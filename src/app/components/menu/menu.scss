@@ -18,11 +18,18 @@
   width: 70px;
 }
 
-.logo {
+.logo-container {
   display: flex;
   align-items: center;
   padding: 16px 15px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  flex: 1;
 }
 
 .logo img {
@@ -38,9 +45,13 @@
   overflow: hidden;
 }
 
+.sidebar.collapsed .logo-container {
+  justify-content: center;
+  padding: 16px 10px;
+}
+
 .sidebar.collapsed .logo {
   justify-content: center;
-  padding: 20px 10px;
 }
 
 .sidebar.collapsed .logo img {
@@ -136,41 +147,41 @@ ul li .icon {
 }
 
 .toggle-btn {
-  position: absolute;
-  top: 15px;
-  right: 15px;
+  position: fixed;
+  top: 20px;
+  left: 200px;
   background: white;
-  border-radius: 4px;
+  border-radius: 50%;
   border: none;
-  padding: 6px;
+  padding: 8px;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-  z-index: 1001;
-  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  transition: left 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
+  z-index: 1001;
 }
 
 .toggle-btn:hover {
   background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  transform: scale(1.05);
 }
 
 .toggle-btn mat-icon {
   color: #e53966;
-  font-size: 20px;
-  width: 20px;
-  height: 20px;
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .sidebar.collapsed .toggle-btn {
-  right: 50%;
-  transform: translateX(50%);
+  left: 50px;
 }
   
