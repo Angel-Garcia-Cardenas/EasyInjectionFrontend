@@ -1,9 +1,8 @@
-// register.component.ts
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { environment } from '../../../../environments/environment';
 
@@ -14,7 +13,7 @@ import { environment } from '../../../../environments/environment';
   templateUrl: './register.html',
   styleUrls: ['./register.scss']
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
   isSubmitting = false;
   submitError: string | null = null;
@@ -34,7 +33,8 @@ export class RegisterComponent {
   constructor(
     private fb: FormBuilder, 
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.registerForm = this.fb.group({
       username: ['', Validators.required],
@@ -47,6 +47,20 @@ export class RegisterComponent {
     this.registerForm.get('password')?.valueChanges.subscribe(password => {
       this.checkPasswordStrength(password);
     });
+  }
+
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      const token = params['token'];
+      if (token) {
+        localStorage.setItem('authToken', token);
+        this.router.navigate(['/dashboard']);
+      }
+    });
+  }
+
+  loginWithGoogle(): void {
+    window.location.href = `${environment.backendUrl}api/auth/google`;
   }
 
   passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
@@ -132,7 +146,6 @@ export class RegisterComponent {
     if (this.registerForm.valid) {
       this.isSubmitting = true;
       
-      // Prepare data for API (remove confirmPassword, include acceptedTerms)
       const registerData = {
         username: this.registerForm.get('username')?.value,
         email: this.registerForm.get('email')?.value,
@@ -140,7 +153,6 @@ export class RegisterComponent {
         acceptedTerms: this.registerForm.get('terms')?.value
       };
 
-      // API endpoint for registration
       this.http.post(`${environment.backendUrl}api/register`, registerData)
         .subscribe({
           next: (res: any) => {
@@ -148,12 +160,10 @@ export class RegisterComponent {
             this.submitSuccess = res.message || 'Usuario registrado exitosamente';
             this.isSubmitting = false;
             
-            // Store user data temporarily (without token since verification is required)
             if (res.user) {
               localStorage.setItem('tempUserData', JSON.stringify(res.user));
             }
             
-            // Redirect to register-success page after 2 seconds
             setTimeout(() => {
               this.router.navigate(['/register-success']);
             }, 2000);
@@ -165,7 +175,7 @@ export class RegisterComponent {
           }
         });
     } else {
-      this.registerForm.markAllAsTouched(); // marca todos los campos como tocados para mostrar errores
+      this.registerForm.markAllAsTouched();
       console.log('Formulario inválido');
     }
   }

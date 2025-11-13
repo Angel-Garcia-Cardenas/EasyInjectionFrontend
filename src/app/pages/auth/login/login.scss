@@ -53,31 +53,123 @@
     align-items: center;
   }
   
-  .generic-input {
-    display: flex;
-    align-items: center;
-  }
-  
-  .generic-input input {
-    flex: 1;
-  }
-  
-  .btn-primary {
-    background-color: var(--pink);
-    color: white;
-    border: none;
-    padding: 0.9rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 1rem;
-    font-size: 1rem;
-  }
-  
-  .btn-primary:hover {
-    background-color: var(--pink-hover);
-  }
+.generic-input {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.generic-input input {
+  flex: 1;
+}
+
+.generic-input.password-input input {
+  padding-right: 3rem;
+}
+
+.generic-input .toggle-password {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  color: #6c757d;
+  border-radius: 4px;
+}
+
+.generic-input .toggle-password:hover {
+  color: var(--pink);
+  background-color: rgba(214, 61, 108, 0.1);
+}
+
+.generic-input .toggle-password mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary {
+  background-color: var(--pink);
+  color: white;
+  border: none;
+  padding: 0.9rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 1rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--pink-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(214, 61, 108, 0.3);
+}
+
+.btn-primary:disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 1.5rem 0;
+  color: #6c757d;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.divider span {
+  padding: 0 1rem;
+  font-size: 0.9rem;
+}
+
+.btn-google {
+  background-color: white;
+  color: #3c4043;
+  border: 1px solid #dadce0;
+  padding: 0.9rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.btn-google:hover {
+  background-color: #f8f9fa;
+  border-color: #c6c6c6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-google .google-icon {
+  width: 20px;
+  height: 20px;
+}
   
   .login-link {
     margin-top: 1rem;

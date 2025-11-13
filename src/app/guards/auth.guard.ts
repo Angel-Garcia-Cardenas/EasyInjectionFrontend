@@ -14,6 +14,13 @@ export class AuthGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean> | Promise<boolean> | boolean {
+    const tokenFromQuery = route.queryParams['token'];
+    if (tokenFromQuery) {
+      localStorage.setItem('authToken', tokenFromQuery);
+      this.router.navigate([state.url.split('?')[0]], { replaceUrl: true });
+      return true;
+    }
+
     const token = this.authService.getToken();
     
     if (!token) {
@@ -21,11 +28,9 @@ export class AuthGuard implements CanActivate {
       return false;
     }
 
-    // Verify token with backend
     return this.authService.verifyToken().pipe(
       map(() => true),
       catchError(() => {
-        // Token is invalid, clear auth and redirect
         this.authService.logout();
         this.router.navigate(['/login']);
         return of(false);
