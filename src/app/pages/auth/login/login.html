@@ -45,6 +45,15 @@
   
         <!-- Mensaje de error general -->
         <div *ngIf="submitError" class="submit-error">{{ submitError }}</div>
+
+        <!-- Forgot Password Button (appears after failed attempt) -->
+        <div *ngIf="showForgotPasswordButton" class="forgot-password-alert">
+          <mat-icon fontSet="material-icons">info</mat-icon>
+          <span>¿Olvidaste tu contraseña?</span>
+          <button type="button" class="btn-forgot-inline" (click)="goToForgotPassword()">
+            Recuperar contraseña
+          </button>
+        </div>
   
         <!-- Botón de envío -->
         <button type="submit" class="btn btn-primary" 

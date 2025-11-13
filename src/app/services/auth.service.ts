@@ -84,4 +84,28 @@ export class AuthService {
     const headers = this.getAuthHeaders();
     return this.http.get(`${environment.backendUrl}api/auth/verify`, { headers });
   }
+
+  // Forgot password - request reset email
+  forgotPassword(email: string): Observable<any> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post(`${environment.backendUrl}api/auth/forgot-password`, 
+      { email }, 
+      { headers }
+    );
+  }
+
+  // Reset password with token
+  resetPassword(token: string, newPassword: string): Observable<any> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post(`${environment.backendUrl}api/auth/reset-password`, 
+      { token, newPassword }, 
+      { headers }
+    );
+  }
 }

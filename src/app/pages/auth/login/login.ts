@@ -19,6 +19,8 @@ export class LoginComponent implements OnInit {
   isSubmitting = false;
   submitError: string | null = null;
   showPassword = false;
+  failedAttempts = 0;
+  showForgotPasswordButton = false;
 
   constructor(
     private fb: FormBuilder,
@@ -80,6 +82,12 @@ export class LoginComponent implements OnInit {
             console.error('Error en login', err);
             this.submitError = err.error?.error || 'Credenciales incorrectas o servidor no disponible.';
             this.isSubmitting = false;
+            
+            // Show forgot password button after first failed attempt
+            this.failedAttempts++;
+            if (this.failedAttempts >= 1) {
+              this.showForgotPasswordButton = true;
+            }
           }
         });
     } else {
