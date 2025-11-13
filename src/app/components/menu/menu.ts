@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
 import { UserService } from '../../services/user.service';
+import { SidebarService } from '../../services/sidebar.service';
 
 @Component({
   selector: 'app-menu',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, MatIconModule],
   templateUrl: './menu.html',
   styleUrl: './menu.scss'
 })
@@ -15,11 +17,16 @@ export class Menu {
 
   constructor(
     private router: Router,
-    private userService: UserService
-  ) {}
+    private userService: UserService,
+    private sidebarService: SidebarService
+  ) {
+    this.sidebarService.isCollapsed$.subscribe(collapsed => {
+      this.isCollapsed = collapsed;
+    });
+  }
 
   toggleSidebar() {
-    this.isCollapsed = !this.isCollapsed;
+    this.sidebarService.toggleSidebar();
   }
 
   logout() {

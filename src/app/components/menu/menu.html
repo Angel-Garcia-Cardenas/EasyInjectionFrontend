@@ -1,8 +1,8 @@
 <div class="sidebar" [ngClass]="{ 'collapsed': isCollapsed }">
-    <!-- Botón toggle Commmented because it doesn't work properly -->
-    <!-- <button class="toggle-btn" (click)="toggleSidebar()">
-      <span [ngClass]="isCollapsed ? 'icon-chevron-right' : 'icon-chevron-left'">‹</span>
-    </button> -->
+    <!-- Toggle Button -->
+    <button class="toggle-btn" (click)="toggleSidebar()" [attr.aria-label]="isCollapsed ? 'Expandir menú' : 'Contraer menú'">
+      <mat-icon fontSet="material-icons">{{ isCollapsed ? 'menu' : 'menu_open' }}</mat-icon>
+    </button>
   
     <!-- Logo -->
     <div class="logo">
@@ -14,31 +14,31 @@
     <ul>
       <a routerLink="/dashboard" routerLinkActive="active">
         <li>
-          <span class="icon">🏠</span>
+          <mat-icon fontSet="material-icons" class="icon">home</mat-icon>
           <span *ngIf="!isCollapsed">Inicio</span>
         </li>
       </a>
       <a routerLink="/dashboard/theory" routerLinkActive="active">
         <li>
-          <span class="icon">📚</span>
+          <mat-icon fontSet="material-icons" class="icon">book</mat-icon>
           <span *ngIf="!isCollapsed">Teoría</span>
         </li>
       </a>
       <a routerLink="/dashboard/new-scan" routerLinkActive="active">
         <li>
-          <span class="icon">🎯</span>
+          <mat-icon fontSet="material-icons" class="icon">gps_fixed</mat-icon>
           <span *ngIf="!isCollapsed">Nuevo Escaneo</span>
         </li>
       </a>
       <a routerLink="/dashboard/scans" routerLinkActive="active">
         <li> 
-          <span class="icon">📋</span>
+          <mat-icon fontSet="material-icons" class="icon">folder</mat-icon>
           <span *ngIf="!isCollapsed">Mis Escaneos</span>
         </li>
       </a>
       <a routerLink="/dashboard/scoreboard" routerLinkActive="active">
         <li> 
-          <span class="icon">🏆</span>
+          <mat-icon fontSet="material-icons" class="icon">emoji_events</mat-icon>
           <span *ngIf="!isCollapsed">Scoreboard</span>
         </li>
       </a>
@@ -48,13 +48,13 @@
     <div class="footer">
       <a routerLink="/user/account" routerLinkActive="active">
         <li>
-          <span class="icon">👤</span>
+          <mat-icon fontSet="material-icons" class="icon">account_circle</mat-icon>
           <span *ngIf="!isCollapsed">Mi Cuenta</span>
         </li>
       </a>
       <a href="#" (click)="logout()">
         <li>
-          <span class="icon">🚪</span>
+          <mat-icon fontSet="material-icons" class="icon">logout</mat-icon>
           <span *ngIf="!isCollapsed">Cerrar Sesión</span>
         </li>
       </a>

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { Menu } from '../../../components/menu/menu';
 import { Header } from '../../../components/header/header';
+import { SidebarService } from '../../../services/sidebar.service';
 
 @Component({
   selector: 'app-dashboard-layout',
@@ -12,5 +13,11 @@ import { Header } from '../../../components/header/header';
   styleUrls: ['./dashboard-layout.scss']
 })
 export class DashboardLayoutComponent {
-  constructor() {}
+  isSidebarCollapsed = false;
+
+  constructor(private sidebarService: SidebarService) {
+    this.sidebarService.isCollapsed$.subscribe(collapsed => {
+      this.isSidebarCollapsed = collapsed;
+    });
+  }
 }
