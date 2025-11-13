@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ProgressIndicatorComponent } from '../components/progress-indicator/progress-indicator';
 import hljs from 'highlight.js';
 
 
@@ -16,7 +15,7 @@ interface LessonData {
 @Component({
   selector: 'app-lesson',
   standalone: true,
-  imports: [CommonModule, ProgressIndicatorComponent],
+  imports: [CommonModule],
   templateUrl: './lesson.html',
   styleUrl: './lesson.scss'
 })
@@ -35,7 +34,6 @@ export class LessonComponent implements OnInit {
   hasPreviousLesson = false;
   hasNextLesson = true;
 
-  // Mapeo de lecciones por categoría y su orden
   private categoryLessons = {
     'security-basics': ['intro-seguridad', 'owasp-top-10'],
     'xss': ['fundamentos-xss', 'tipos-xss', 'contextos-salida-xss', 'dom-xss-ejecucion-cliente', 'prevencion-xss', 'csp-y-headers', 'diseno-seguro-y-procesos', 'casos-avanzados-xss'],
@@ -2704,11 +2702,14 @@ echo "&lt;p&gt;" . htmlspecialchars($estado, ENT_QUOTES, 'UTF-8') . "&lt;/p&gt;"
     const categoryLessonsList = this.categoryLessons[currentCategory];
     
     if (categoryLessonsList && this.hasPreviousLesson) {
-      const previousLessonId = categoryLessonsList[this.currentStep - 2]; // currentStep es 1-indexed
-      this.router.navigate(['/dashboard/theory/lesson', previousLessonId]);
+      const previousLessonId = categoryLessonsList[this.currentStep - 2];
+      this.router.navigate(['/dashboard/theory/lesson', previousLessonId]).then(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
     } else {
-      // Si no hay lección anterior, volver al temario
-      this.router.navigate(['/dashboard/theory/syllabus']);
+      this.router.navigate(['/dashboard/theory/syllabus']).then(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
     }
   }
 
@@ -2717,18 +2718,23 @@ echo "&lt;p&gt;" . htmlspecialchars($estado, ENT_QUOTES, 'UTF-8') . "&lt;/p&gt;"
     const categoryLessonsList = this.categoryLessons[currentCategory];
     
     if (categoryLessonsList && this.hasNextLesson) {
-      const nextLessonId = categoryLessonsList[this.currentStep]; // currentStep ya es 1-indexed
-      //Redirigir a la siguiente lección
-      this.router.navigate(['/dashboard/theory/lesson', nextLessonId]);
+      const nextLessonId = categoryLessonsList[this.currentStep];
+      this.router.navigate(['/dashboard/theory/lesson', nextLessonId]).then(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
     } else {
-      // Si no hay siguiente lección, volver al temario. Parte de arriba
-      this.router.navigate(['/dashboard/theory/syllabus']);
+      this.router.navigate(['/dashboard/theory/syllabus']).then(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
     }
   }
 
   navigateToSyllabus(): void {
-    //Que redirija al temario a la parte de arriba
     this.router.navigate(['/dashboard/theory/syllabus']);
-}
+  }
+
+  getStepsArray(): number[] {
+    return Array.from({ length: this.totalSteps }, (_, i) => i + 1);
+  }
 
 }

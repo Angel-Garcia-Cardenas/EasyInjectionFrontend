@@ -2,16 +2,29 @@
   <div class="container">
     <div class="lesson-layout">
       
-<!--
+      <!-- Step Progress Sidebar -->
       <div class="progress-sidebar">
         <div class="progress-sticky">
-          <app-progress-indicator 
-            [steps]="totalSteps"
-            [currentStep]="currentStep">
-          </app-progress-indicator>
+          <div class="step-progress-bar-vertical">
+            <div class="progress-line-vertical">
+              <div class="progress-line-fill-vertical" [style.height.%]="(currentStep / totalSteps) * 100"></div>
+            </div>
+            <div class="progress-steps-vertical">
+              <div 
+                *ngFor="let step of getStepsArray(); let i = index" 
+                class="progress-step-vertical"
+                [class.completed]="i + 1 < currentStep"
+                [class.current]="i + 1 === currentStep"
+                [class.upcoming]="i + 1 > currentStep">
+                <div class="step-circle">
+                  <span class="step-number">{{ i + 1 }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
--->
+
       <!-- Contenido principal -->
       <div class="main-content">
         
@@ -24,7 +37,7 @@
         </div>
 
         <div class="content-wrapper">
-          
+
           <!-- Encabezado de la lección -->
           <div class="lesson-header">
             <h1 class="lesson-title">{{ lessonData.title }}</h1>
