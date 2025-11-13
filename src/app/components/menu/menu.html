@@ -3,12 +3,12 @@
     <button class="toggle-btn" (click)="toggleSidebar()" [attr.aria-label]="isCollapsed ? 'Expandir menú' : 'Contraer menú'">
       <mat-icon fontSet="material-icons">{{ isCollapsed ? 'menu' : 'menu_open' }}</mat-icon>
     </button>
-
+  
     <!-- Logo -->
     <div class="logo-container">
-      <div class="logo">
-        <img src="logo.png" alt="EasyInjection logo">
-        <span *ngIf="!isCollapsed">EasyInjection</span>
+    <div class="logo">
+      <img src="logo.png" alt="EasyInjection logo">
+      <span *ngIf="!isCollapsed">EasyInjection</span>
       </div>
     </div>
   

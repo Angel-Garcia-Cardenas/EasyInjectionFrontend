@@ -73,7 +73,7 @@
 
 .generic-input.password-input input {
   padding-right: 3rem;
-}
+  }
   
   .generic-input .toggle-password {
   position: absolute;
@@ -203,22 +203,22 @@
     text-decoration: none;
   }
   
-.btn-primary {
-  background-color: var(--pink);
-  color: white;
-  border: none;
-  padding: 0.9rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 1rem;
-  font-size: 1rem;
+  .btn-primary {
+    background-color: var(--pink);
+    color: white;
+    border: none;
+    padding: 0.9rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 1rem;
+    font-size: 1rem;
   transition: all 0.3s ease;
-}
-
+  }
+  
 .btn-primary:hover:not(:disabled) {
-  background-color: var(--pink-hover);
+    background-color: var(--pink-hover);
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(214, 61, 108, 0.3);
 }
@@ -277,7 +277,7 @@
 .btn-google .google-icon {
   width: 20px;
   height: 20px;
-}
+  }
   
   .login-link {
     margin-top: 0.5rem;
