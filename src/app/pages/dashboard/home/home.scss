@@ -128,10 +128,27 @@
   /* ---- Actividad reciente ---- */
   .activity {
     .item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
       padding: 14px 0;
       border-bottom: 1px solid #f0f0f0;
 
       &:last-child { border-bottom: 0; }
+
+      &__icon {
+        color: #e53966;
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+
+      &__content {
+        flex: 1;
+        min-width: 0;
+      }
 
       &__title {
         font-weight: 700;
@@ -147,6 +164,36 @@
         font-size: 12px;
         color: #9ca3af;
       }
+    }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #9ca3af;
+
+    mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 12px;
+      opacity: 0.5;
+    }
+
+    p {
+      margin: 0;
+      font-size: 14px;
+    }
+  }
+
+  .loading-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6b7280;
+
+    p {
+      margin: 0;
+      font-size: 14px;
     }
   }
 

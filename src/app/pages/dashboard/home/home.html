@@ -40,9 +40,19 @@
       <h3 class="panel__title">Actividad reciente</h3>
       <div class="activity">
         <div class="item" *ngFor="let item of recentActivity">
-          <div class="item__title">{{ item.title }}</div>
-          <div class="item__desc">{{ item.description }}</div>
-          <div class="item__time">{{ item.time }}</div>
+          <mat-icon fontSet="material-icons" class="item__icon">{{ getActivityIcon(item.type) }}</mat-icon>
+          <div class="item__content">
+            <div class="item__title">{{ item.title }}</div>
+            <div class="item__desc">{{ item.description }}</div>
+            <div class="item__time">{{ formatActivityTime(item.date) }}</div>
+          </div>
+        </div>
+        <div class="empty-state" *ngIf="recentActivity.length === 0 && !loading">
+          <mat-icon fontSet="material-icons">history</mat-icon>
+          <p>No hay actividad reciente</p>
+        </div>
+        <div class="loading-state" *ngIf="loading">
+          <p>Cargando actividad...</p>
         </div>
       </div>
     </div>
@@ -50,24 +60,27 @@
     <!-- Statistics -->
     <div class="panel">
       <h3 class="panel__title">Tus estadísticas</h3>
-      <div class="stats">
+      <div class="stats" *ngIf="!loading">
         <div class="row">
           <span class="row__label">Escaneos realizados</span>
-          <span class="row__value">{{ stats.escaneos }}</span>
+          <span class="row__value">{{ stats.scansPerformed }}</span>
         </div>
         <div class="row">
           <span class="row__label">Vulnerabilidades detectadas</span>
-          <span class="row__value">{{ stats.vulnerabilidades }}</span>
+          <span class="row__value">{{ stats.vulnerabilitiesDetected }}</span>
         </div>
         <div class="row">
           <span class="row__label">Mejor puntuación</span>
-          <span class="row__value">{{ stats.puntos }}</span>
+          <span class="row__value">{{ stats.bestScore }}</span>
         </div>
         <div class="row">
           <span class="row__label">Mejor escaneo</span>
-          <span class="row__value">Alias mejor escaneo</span>
+          <span class="row__value">{{ stats.bestScanAlias }}</span>
         </div>
-        <button class="btn btn--outline-pink full-btn">Ver estadísticas completas</button>
+        <button class="btn btn--outline-pink full-btn" (click)="goToScoreboard()">Ver estadísticas completas</button>
+      </div>
+      <div class="loading-state" *ngIf="loading">
+        <p>Cargando estadísticas...</p>
       </div>
     </div>
   </div>
