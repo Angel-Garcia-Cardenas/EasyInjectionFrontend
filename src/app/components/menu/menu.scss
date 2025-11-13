@@ -67,12 +67,20 @@ ul {
 
 a {
   text-decoration: none;
-  color: var(--cream); /* gris oscuro */
+  color: white;
   font-weight: 500;
-  transition: color 0.2s ease;
+  transition: all 0.2s ease;
 
   &:hover {
-    color: var(--gray);
+    color: white;
+  }
+
+  &.active {
+    background: rgba(255, 255, 255, 0.2);
+    
+    li {
+      background: transparent;
+    }
   }
 }
 
@@ -87,6 +95,14 @@ ul li {
 
 ul li:hover {
   background: rgba(255, 255, 255, 0.1);
+}
+
+a:hover li {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+a.active:hover li {
+  background: transparent;
 }
 
 ul li .icon {
@@ -108,10 +124,21 @@ ul li .icon {
   display: none;
 }
 
+
 .footer {
   margin-top: auto;
   padding: 0;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer a {
+  &.active {
+    background: rgba(255, 255, 255, 0.2);
+    
+    li {
+      background: transparent;
+    }
+  }
 }
 
 .footer li {
@@ -125,6 +152,14 @@ ul li .icon {
 
 .footer li:hover {
   background: rgba(255, 255, 255, 0.1);
+}
+
+.footer a:hover li {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.footer a.active:hover li {
+  background: transparent;
 }
 
 .footer li .icon {
