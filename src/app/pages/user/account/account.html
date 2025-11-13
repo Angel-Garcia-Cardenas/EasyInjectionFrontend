@@ -59,17 +59,48 @@
   
         <!-- Sesiones activas -->
         <div class="card">
-          <h3>Sesiones activas</h3>
-          <p class="text-muted">Dispositivos donde tu cuenta está actualmente iniciada</p>
-          <div class="session-item" *ngFor="let session of sessions">
-            <span class="icon">📱</span>
-            <div>
-              <p><strong>{{ session.device }}</strong></p>
-              <p>{{ session.browser }} - {{ session.location }}</p>
-            </div>
-            <span class="status" [class.active]="session.isCurrent">{{ session.lastActive }}</span>
+          <div class="card-header">
+            <h3>Sesiones activas</h3>
+            <button class="btn-outline" (click)="closeAllSessions()" *ngIf="sessions.length > 1">
+              Cerrar todas
+            </button>
           </div>
-          <button class="btn-outline full" (click)="closeAllSessions()">Cerrar todas las sesiones</button>
+          <p class="text-muted">Dispositivos donde tu cuenta está actualmente iniciada</p>
+          
+          <div class="sessions-list" *ngIf="sessions.length > 0">
+            <div class="session-item" *ngFor="let session of sessions">
+              <div class="session-icon">
+                {{ getDeviceIcon(session.device) }}
+              </div>
+              <div class="session-info">
+                <div class="session-header">
+                  <strong>{{ session.device || 'Dispositivo desconocido' }}</strong>
+                  <span class="current-badge" *ngIf="isCurrentSession(session)">Sesión actual</span>
+                </div>
+                <div class="session-details">
+                  <span>{{ getBrowserIcon(session.browser) }} {{ session.browser || 'Navegador desconocido' }}</span>
+                  <span class="separator">•</span>
+                  <span>📍 {{ session.location || 'Ubicación desconocida' }}</span>
+                </div>
+                <div class="session-meta">
+                  <span>IP: {{ session.ip || 'N/A' }}</span>
+                  <span class="separator">•</span>
+                  <span>{{ formatLastActivity(session.lastActivity) }}</span>
+                </div>
+              </div>
+              <button 
+                class="btn-close-session" 
+                (click)="closeSession(session._id)"
+                *ngIf="!isCurrentSession(session)"
+                title="Cerrar sesión">
+                ✕
+              </button>
+            </div>
+          </div>
+
+          <div class="empty-sessions" *ngIf="sessions.length === 0">
+            <p>No hay sesiones activas</p>
+          </div>
         </div>
       </div>
     </div>

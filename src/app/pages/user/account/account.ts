@@ -3,9 +3,8 @@ import { FormBuilder, FormGroup, Validators, AbstractControl, ReactiveFormsModul
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
-import { UserService, User, SessionItem } from '../../../services/user.service';
-
-// Remove duplicate interfaces - they're now imported from user.service
+import { UserService, User } from '../../../services/user.service';
+import { SessionService, Session } from '../../../services/session.service';
 
 @Component({
   selector: 'app-account',
@@ -29,8 +28,9 @@ export class Account implements OnInit {
     }
   };
 
-  // Sesiones activas (mock)
-  sessions: SessionItem[] = [];
+  // Active sessions
+  sessions: Session[] = [];
+  currentSessionToken: string = '';
 
   // Available avatars
   availableAvatars = [
@@ -81,6 +81,7 @@ export class Account implements OnInit {
     private fb: FormBuilder, 
     private router: Router,
     private userService: UserService,
+    private sessionService: SessionService,
     private cd: ChangeDetectorRef
   ) {
     // Formulario para editar perfil
@@ -105,6 +106,7 @@ export class Account implements OnInit {
   }
 
   ngOnInit(): void {
+    this.currentSessionToken = localStorage.getItem('token') || '';
     this.loadUserData();
     this.loadSessions();
   }
@@ -129,19 +131,31 @@ export class Account implements OnInit {
   }
 
   loadSessions(): void {
-    this.userService.getSessions().subscribe({
-      next: (response) => {
-        this.sessions = response.sessions;
+    this.sessionService.getSessions().subscribe({
+      next: (sessions) => {
+        this.sessions = sessions;
       },
       error: (error) => {
         console.error('Error loading sessions:', error);
-        // Fallback to mock data
-        this.sessions = [
-          { id: 's1', device: 'PC', browser: 'Chrome', location: 'Ciudad de México', lastActive: 'Activo ahora', isCurrent: true },
-          { id: 's2', device: 'iPhone', browser: 'Safari', location: 'Guadalajara', lastActive: 'Hace 2 días', isCurrent: false }
-        ];
+        this.showNotificationMessage('Error al cargar las sesiones', 'error');
       }
     });
+  }
+
+  isCurrentSession(session: Session): boolean {
+    return session.token === this.currentSessionToken;
+  }
+
+  getDeviceIcon(device: string): string {
+    return this.sessionService.getDeviceIcon(device);
+  }
+
+  getBrowserIcon(browser: string): string {
+    return this.sessionService.getBrowserIcon(browser);
+  }
+
+  formatLastActivity(date: Date): string {
+    return this.sessionService.formatLastActivity(date);
   }
 
   loadMockData(): void {
@@ -405,31 +419,33 @@ export class Account implements OnInit {
   // Sesiones
   // =========================
   closeSession(sessionId: string) {
-    this.userService.closeSession(sessionId).subscribe({
-      next: (response) => {
-        // Remove session from UI
-        this.sessions = this.sessions.filter(s => s.id !== sessionId);
-        this.showNotificationMessage('Sesión cerrada exitosamente');
-      },
-      error: (error) => {
-        console.error('Error cerrando sesión', error);
-        this.showNotificationMessage('Error al cerrar la sesión: ' + (error.error?.error || 'Error desconocido'), 'error');
-      }
-    });
+    if (confirm('¿Estás seguro de que deseas cerrar esta sesión?')) {
+      this.sessionService.closeSession(sessionId).subscribe({
+        next: (response) => {
+          this.sessions = this.sessions.filter(s => s._id !== sessionId);
+          this.showNotificationMessage('Sesión cerrada exitosamente');
+        },
+        error: (error) => {
+          console.error('Error cerrando sesión', error);
+          this.showNotificationMessage('Error al cerrar la sesión: ' + (error.error?.error || 'Error desconocido'), 'error');
+        }
+      });
+    }
   }
 
   closeAllSessions() {
-    this.userService.closeAllSessions().subscribe({
-      next: (response) => {
-        // Keep only current session in UI
-        this.sessions = this.sessions.filter(s => s.isCurrent);
-        this.showNotificationMessage('Todas las sesiones cerradas exitosamente');
-      },
-      error: (error) => {
-        console.error('Error cerrando todas las sesiones', error);
-        this.showNotificationMessage('Error al cerrar las sesiones: ' + (error.error?.error || 'Error desconocido'), 'error');
-      }
-    });
+    if (confirm('¿Estás seguro de que deseas cerrar todas las sesiones? Esto cerrará tu sesión en todos los dispositivos excepto este.')) {
+      this.sessionService.closeAllSessions().subscribe({
+        next: (response) => {
+          this.sessions = this.sessions.filter(s => this.isCurrentSession(s));
+          this.showNotificationMessage('Todas las sesiones cerradas exitosamente');
+        },
+        error: (error) => {
+          console.error('Error cerrando todas las sesiones', error);
+          this.showNotificationMessage('Error al cerrar las sesiones: ' + (error.error?.error || 'Error desconocido'), 'error');
+        }
+      });
+    }
   }
 
   // =========================
