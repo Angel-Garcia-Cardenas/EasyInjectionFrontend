@@ -1,49 +1,177 @@
-<div class="container mx-auto py-6">
-  <div class="flex flex-col gap-6">
-    <!-- Header -->
-    <div class="flex items-center justify-between">
-      <h1 class="text-3xl font-bold text-rosa-mexicano">Scoreboard</h1>
+<div class="scoreboard-container">
+  <!-- Header -->
+  <div class="scoreboard-header">
+    <h1>🏆 Scoreboard</h1>
+    <p class="subtitle">Compite con otros usuarios y escala posiciones</p>
+  </div>
+
+  <!-- User Stats Card -->
+  <div class="user-stats-card" *ngIf="userStats">
+    <div class="stats-header">
+      <h2>Tus Estadísticas</h2>
+      <div class="user-rank" *ngIf="currentUserRank">
+        <span class="rank-label">Tu posición:</span>
+        <span class="rank-number">#{{ currentUserRank }}</span>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-icon">⭐</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatScore(userStats.totalPoints) }}</div>
+          <div class="stat-label">Puntos Totales</div>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ userStats.totalScans }}</div>
+          <div class="stat-label">Escaneos</div>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon">🐛</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ userStats.totalVulnerabilities }}</div>
+          <div class="stat-label">Vulnerabilidades</div>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon">📊</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatScore(userStats.avgScore) }}</div>
+          <div class="stat-label">Promedio</div>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon">🏅</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatScore(userStats.bestScore) }}</div>
+          <div class="stat-label">Mejor Puntaje</div>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon">📈</div>
+        <div class="stat-content">
+          <div class="stat-value">Nivel {{ userStats.level }}</div>
+          <div class="stat-label">Nivel Actual</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeframe Selector -->
+  <div class="timeframe-selector">
+    <button 
+      class="timeframe-btn" 
+      [class.active]="timeframe === 'all'"
+      (click)="changeTimeframe('all')">
+      Todo el tiempo
+    </button>
+    <button 
+      class="timeframe-btn" 
+      [class.active]="timeframe === 'month'"
+      (click)="changeTimeframe('month')">
+      Este mes
+    </button>
+    <button 
+      class="timeframe-btn" 
+      [class.active]="timeframe === 'week'"
+      (click)="changeTimeframe('week')">
+      Esta semana
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Cargando scoreboard...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-state" *ngIf="error && !loading">
+    <div class="error-icon">⚠️</div>
+    <p>{{ error }}</p>
+    <button class="retry-btn" (click)="loadScoreboard()">Reintentar</button>
+  </div>
+
+  <!-- Scoreboard Table -->
+  <div class="scoreboard-table" *ngIf="!loading && !error">
+    <div class="table-header">
+      <div class="col-rank">Posición</div>
+      <div class="col-user">Usuario</div>
+      <div class="col-level">Nivel</div>
+      <div class="col-points">Puntos</div>
+      <div class="col-scans">Escaneos</div>
+      <div class="col-vulns">Vulnerabilidades</div>
+      <div class="col-avg">Promedio</div>
+      <div class="col-best">Mejor</div>
     </div>
 
-    <!-- Tabla de clasificación -->
-    <div class="card">
-      <div class="card-header">
-        <h2 class="card-title">Clasificación</h2>
-      </div>
-      <div class="card-content">
-        <div class="rounded-md border">
-          <div class="grid grid-cols-12 bg-muted p-3 text-sm font-medium">
-            <div class="col-span-1 text-center">#</div>
-            <div class="col-span-5">Nombre del escaneo (Alias)</div>
-            <div class="col-span-2 text-right">Respuestas correctas</div>
-            <div class="col-span-2 text-right">Calificación de vulnerabilidades</div>
-            <div class="col-span-2 text-right">Puntaje</div>
-          </div>
-          <div class="divide-y">
-            <div
-              *ngFor="let scan of filteredScans"
-              class="grid grid-cols-12 items-center p-3"
-            >
-              <div class="col-span-1 text-center font-medium">
-                <div *ngIf="scan.rank <= 3" class="inline-flex items-center justify-center">
-                  <svg class="h-5 w-5" [ngClass]="getMedalClass(scan.rank)" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M7 4V2C7 1.45 7.45 1 8 1H16C16.55 1 17 1.45 17 2V4H20.38C20.8 4 21.13 4.42 21.02 4.83L19.37 11.1C19.18 11.8 18.53 12.27 17.8 12.27H6.2C5.47 12.27 4.82 11.8 4.63 11.1L2.98 4.83C2.87 4.42 3.2 4 3.62 4H7Z"/>
-                  </svg>
-                </div>
-                <span *ngIf="scan.rank > 3">{{ scan.rank }}</span>
-              </div>
-              <div class="col-span-5 flex items-center gap-2">
-                <div>
-                  <div class="font-medium">{{ scan.name }}</div>
-                </div>
-              </div>
-              <div class="col-span-2 text-right font-medium">{{ scan.correctAnswers }}</div>
-              <div class="col-span-2 text-right text-muted-foreground">{{ scan.vulnerabilityScore }}</div>
-              <div class="col-span-2 text-right text-muted-foreground">{{ formatScore(scan.totalScore) }}</div>
+    <div class="table-body">
+      <div 
+        *ngFor="let entry of scoreboard; let i = index" 
+        class="table-row"
+        [class.highlight]="entry.rank === currentUserRank">
+        
+        <!-- Rank -->
+        <div class="col-rank">
+          <span class="rank-badge" [class.medal]="entry.rank <= 3">
+            <span *ngIf="entry.rank <= 3" class="medal-icon">{{ getMedalIcon(entry.rank) }}</span>
+            <span *ngIf="entry.rank > 3">{{ entry.rank }}</span>
+          </span>
+        </div>
+
+        <!-- User -->
+        <div class="col-user">
+          <div class="user-info">
+            <div class="avatar">
+              <img [src]="getAvatarPath(entry.avatarId)" [alt]="entry.username" />
+            </div>
+            <div class="username">
+              {{ entry.username }}
+              <span class="you-badge" *ngIf="entry.rank === currentUserRank">Tú</span>
             </div>
           </div>
         </div>
+
+        <!-- Level -->
+        <div class="col-level">
+          <span class="level-badge">Nivel {{ entry.level }}</span>
+        </div>
+
+        <!-- Points -->
+        <div class="col-points">
+          <span class="points-value">{{ formatScore(entry.totalPoints) }}</span>
+        </div>
+
+        <!-- Scans -->
+        <div class="col-scans">
+          {{ entry.totalScans }}
+        </div>
+
+        <!-- Vulnerabilities -->
+        <div class="col-vulns">
+          {{ entry.totalVulnerabilities }}
+        </div>
+
+        <!-- Average -->
+        <div class="col-avg">
+          {{ formatScore(entry.avgScore) }}
+        </div>
+
+        <!-- Best Score -->
+        <div class="col-best">
+          <span class="best-score">{{ formatScore(entry.bestScore) }}</span>
+        </div>
       </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="scoreboard.length === 0">
+      <div class="empty-icon">📊</div>
+      <h3>No hay datos disponibles</h3>
+      <p>Completa algunos escaneos para aparecer en el scoreboard</p>
     </div>
   </div>
 </div>

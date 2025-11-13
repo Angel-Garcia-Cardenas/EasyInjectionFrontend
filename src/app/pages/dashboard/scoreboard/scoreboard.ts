@@ -61,6 +61,28 @@ export class ScoreboardComponent implements OnInit {
   }
 
   getAvatarPath(avatarId: string): string {
-    return `${avatarId}.png`;
+    return `assets/avatars/${avatarId}.png`;
+  }
+
+  getMedalClass(rank: number): string {
+    if (rank === 1) return 'text-yellow-500';
+    if (rank === 2) return 'text-gray-400';
+    if (rank === 3) return 'text-orange-600';
+    return '';
+  }
+
+  getMedalIcon(rank: number): string {
+    if (rank === 1) return '🥇';
+    if (rank === 2) return '🥈';
+    if (rank === 3) return '🥉';
+    return '';
+  }
+
+  formatScore(score: number): string {
+    return score.toLocaleString('es-ES');
+  }
+
+  isCurrentUser(userId: string): boolean {
+    return false; // Will be implemented when we have current user ID
   }
 }
