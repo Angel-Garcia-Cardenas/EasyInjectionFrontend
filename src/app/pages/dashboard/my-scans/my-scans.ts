@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faExclamationTriangle,
@@ -64,10 +64,32 @@ export class MyScansComponent implements OnInit, OnDestroy {
 
   constructor(
     private scanService: ScanService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    // Check for search query parameter from route (synchronously first)
+    const searchParam = this.route.snapshot.queryParams['search'];
+    if (searchParam) {
+      this.searchTerm = searchParam;
+    }
+    
+    // Also subscribe to query params changes in case user navigates with different search
+    this.route.queryParams.subscribe(params => {
+      if (params['search']) {
+        this.searchTerm = params['search'];
+        // Re-apply filters if scans are already loaded
+        if (this.scans.length > 0) {
+          this.applyFilters();
+        }
+      } else if (this.searchTerm && !params['search']) {
+        // Clear search if query param is removed
+        this.searchTerm = '';
+        this.applyFilters();
+      }
+    });
+    
     this.loadScans();
   }
 
@@ -152,6 +174,10 @@ export class MyScansComponent implements OnInit, OnDestroy {
       next: (response) => {
         this.scans = response.scans;
         this.filteredScans = [...this.scans];
+        // Apply filters if search term exists
+        if (this.searchTerm) {
+          this.applyFilters();
+        }
         this.loading = false;
       },
       error: (error) => {
@@ -160,6 +186,10 @@ export class MyScansComponent implements OnInit, OnDestroy {
         this.loading = false;
         // Add mock data for development when API fails
         this.addMockData();
+        // Apply filters if search term exists
+        if (this.searchTerm) {
+          this.applyFilters();
+        }
       }
     });
   }

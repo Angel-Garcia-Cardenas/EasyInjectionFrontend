@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatBadgeModule } from '@angular/material/badge';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -31,7 +32,8 @@ export class Header implements OnInit, OnDestroy {
 
   constructor(
     private sidebarService: SidebarService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -146,5 +148,14 @@ export class Header implements OnInit, OnDestroy {
   }
 
   onSearch() {
+    if (this.searchQuery.trim()) {
+      // Navigate to scans page with search query parameter
+      this.router.navigate(['/dashboard/scans'], {
+        queryParams: { search: this.searchQuery.trim() }
+      });
+    } else {
+      // If search is empty, just navigate to scans page
+      this.router.navigate(['/dashboard/scans']);
+    }
   }
 }
