@@ -1,3 +1,5 @@
+@use "sass:color";
+
 $rosa: #d63d6c;
 $gris: #c0cbcd;
 $gris-oscuro: #6b6b6b;
@@ -493,7 +495,7 @@ $crema: #efeded;
       transition: all 0.2s;
 
       &:hover:not(:disabled) {
-        background: adjust-color($rosa, $lightness: -10%);
+        background: color.adjust($rosa, $lightness: -10%);
       }
 
       &:disabled {

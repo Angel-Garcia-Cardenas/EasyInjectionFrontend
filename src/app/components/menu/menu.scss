@@ -102,10 +102,12 @@ a:hover li {
 }
 
 a.active:hover li {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.25);
 }
 
-ul li .icon {
+ul li .icon,
+ul li i,
+ul li fa-icon {
   font-size: 24px;
   margin-right: 15px;
   min-width: 24px;
@@ -113,10 +115,15 @@ ul li .icon {
   align-items: center;
   justify-content: center;
   font-weight: 400;
+}
+
+ul li .icon {
   font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
-.sidebar.collapsed ul li .icon {
+.sidebar.collapsed ul li .icon,
+.sidebar.collapsed ul li i,
+.sidebar.collapsed ul li fa-icon {
   margin: 0 auto;
 }
 
@@ -159,10 +166,12 @@ ul li .icon {
 }
 
 .footer a.active:hover li {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.25);
 }
 
-.footer li .icon {
+.footer li .icon,
+.footer li i,
+.footer li fa-icon {
   font-size: 24px;
   margin-right: 15px;
   min-width: 24px;
@@ -170,10 +179,15 @@ ul li .icon {
   align-items: center;
   justify-content: center;
   font-weight: 400;
+}
+
+.footer li .icon {
   font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
-.sidebar.collapsed .footer li .icon {
+.sidebar.collapsed .footer li .icon,
+.sidebar.collapsed .footer li i,
+.sidebar.collapsed .footer li fa-icon {
   margin: 0 auto;
 }
 

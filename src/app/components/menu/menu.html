@@ -1,10 +1,8 @@
 <div class="sidebar" [ngClass]="{ 'collapsed': isCollapsed }">
-    <!-- Toggle Button (Outside) -->
     <button class="toggle-btn" (click)="toggleSidebar()" [attr.aria-label]="isCollapsed ? 'Expandir menú' : 'Contraer menú'">
       <mat-icon fontSet="material-icons">{{ isCollapsed ? 'menu' : 'menu_open' }}</mat-icon>
     </button>
   
-    <!-- Logo -->
     <div class="logo-container">
     <div class="logo">
       <img src="logo.png" alt="EasyInjection logo">
@@ -12,51 +10,49 @@
       </div>
     </div>
   
-    <!-- Menú -->
     <ul>
       <a routerLink="/dashboard" routerLinkActive="active">
         <li>
-          <mat-icon fontSet="material-icons" class="icon">home</mat-icon>
+          <fa-icon [icon]="faHome"></fa-icon>
           <span *ngIf="!isCollapsed">Inicio</span>
         </li>
       </a>
       <a routerLink="/dashboard/theory" routerLinkActive="active">
         <li>
-          <mat-icon fontSet="material-icons" class="icon">book</mat-icon>
+          <fa-icon [icon]="faBook" class="icon"></fa-icon>
           <span *ngIf="!isCollapsed">Teoría</span>
         </li>
       </a>
       <a routerLink="/dashboard/new-scan" routerLinkActive="active">
         <li>
-          <mat-icon fontSet="material-icons" class="icon">gps_fixed</mat-icon>
+          <fa-icon [icon]="faBullseye" class="icon"></fa-icon>
           <span *ngIf="!isCollapsed">Nuevo Escaneo</span>
         </li>
       </a>
       <a routerLink="/dashboard/scans" routerLinkActive="active">
         <li> 
-          <mat-icon fontSet="material-icons" class="icon">folder</mat-icon>
+          <fa-icon [icon]="faTh" class="icon"></fa-icon>
           <span *ngIf="!isCollapsed">Mis Escaneos</span>
         </li>
       </a>
       <a routerLink="/dashboard/scoreboard" routerLinkActive="active">
         <li> 
-          <mat-icon fontSet="material-icons" class="icon">emoji_events</mat-icon>
+          <fa-icon [icon]="faTrophy" class="icon"></fa-icon>
           <span *ngIf="!isCollapsed">Scoreboard</span>
         </li>
       </a>
     </ul>
   
-    <!-- Footer -->
     <div class="footer">
       <a routerLink="/user/account" routerLinkActive="active">
         <li>
-          <mat-icon fontSet="material-icons" class="icon">account_circle</mat-icon>
+          <fa-icon [icon]="faUser" class="icon"></fa-icon>
           <span *ngIf="!isCollapsed">Mi Cuenta</span>
         </li>
       </a>
       <a href="#" (click)="logout()">
         <li>
-          <mat-icon fontSet="material-icons" class="icon">logout</mat-icon>
+          <fa-icon [icon]="faSignOutAlt" class="icon"></fa-icon>
           <span *ngIf="!isCollapsed">Cerrar Sesión</span>
         </li>
       </a>

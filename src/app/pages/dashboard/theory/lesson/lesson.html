@@ -54,22 +54,47 @@
 
           <!-- Navegación entre lecciones -->
           <div class="lesson-navigation" style="min-height: 3rem;">
-            <button 
+            <!-- Botón de lección anterior (lado izquierdo) -->
+            <button
               *ngIf="hasPreviousLesson"
               class="nav-btn prev-btn"
               (click)="navigateToPrevious()"
             >
               <img src="/back.svg" alt="Anterior" class="nav-icon">
-                Lección anterior
+              Lección anterior
             </button>
-            
-            <button 
-              *ngIf="hasNextLesson"
+
+            <!-- Botón de siguiente lección (lado derecho, solo si no está al final) -->
+            <button
+              *ngIf="hasNextLesson && !(currentStep === totalSteps)"
               class="nav-btn next-btn"
               (click)="navigateToNext()"
             >
               Siguiente lección
               <img src="/next.svg" alt="Siguiente" class="nav-icon">
+            </button>
+
+            <!-- Botón de completar lección (lado derecho, solo al final si no está completada) -->
+            <button
+              *ngIf="currentStep === totalSteps && !isLessonCompleted"
+              class="complete-lesson-btn nav-btn next-btn"
+              (click)="markLessonAsComplete()"
+              [disabled]="isMarkingComplete"
+              style="background-color: #28a745; color: white;"
+            >
+              <span *ngIf="!isMarkingComplete" style="font-size: 20px;">✓</span>
+              {{ isMarkingComplete ? 'Marcando como completada...' : 'Marcar lección como completada' }}
+            </button>
+
+            <!-- Badge de lección completada (lado derecho, solo al final si está completada) -->
+            <button
+              *ngIf="currentStep === totalSteps && isLessonCompleted"
+              class="lesson-completed-badge nav-btn next-btn"
+              (click)="reloadCurrentLesson()"
+              style="background-color: #d4edda; color: #155724;"
+            >
+              <span style="font-size: 20px;">✓</span>
+              ¡Lección completada!
             </button>
           </div>
 

@@ -2,6 +2,14 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import {
+  faExclamationTriangle,
+  faChartBar,
+  faEye,
+  faLink,
+  faTrash
+} from '@fortawesome/free-solid-svg-icons';
 import { ScanService, Scan, ScanDetails, Vulnerability } from '../../../services/scan.service';
 
 // Interfaces are now imported from the service
@@ -9,11 +17,16 @@ import { ScanService, Scan, ScanDetails, Vulnerability } from '../../../services
 @Component({
   selector: 'app-my-scans',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, FontAwesomeModule],
   templateUrl: './my-scans.html',
   styleUrl: './my-scans.scss'
 })
 export class MyScansComponent implements OnInit, OnDestroy {
+  faExclamationTriangle = faExclamationTriangle;
+  faChartBar = faChartBar;
+  faEye = faEye;
+  faLink = faLink;
+  faTrash = faTrash;
   scans: Scan[] = [];
   filteredScans: Scan[] = [];
   loading = true;

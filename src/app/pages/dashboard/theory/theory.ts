@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { LessonService } from '../../../services/lesson.service';
 
 interface FeaturedCategory {
   id: string;
@@ -21,10 +22,12 @@ interface FeaturedCategory {
 })
 export class TheoryComponent implements OnInit {
   searchTerm = '';
+  hasCompletedLessons = false;
+  buttonText = 'Comenzar a aprender';
 
   // Datos de lecciones (sincronizados con syllabus)
   private securityBasicsLessons = 2; // Fundamentos de Seguridad
-  private xssLessons = 8; // Cross-Site Scripting 
+  private xssLessons = 8; // Cross-Site Scripting
   private sqlInjectionLessons = 8; // Inyección SQL
 
   featuredCategories: FeaturedCategory[] = [
@@ -67,44 +70,65 @@ export class TheoryComponent implements OnInit {
     'Ejemplos de código seguro (ZIP)'
   ];
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private lessonService: LessonService
+  ) {}
 
   ngOnInit(): void {
     this.updateCategoryCounts();
   }
 
   private updateCategoryCounts(): void {
-    // Obtener lecciones completadas del localStorage
-    const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '[]');
-    
-    // Contar lecciones completadas por categoría
-    const completedSecurityBasics = completedLessons.filter((id: string) => 
-      ['intro-seguridad', 'owasp-top-10'].includes(id)
-    ).length;
-    
-    const completedXss = completedLessons.filter((id: string) => 
-      ['fundamentos-xss', 'tipos-xss', 'contextos-salida-xss', 'dom-xss-ejecucion-cliente', 
-       'prevencion-xss', 'csp-y-headers', 'diseno-seguro-y-procesos', 'casos-avanzados-xss'].includes(id)
-    ).length;
-    
-    const completedSql = completedLessons.filter((id: string) => 
-      ['fundamentos-sqli', 'tipos-sqli', 'fundamentos-sql-y-acceso', 'raices-sqli',
-       'prevencion-sqli', 'arquitectura-operaciones', 'analisis-priorizacion-riesgo', 'casos-avanzados-sqli'].includes(id)
-    ).length;
+    // Obtener lecciones completadas desde el backend
+    this.lessonService.getProgress().subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          const completedLessons = response.data.completedLessons;
 
-    // Actualizar las descripciones para mostrar progreso
-    this.featuredCategories = this.featuredCategories.map(category => {
-      const total = category.count;
-      let completed = 0;
-      
-      if (category.id === 'security-basics') completed = completedSecurityBasics;
-      else if (category.id === 'xss') completed = completedXss;
-      else if (category.id === 'sql-injection') completed = completedSql;
-      
-      return {
-        ...category,
-        description: `${category.description} (${completed}/${total} completadas)`
-      };
+          // Actualizar el texto del botón basado en si hay lecciones iniciadas
+          this.hasCompletedLessons = response.data.hasStartedAny;
+          this.buttonText = this.hasCompletedLessons ? 'Continuar aprendiendo' : 'Comenzar a aprender';
+
+          // Contar lecciones completadas por categoría
+          const completedSecurityBasics = completedLessons.filter((id: string) =>
+            ['intro-seguridad', 'owasp-top-10'].includes(id)
+          ).length;
+
+          const completedXss = completedLessons.filter((id: string) =>
+            ['fundamentos-xss', 'tipos-xss', 'contextos-salida-xss', 'dom-xss-ejecucion-cliente',
+             'prevencion-xss', 'csp-y-headers', 'diseno-seguro-y-procesos', 'casos-avanzados-xss'].includes(id)
+          ).length;
+
+          const completedSql = completedLessons.filter((id: string) =>
+            ['fundamentos-sqli', 'tipos-sqli', 'fundamentos-sql-y-acceso', 'raices-sqli',
+             'prevencion-sqli', 'arquitectura-operaciones', 'analisis-priorizacion-riesgo', 'casos-avanzados-sqli'].includes(id)
+          ).length;
+
+          // Actualizar las descripciones para mostrar progreso
+          this.featuredCategories = this.featuredCategories.map(category => {
+            const total = category.count;
+            let completed = 0;
+
+            if (category.id === 'security-basics') completed = completedSecurityBasics;
+            else if (category.id === 'xss') completed = completedXss;
+            else if (category.id === 'sql-injection') completed = completedSql;
+
+            // Preserve the original description without "(X/Y completadas)" suffix
+            const baseDescription = category.description.replace(/\s*\(\d+\/\d+\s+completadas\)$/, '');
+
+            return {
+              ...category,
+              description: `${baseDescription} (${completed}/${total} completadas)`
+            };
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error loading lesson progress:', error);
+        // En caso de error, mantener las categorías sin progreso
+        this.buttonText = 'Comenzar a aprender';
+      }
     });
   }
 

@@ -2,13 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import { faGlobe, faShieldAlt, faCode, faSyringe } from '@fortawesome/free-solid-svg-icons';
 import { ScanService, CreateScanRequest } from '../../../services/scan.service';
 
 export interface ScanType {
   id: string;
   name: string;
   description: string;
-  icon: string;
+  icon: string | IconDefinition;
   color: string;
 }
 
@@ -21,11 +24,15 @@ export interface DBMS {
 @Component({
   selector: 'app-new-scan',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, FontAwesomeModule],
   templateUrl: './new-scan.html',
   styleUrl: './new-scan.scss'
 })
 export class NewScanComponent implements OnInit {
+  faGlobe = faGlobe;
+  faShieldAlt = faShieldAlt;
+  faCode = faCode;
+  faSyringe = faSyringe;
   scanForm: FormGroup;
   isSubmitting = false;
   submitError: string | null = null;
@@ -36,24 +43,31 @@ export class NewScanComponent implements OnInit {
       id: 'xss',
       name: 'XSS (Cross-Site Scripting)',
       description: 'Detecta vulnerabilidades de inyección de scripts maliciosos',
-      icon: '</>',
+      icon: faCode,
       color: '#4ecdc4'
     },
     {
       id: 'sql',
       name: 'SQL Injection',
       description: 'Identifica puntos de inyección SQL en formularios y parámetros',
-      icon: '💉',
+      icon: faSyringe,
       color: '#ff6b6b'
     },
     {
       id: 'both',
       name: 'Análisis Completo',
       description: 'Ejecuta ambos tipos de escaneo para un análisis exhaustivo',
-      icon: '🛡️',
+      icon: faShieldAlt,
       color: '#45b7d1'
     }
   ];
+
+  getScanTypeIcon(scanType: ScanType): IconDefinition {
+    if (typeof scanType.icon === 'string') {
+      return faShieldAlt;
+    }
+    return scanType.icon;
+  }
 
   // Available DBMS (supported by sqlmap)
   dbmsList: DBMS[] = [

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import hljs from 'highlight.js';
+import { LessonService } from '../../../../services/lesson.service';
 
 
 interface LessonData {
@@ -33,6 +34,8 @@ export class LessonComponent implements OnInit {
   totalSteps = 1;
   hasPreviousLesson = false;
   hasNextLesson = true;
+  isLessonCompleted = false;
+  isMarkingComplete = false;
 
   private categoryLessons = {
     'security-basics': ['intro-seguridad', 'owasp-top-10'],
@@ -2656,7 +2659,8 @@ echo "&lt;p&gt;" . htmlspecialchars($estado, ENT_QUOTES, 'UTF-8') . "&lt;/p&gt;"
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private lessonService: LessonService
   ) {}
 
   ngOnInit(): void {
@@ -2672,9 +2676,49 @@ echo "&lt;p&gt;" . htmlspecialchars($estado, ENT_QUOTES, 'UTF-8') . "&lt;/p&gt;"
       this.lessonData = lesson;
       this.calculateStepPosition(lessonId, lesson.category);
       this.updateNavigationState();
+
+      // Check if lesson is already completed
+      this.checkLessonCompletion(lessonId);
+
+      // Mark the lesson as started when user visits it
+      this.lessonService.markLessonStarted(lessonId).subscribe({
+        next: () => {
+          console.log('Lesson marked as started');
+        },
+        error: (error) => {
+          console.error('Error marking lesson as started:', error);
+        }
+      });
     } else {
       this.router.navigate(['/dashboard/theory/syllabus']);
     }
+  }
+
+  private checkLessonCompletion(lessonId: string): void {
+    const completedLessons = this.lessonService.getCompletedLessonsSync();
+    this.isLessonCompleted = completedLessons.includes(lessonId);
+  }
+
+  markLessonAsComplete(): void {
+    if (this.isMarkingComplete || this.isLessonCompleted) {
+      return;
+    }
+
+    this.isMarkingComplete = true;
+    const lessonId = this.lessonData.id;
+
+    this.lessonService.markLessonComplete(lessonId).subscribe({
+      next: (response) => {
+        console.log('Lesson marked as complete:', response);
+        this.isLessonCompleted = true;
+        this.isMarkingComplete = false;
+      },
+      error: (error) => {
+        console.error('Error marking lesson as complete:', error);
+        this.isMarkingComplete = false;
+        alert('Error al marcar la lección como completada. Por favor, intenta de nuevo.');
+      }
+    });
   }
 
   private calculateStepPosition(lessonId: string, category: string): void {
@@ -2716,7 +2760,7 @@ echo "&lt;p&gt;" . htmlspecialchars($estado, ENT_QUOTES, 'UTF-8') . "&lt;/p&gt;"
   navigateToNext(): void {
     const currentCategory = this.lessonData.category as keyof typeof this.categoryLessons;
     const categoryLessonsList = this.categoryLessons[currentCategory];
-    
+
     if (categoryLessonsList && this.hasNextLesson) {
       const nextLessonId = categoryLessonsList[this.currentStep];
       this.router.navigate(['/dashboard/theory/lesson', nextLessonId]).then(() => {
@@ -2731,6 +2775,13 @@ echo "&lt;p&gt;" . htmlspecialchars($estado, ENT_QUOTES, 'UTF-8') . "&lt;/p&gt;"
 
   navigateToSyllabus(): void {
     this.router.navigate(['/dashboard/theory/syllabus']);
+  }
+
+  reloadCurrentLesson(): void {
+    // Navigate back to the syllabus page
+    this.router.navigate(['/dashboard/theory/syllabus']).then(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   }
 
   getStepsArray(): number[] {

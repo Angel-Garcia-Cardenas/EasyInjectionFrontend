@@ -1,6 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import {
+  faLink,
+  faFileAlt,
+  faCalendar,
+  faClock,
+  faExclamationTriangle,
+  faSearch
+} from '@fortawesome/free-solid-svg-icons';
 import { ScanService } from '../../../services/scan.service';
 
 export interface ScanReport {
@@ -73,11 +82,17 @@ export interface QuizResult {
 @Component({
   selector: 'app-scan-report',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FontAwesomeModule],
   templateUrl: './scan-report.html',
   styleUrls: ['./scan-report.scss']
 })
 export class ScanReportComponent implements OnInit {
+  faLink = faLink;
+  faFileAlt = faFileAlt;
+  faCalendar = faCalendar;
+  faClock = faClock;
+  faExclamationTriangle = faExclamationTriangle;
+  faSearch = faSearch;
   scanId: string = '';
   report: ScanReport | null = null;
   loading: boolean = true;

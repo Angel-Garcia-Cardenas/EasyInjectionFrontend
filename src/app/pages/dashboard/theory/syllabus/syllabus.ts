@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { LessonService } from '../../../../services/lesson.service';
 
 interface Lesson {
   id: string;
@@ -8,6 +9,7 @@ interface Lesson {
   description: string;
   content: string;
   completed: boolean;
+  started: boolean;
 }
 
 interface Tab {
@@ -46,14 +48,16 @@ export class SyllabusComponent implements OnInit {
       title: 'Introducción a la Seguridad Web',
       description: 'Conceptos básicos y terminología de seguridad',
       content: 'Aprende los conceptos fundamentales de seguridad web, incluyendo los principios de defensa en profundidad, mínimo privilegio y superficie de ataque.',
-      completed: false
+      completed: false,
+      started: false
     },
     {
       id: 'owasp-top-10',
       title: 'OWASP Top 10',
       description: 'Las vulnerabilidades más críticas según OWASP',
       content: 'Conoce las diez vulnerabilidades más críticas según el Open Web Application Security Project (OWASP) y por qué son importantes.',
-      completed: false
+      completed: false,
+      started: false
     }
   ];
 
@@ -63,56 +67,64 @@ export class SyllabusComponent implements OnInit {
       title: 'Fundamentos de XSS',
       description: '¿Qué es XSS y cómo funciona?',
       content: 'Aprende qué es Cross-Site Scripting, cómo funciona y por qué sigue siendo una de las vulnerabilidades más comunes en aplicaciones web modernas.',
-      completed: false
+      completed: false,
+      started: false
     },
     {
       id: 'tipos-xss',
       title: 'Tipos de XSS',
       description: 'Reflejado, Almacenado y DOM-based XSS',
       content: 'Explora los tres tipos principales de XSS: reflejado, almacenado y basado en DOM, comprendiendo cómo se manifiestan y qué los diferencia.',
-      completed: false
+      completed: false,
+      started: false
     },
     {
       id: 'contextos-salida-xss',
       title: 'Contextos de salida y su importancia',
       description: 'HTML, atributos, JavaScript, URLs y JSON',
       content: 'Descubre cómo el contexto donde se inserta la información determina el tipo de protección necesaria y aprende a reconocer los más comunes.',
-      completed: false
+      completed: false,
+      started: false
     },
     {
       id: 'dom-xss-ejecucion-cliente',
       title: 'XSS basado en DOM',
       description: 'Vulnerabilidades en el lado del cliente',
       content: 'Comprende cómo los scripts que manipulan el DOM pueden generar vulnerabilidades y aprende a manejar los datos del navegador de forma segura.',
-      completed: false
+      completed: false,
+      started: false
     },
     {
       id: 'prevencion-xss',
       title: 'Prevención de XSS',
       description: 'Técnicas y mejores prácticas',
       content: 'Conoce las estrategias más efectivas para prevenir ataques XSS, como el escapado por contexto, la validación de entradas y el uso de APIs seguras.',
-      completed: false
+      completed: false,
+      started: false
     },
     {
       id: 'csp-y-headers',
       title: 'Content Security Policy y cabeceras HTTP',
       description: 'Defensa en profundidad contra XSS',
       content: 'Aprende cómo aplicar Content Security Policy y otras cabeceras de seguridad para reforzar la protección de tu aplicación frente a ataques XSS.',
-      completed: false
+      completed: false,
+      started: false
     },
     {
       id: 'diseno-seguro-y-procesos',
       title: 'Diseño seguro y ciclo de desarrollo',
       description: 'Buenas prácticas en el desarrollo web',
       content: 'Descubre cómo integrar medidas de seguridad contra XSS en cada etapa del desarrollo, desde el diseño hasta las revisiones de código.',
-      completed: false
+      completed: false,
+      started: false
     },
     {
       id: 'casos-avanzados-xss',
       title: 'Casos avanzados de XSS',
       description: 'Aplicaciones modernas y nuevos desafíos',
       content: 'Analiza escenarios complejos como aplicaciones SPA, uso de terceros y editores enriquecidos, y cómo adaptar las defensas a entornos modernos.',
-      completed: false
+      completed: false,
+      started: false
     }
   ];
 
@@ -122,56 +134,64 @@ export class SyllabusComponent implements OnInit {
       title: 'Fundamentos de Inyección SQL',
       description: '¿Qué es la Inyección SQL y por qué importa?',
       content: 'Aprende qué es la inyección SQL, cómo un dato no confiable puede alterar una consulta y qué impactos puede tener sobre la confidencialidad e integridad de la base de datos.',
-      completed: false
+      completed: false,
+      started: false
     },
     {
       id: 'tipos-sqli',
       title: 'Tipos de Inyección SQL',
       description: 'In-band, inferencial y out-of-band',
       content: 'Conoce las familias principales de Inyección SQL: in-band, inferencial (blind) y out-of-band, y entiende cómo difieren en visibilidad y método de explotación.',
-      completed: false
+      completed: false,
+      started: false
     },
     {
       id: 'fundamentos-sql-y-acceso',
       title: 'Fundamentos de SQL y acceso a datos',
       description: 'Consultas, drivers, y ORMs',
       content: 'Revisa las bases del lenguaje SQL, cómo las aplicaciones construyen consultas y el papel de drivers y ORMs en la seguridad de las consultas.',
-      completed: false
+      completed: false,
+      started: false
     },
     {
       id: 'raices-sqli',
       title: '¿Por qué ocurren las inyecciones SQL?',
       description: 'Patrones de código y diseño vulnerables',
       content: 'Explora las causas comunes: concatenación de cadenas, falta de validación, uso indebido de APIs y su relación con decisiones de diseño inseguras.',
-      completed: false
+      completed: false,
+      started: false
     },
     {
       id: 'prevencion-sqli',
       title: 'Prevención de Inyección SQL',
       description: 'Prepared statements, parametrización y validación',
       content: 'Aprende las defensas efectivas: consultas parametrizadas, uso correcto de ORMs, validación por whitelist y separación de responsabilidades entre código y datos.',
-      completed: false
+      completed: false,
+      started: false
     },
     {
       id: 'arquitectura-operaciones',
       title: 'Arquitectura y operaciones seguras',
       description: 'Principios operativos y detección',
       content: 'Descubre medidas a nivel de arquitectura y operación: controles de acceso a la BD, monitoreo de consultas, WAF como capa adicional y planes de respuesta ante incidentes.',
-      completed: false
+      completed: false,
+      started: false
     },
     {
       id: 'analisis-priorizacion-riesgo',
       title: 'Análisis y priorización de riesgo',
       description: 'Cómo valorar hallazgos y decidir acciones',
       content: 'Aprende a evaluar severidad según datos expuestos, privilegios y exposición pública, y a priorizar correcciones basadas en impacto y probabilidad.',
-      completed: false
+      completed: false,
+      started: false
     },
     {
       id: 'casos-avanzados-sqli',
       title: 'Casos avanzados y consideraciones modernas',
       description: 'Procedimientos almacenados, ORMs complejos y NoSQL',
       content: 'Analiza escenarios complejos como SQL dinámico, procedimientos almacenados, limitaciones de ORMs y riesgos comparativos en bases NoSQL, con estrategias para mitigarlos.',
-      completed: false
+      completed: false,
+      started: false
     }
   ];
 
@@ -188,34 +208,54 @@ export class SyllabusComponent implements OnInit {
     }
   ];
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private lessonService: LessonService
+  ) {}
 
   ngOnInit(): void {
     this.loadCompletedLessons();
-    this.calculateProgress();
   }
 
   private loadCompletedLessons(): void {
-    // Cargar lecciones completadas desde localStorage
-    const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '[]');
-    
-    // Marcar lecciones completadas en securityBasicsLessons
-    this.securityBasicsLessons = this.securityBasicsLessons.map(lesson => ({
-      ...lesson,
-      completed: completedLessons.includes(lesson.id)
-    }));
+    // Cargar lecciones completadas desde el backend
+    this.lessonService.getProgress().subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          const completedLessons = response.data.completedLessons;
+          const startedLessons = response.data.startedLessons || [];
 
-    // Marcar lecciones completadas en xssLessons
-    this.xssLessons = this.xssLessons.map(lesson => ({
-      ...lesson,
-      completed: completedLessons.includes(lesson.id)
-    }));
+          // Marcar lecciones completadas y/o iniciadas en securityBasicsLessons
+          this.securityBasicsLessons = this.securityBasicsLessons.map(lesson => ({
+            ...lesson,
+            completed: completedLessons.includes(lesson.id),
+            started: startedLessons.includes(lesson.id)
+          }));
 
-    // Marcar lecciones completadas en sqlInjectionLessons
-    this.sqlInjectionLessons = this.sqlInjectionLessons.map(lesson => ({
-      ...lesson,
-      completed: completedLessons.includes(lesson.id)
-    }));
+          // Marcar lecciones completadas y/o iniciadas en xssLessons
+          this.xssLessons = this.xssLessons.map(lesson => ({
+            ...lesson,
+            completed: completedLessons.includes(lesson.id),
+            started: startedLessons.includes(lesson.id)
+          }));
+
+          // Marcar lecciones completadas y/o iniciadas en sqlInjectionLessons
+          this.sqlInjectionLessons = this.sqlInjectionLessons.map(lesson => ({
+            ...lesson,
+            completed: completedLessons.includes(lesson.id),
+            started: startedLessons.includes(lesson.id)
+          }));
+
+          // Calcular progreso después de cargar los datos
+          this.calculateProgress();
+        }
+      },
+      error: (error) => {
+        console.error('Error loading lesson progress:', error);
+        // En caso de error, inicializar sin progreso
+        this.calculateProgress();
+      }
+    });
   }
 
   private calculateProgress(): void {
@@ -235,23 +275,19 @@ export class SyllabusComponent implements OnInit {
     // Lógica de búsqueda
     }
 
-  navigateToLesson(lessonId: string): void {
-    // Marcar la lección como completada cuando el usuario navega a ella
-    this.markLessonAsCompleted(lessonId);
-    this.router.navigate(['/dashboard/theory/lesson', lessonId]);
+  getLessonButtonText(lesson: Lesson): string {
+    if (lesson.completed) {
+      return 'Repasar lección';
+    } else if (lesson.started) {
+      return 'Continuar aprendiendo';
+    } else {
+      return 'Comenzar a aprender';
+    }
   }
 
-  private markLessonAsCompleted(lessonId: string): void {
-    const completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '[]');
-    
-    if (!completedLessons.includes(lessonId)) {
-      completedLessons.push(lessonId);
-      localStorage.setItem('completedLessons', JSON.stringify(completedLessons));
-      
-      // Recargar el estado y recalcular progreso
-      this.loadCompletedLessons();
-      this.calculateProgress();
-    }
+  navigateToLesson(lessonId: string): void {
+    // Simplemente navegar a la lección - el progreso se marcará al completarla
+    this.router.navigate(['/dashboard/theory/lesson', lessonId]);
   }
 
   navigateBack(): void {

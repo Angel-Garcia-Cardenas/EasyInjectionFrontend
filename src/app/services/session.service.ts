@@ -48,21 +48,21 @@ export class SessionService {
   getDeviceIcon(device: string): string {
     const deviceLower = device.toLowerCase();
     if (deviceLower.includes('mobile') || deviceLower.includes('android') || deviceLower.includes('iphone')) {
-      return '📱';
+      return 'mobile-alt';
     }
     if (deviceLower.includes('tablet') || deviceLower.includes('ipad')) {
-      return '📱';
+      return 'tablet-alt';
     }
-    return '💻';
+    return 'laptop';
   }
 
   getBrowserIcon(browser: string): string {
     const browserLower = browser.toLowerCase();
-    if (browserLower.includes('chrome')) return '🌐';
-    if (browserLower.includes('firefox')) return '🦊';
-    if (browserLower.includes('safari')) return '🧭';
-    if (browserLower.includes('edge')) return '🌊';
-    return '🌐';
+    if (browserLower.includes('chrome')) return 'chrome';
+    if (browserLower.includes('firefox')) return 'firefox';
+    if (browserLower.includes('safari')) return 'safari';
+    if (browserLower.includes('edge')) return 'edge';
+    return 'globe';
   }
 
   formatLastActivity(date: Date): string {

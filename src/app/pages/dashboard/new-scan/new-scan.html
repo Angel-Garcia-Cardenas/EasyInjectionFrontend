@@ -45,7 +45,7 @@
               placeholder="https://ejemplo.com"
               class="url-input"
             >
-            <div class="url-icon">🌐</div>
+            <div class="url-icon"><fa-icon [icon]="faGlobe"></fa-icon></div>
           </div>
           <div class="error-message" *ngIf="scanForm.get('url')?.invalid && scanForm.get('url')?.touched">
             {{ getUrlErrorMessage() }}
@@ -64,7 +64,7 @@
             (click)="selectScanType(scanType.id)"
           >
             <div class="scan-type-icon" [style.background-color]="scanType.color">
-              {{ scanType.icon }}
+              <fa-icon [icon]="getScanTypeIcon(scanType)"></fa-icon>
             </div>
             <div class="scan-type-content">
               <h4 class="scan-type-name">{{ scanType.name }}</h4>

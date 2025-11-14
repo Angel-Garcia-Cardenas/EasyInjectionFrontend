@@ -81,13 +81,13 @@
                     <p class="lesson-content">{{ lesson.content }}</p>
                   </div>
                   <div class="card-footer">
-                    <button 
+                    <button
                       class="lesson-btn"
                       [class]="lesson.completed ? 'btn-outline' : 'btn-coral'"
                       (click)="navigateToLesson(lesson.id)"
                     >
                       <img src="/lesson.svg" alt="Lección" class="btn-icon">
-                      {{ lesson.completed ? 'Repasar lección' : 'Comenzar lección' }}
+                      {{ getLessonButtonText(lesson) }}
                     </button>
                   </div>
                 </div>
@@ -130,7 +130,7 @@
                       (click)="navigateToLesson(lesson.id)"
                     >
                       <img src="/lesson.svg" alt="Lección" class="btn-icon">
-                      {{ lesson.completed ? 'Repasar lección' : 'Comenzar lección' }}
+                      {{ getLessonButtonText(lesson) }}
                     </button>
                   </div>
                 </div>
@@ -173,7 +173,7 @@
                       (click)="navigateToLesson(lesson.id)"
                     >
                       <img src="/lesson.svg" alt="Lección" class="btn-icon">
-                      {{ lesson.completed ? 'Repasar lección' : 'Comenzar lección' }}
+                      {{ getLessonButtonText(lesson) }}
                     </button>
                   </div>
                 </div>
@@ -238,7 +238,7 @@
                       (click)="navigateToLesson(lesson.id)"
                     >
                       <img src="/lesson.svg" alt="Lección" class="btn-icon">
-                      {{ lesson.completed ? 'Repasar lección' : 'Comenzar lección' }}
+                      {{ getLessonButtonText(lesson) }}
                     </button>
                   </div>
                 </div>
@@ -281,7 +281,7 @@
                       (click)="navigateToLesson(lesson.id)"
                     >
                       <img src="/lesson.svg" alt="Lección" class="btn-icon">
-                      {{ lesson.completed ? 'Repasar lección' : 'Comenzar lección' }}
+                      {{ getLessonButtonText(lesson) }}
                     </button>
                   </div>
                 </div>

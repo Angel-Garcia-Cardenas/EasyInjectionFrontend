@@ -366,7 +366,9 @@ $naranja: #D57275;
         position: relative;
 
         &::before {
-          content: "⚠️ Código Vulnerable";
+          content: "\f071 Código Vulnerable";
+          font-family: "Font Awesome 6 Free";
+          font-weight: 900;
           position: absolute;
           top: -0.5rem;
           right: 0.5rem;
@@ -388,7 +390,9 @@ $naranja: #D57275;
         position: relative;
 
         &::before {
-          content: "✅ Código Seguro";
+          content: "\f058 Código Seguro";
+          font-family: "Font Awesome 6 Free";
+          font-weight: 900;
           position: absolute;
           top: -0.5rem;
           right: 0.5rem;

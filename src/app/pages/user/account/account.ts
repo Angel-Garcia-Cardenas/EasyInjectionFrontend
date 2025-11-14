@@ -3,17 +3,62 @@ import { FormBuilder, FormGroup, Validators, AbstractControl, ReactiveFormsModul
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import {
+  faUser,
+  faLock,
+  faQuestionCircle,
+  faMapMarkerAlt,
+  faTimes,
+  faMobileAlt,
+  faTabletAlt,
+  faLaptop
+} from '@fortawesome/free-solid-svg-icons';
+import {
+  faChrome,
+  faFirefox,
+  faSafari,
+  faEdge,
+  faInternetExplorer
+} from '@fortawesome/free-brands-svg-icons';
 import { UserService, User } from '../../../services/user.service';
 import { SessionService, Session } from '../../../services/session.service';
 
 @Component({
   selector: 'app-account',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, FontAwesomeModule],
   templateUrl: './account.html',
   styleUrl: './account.scss'
 })
 export class Account implements OnInit {
+  faUser = faUser;
+  faLock = faLock;
+  faQuestionCircle = faQuestionCircle;
+  faMapMarkerAlt = faMapMarkerAlt;
+  faTimes = faTimes;
+  
+  getDeviceIcon(device: string): IconDefinition {
+    const deviceLower = device.toLowerCase();
+    if (deviceLower.includes('mobile') || deviceLower.includes('android') || deviceLower.includes('iphone')) {
+      return faMobileAlt;
+    }
+    if (deviceLower.includes('tablet') || deviceLower.includes('ipad')) {
+      return faTabletAlt;
+    }
+    return faLaptop;
+  }
+
+  getBrowserIcon(browser: string): IconDefinition {
+    const browserLower = browser.toLowerCase();
+    if (browserLower.includes('chrome')) return faChrome;
+    if (browserLower.includes('firefox')) return faFirefox;
+    if (browserLower.includes('safari')) return faSafari;
+    if (browserLower.includes('edge')) return faEdge;
+    if (browserLower.includes('explorer') || browserLower.includes('ie')) return faInternetExplorer;
+    return faChrome;
+  }
   // User data from API
   user: User = {
     _id: '',
@@ -146,13 +191,6 @@ export class Account implements OnInit {
     return session.token === this.currentSessionToken;
   }
 
-  getDeviceIcon(device: string): string {
-    return this.sessionService.getDeviceIcon(device);
-  }
-
-  getBrowserIcon(browser: string): string {
-    return this.sessionService.getBrowserIcon(browser);
-  }
 
   formatLastActivity(date: Date): string {
     return this.sessionService.formatLastActivity(date);

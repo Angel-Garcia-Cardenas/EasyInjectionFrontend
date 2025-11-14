@@ -92,7 +92,7 @@
 
   <!-- Error State -->
   <div *ngIf="error && !loading" class="error-state">
-    <div class="error-icon">⚠️</div>
+    <div class="error-icon"><fa-icon [icon]="faExclamationTriangle"></fa-icon></div>
     <p>{{ error }}</p>
     <button class="btn--primary" (click)="loadScans()">
       Reintentar
@@ -166,28 +166,28 @@
                   (click)="viewReport(scan); closeActionsMenu()"
                   *ngIf="scan.estado === 'finalizado'"
                 >
-                  <span class="action-icon">📊</span>
+                  <fa-icon [icon]="faChartBar"></fa-icon>
                   Ver reporte completo
                 </button>
                 <button 
                   class="action-item"
                   (click)="viewDetails(scan); closeActionsMenu()"
                 >
-                  <span class="action-icon">👁️</span>
+                  <fa-icon [icon]="faEye"></fa-icon>
                   Ver detalles
                 </button>
                 <button 
                   class="action-item"
                   (click)="visitSite(scan.url); closeActionsMenu()"
                 >
-                  <span class="action-icon">🔗</span>
+                  <fa-icon [icon]="faLink"></fa-icon>
                   Visitar sitio
                 </button>
                 <button 
                   class="action-item danger"
                   (click)="deleteScan(scan); closeActionsMenu()"
                 >
-                  <span class="action-icon">🗑️</span>
+                  <fa-icon [icon]="faTrash"></fa-icon>
                   Eliminar
                 </button>
               </div>
@@ -249,7 +249,7 @@
 
   <!-- Empty State -->
   <div *ngIf="!loading && !error && filteredScans.length === 0" class="empty-state">
-    <div class="empty-icon">📊</div>
+    <div class="empty-icon"><fa-icon [icon]="faChartBar"></fa-icon></div>
     <h3>No hay escaneos</h3>
     <p>No se encontraron escaneos que coincidan con los filtros aplicados.</p>
     <button class="btn--primary" (click)="goToNewScan()">

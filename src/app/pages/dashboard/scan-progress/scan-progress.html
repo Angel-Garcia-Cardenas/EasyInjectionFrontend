@@ -8,7 +8,7 @@
   <!-- Error State -->
   <div class="error-container" *ngIf="scanError">
     <div class="error-card">
-      <h2>❌ Error en el escaneo</h2>
+      <h2><fa-icon [icon]="faTimesCircle"></fa-icon> Error en el escaneo</h2>
       <p>{{ errorMessage }}</p>
       <button class="btn btn-primary" (click)="goToScans()">Volver a escaneos</button>
     </div>
@@ -36,25 +36,25 @@
           'status-paused': isPaused,
           'status-completed': scanComplete
         }">
-          <span *ngIf="isScanning && !isPaused">🔄 Escaneando...</span>
-          <span *ngIf="isPaused">⏸️ Pausado</span>
-          <span *ngIf="scanComplete">✅ Completado</span>
+          <span *ngIf="isScanning && !isPaused"><fa-icon [icon]="faSyncAlt" class="fa-spin"></fa-icon> Escaneando...</span>
+          <span *ngIf="isPaused"><fa-icon [icon]="faPause"></fa-icon> Pausado</span>
+          <span *ngIf="scanComplete"><fa-icon [icon]="faCheckCircle"></fa-icon> Completado</span>
         </span>
         <div class="header-actions" *ngIf="!scanComplete">
           <button class="btn btn-pause" (click)="pauseScan()" [disabled]="!isScanning">
-            <span>{{ isPaused ? '▶️' : '⏸️' }}</span> {{ isPaused ? 'Reanudar' : 'Pausar' }}
+            <fa-icon [icon]="isPaused ? faPlay : faPause"></fa-icon> {{ isPaused ? 'Reanudar' : 'Pausar' }}
           </button>
           <button class="btn btn-stop" (click)="stopScan()" [disabled]="!isScanning">
-            <span>⏹️</span> Detener
+            <fa-icon [icon]="faStop"></fa-icon> Detener
           </button>
         </div>
         <div class="header-actions" *ngIf="scanComplete">
           <button class="btn btn-primary" (click)="goToReport()">
-            <span class="btn-icon">📄</span>
+            <fa-icon [icon]="faFileAlt"></fa-icon>
             Ver Reporte Completo
           </button>
           <button class="btn btn-outline" (click)="goToScans()">
-            <span class="btn-icon">📋</span>
+            <fa-icon [icon]="faClipboardList"></fa-icon>
             Ver Todos los Escaneos
           </button>
         </div>
@@ -79,7 +79,7 @@
         <!-- Phases Card -->
         <div class="card phases-card">
           <h2 class="card-title">
-            <span class="title-icon">📋</span>
+            <fa-icon [icon]="faClipboardList"></fa-icon>
             Fases del Escaneo
           </h2>
           <div class="phases-list">
@@ -115,7 +115,7 @@
         <!-- Statistics Card -->
         <div class="card stats-card">
           <h2 class="card-title">
-            <span class="title-icon">📊</span>
+            <fa-icon [icon]="faChartBar"></fa-icon>
             Estadísticas
           </h2>
           <div class="stats-grid">
@@ -140,7 +140,7 @@
         <!-- Logs Card -->
         <div class="card logs-card">
           <h2 class="card-title">
-            <span class="title-icon">📝</span>
+            <fa-icon [icon]="faFileAlt"></fa-icon>
             Logs del Escaneo
           </h2>
           <div class="logs-container" #logsContainer>
@@ -160,7 +160,7 @@
         <!-- Endpoints Card -->
         <div class="card endpoints-card">
           <h2 class="card-title">
-            <span class="title-icon">🔍</span>
+            <fa-icon [icon]="faSearch"></fa-icon>
             Endpoints Descubiertos
             <span class="count-badge">{{ discoveredEndpoints.length }}</span>
           </h2>
@@ -183,7 +183,7 @@
         <!-- Vulnerabilities Card -->
         <div class="card vulnerabilities-card">
           <h2 class="card-title">
-            <span class="title-icon">⚠️</span>
+            <fa-icon [icon]="faExclamationTriangle"></fa-icon>
             Vulnerabilidades Detectadas
             <span class="count-badge alert">{{ detectedVulnerabilities.length }}</span>
           </h2>
@@ -206,7 +206,7 @@
               </div>
             </div>
             <div *ngIf="detectedVulnerabilities.length === 0" class="empty-state">
-              <p>✅ No se han detectado vulnerabilidades</p>
+              <p><fa-icon [icon]="faCheckCircle"></fa-icon> No se han detectado vulnerabilidades</p>
             </div>
           </div>
         </div>
@@ -217,7 +217,7 @@
     <footer class="question-footer" *ngIf="currentQuestion && showQuestion">
       <div class="question-footer-content">
         <div class="question-footer-header">
-          <span class="question-footer-icon">⏸️</span>
+          <fa-icon [icon]="faPause"></fa-icon>
           <h3>Pregunta de Evaluación</h3>
           <span class="question-phase-badge">{{ currentQuestion.phase }}</span>
         </div>
@@ -264,7 +264,7 @@
     <div class="completion-modal" *ngIf="scanComplete && showCompletionModal">
       <div class="completion-card">
         <button class="completion-close" (click)="closeCompletionModal()" aria-label="Cerrar">×</button>
-        <div class="completion-icon">🎉</div>
+        <div class="completion-icon"><fa-icon [icon]="faCheckCircle"></fa-icon></div>
         <h2>Escaneo Completado</h2>
         <p>El escaneo ha finalizado exitosamente</p>
         <div class="completion-stats">
@@ -283,11 +283,11 @@
         </div>
         <div class="completion-buttons">
           <button class="btn btn-primary btn-lg" (click)="goToReport()">
-            <span class="btn-icon">📄</span>
+            <fa-icon [icon]="faFileAlt"></fa-icon>
             Ver Reporte Completo
           </button>
           <button class="btn btn-outline" (click)="goToScans()">
-            <span class="btn-icon">📋</span>
+            <fa-icon [icon]="faClipboardList"></fa-icon>
             Ver Todos los Escaneos
           </button>
         </div>
@@ -298,11 +298,11 @@
     <div class="completion-footer" *ngIf="scanComplete">
       <div class="completion-footer-content">
         <button class="btn btn-primary btn-lg" (click)="goToReport()">
-          <span class="btn-icon">📄</span>
+          <fa-icon [icon]="faFileAlt"></fa-icon>
           Ver Reporte Completo
         </button>
         <button class="btn btn-outline btn-lg" (click)="goToScans()">
-          <span class="btn-icon">📋</span>
+          <fa-icon [icon]="faClipboardList"></fa-icon>
           Ver Todos los Escaneos
         </button>
       </div>

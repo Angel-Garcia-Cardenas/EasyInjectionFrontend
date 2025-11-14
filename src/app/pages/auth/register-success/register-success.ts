@@ -2,16 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-register-success',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FontAwesomeModule],
   templateUrl: './register-success.html',
   styleUrls: ['./register-success.scss']
 })
 export class RegisterSuccessComponent implements OnInit {
+  faCheckCircle = faCheckCircle;
   userData: any = null;
   email: string = '';
 

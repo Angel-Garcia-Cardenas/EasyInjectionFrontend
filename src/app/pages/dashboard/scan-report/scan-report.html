@@ -7,14 +7,14 @@
       </button>
       <h1>Escaneo sitio web corporativo</h1>
       <p class="url">
-        <span class="icon">🔗</span>
+        <fa-icon [icon]="faLink"></fa-icon>
         {{ report.scan.url }}
       </p>
     </div>
 
     <div class="header-actions">
       <button class="btn-secondary" (click)="exportReport()">
-        <span>📄</span> Exportar informe
+        <fa-icon [icon]="faFileAlt"></fa-icon> Exportar informe
       </button>
       <button class="btn-primary" (click)="visitSite()">
         <span>↗</span> Visitar sitio
@@ -26,11 +26,11 @@
   <div class="scan-info">
     <div class="info-item">
       <span class="label">Fecha</span>
-      <span class="value">📅 {{ formatDate(report.scan.fecha_inicio) }}</span>
+      <span class="value"><fa-icon [icon]="faCalendar"></fa-icon> {{ formatDate(report.scan.fecha_inicio) }}</span>
     </div>
     <div class="info-item">
       <span class="label">Duración</span>
-      <span class="value">⏱️ {{ getDuration() }}</span>
+      <span class="value"><fa-icon [icon]="faClock"></fa-icon> {{ getDuration() }}</span>
     </div>
     <div class="info-item">
       <span class="label">Tipo de escaneo</span>
@@ -163,7 +163,7 @@
         </div>
 
         <div class="critical-notice" *ngIf="report.resumen_vulnerabilidades.por_severidad.critica > 0">
-          <span class="icon">⚠️</span>
+          <fa-icon [icon]="faExclamationTriangle"></fa-icon>
           <div>
             <strong>Vulnerabilidades críticas detectadas</strong>
             <p>Se han detectado {{ report.resumen_vulnerabilidades.por_severidad.critica }} vulnerabilidades críticas que requieren atención inmediata. Estas vulnerabilidades pueden permitir a un atacante comprometer completamente el sistema.</p>
@@ -190,7 +190,7 @@
             (click)="viewVulnerabilityDetails(vuln)">
             <div class="vuln-header">
               <div class="vuln-type">
-                <span class="type-icon">🔍</span>
+                <fa-icon [icon]="faSearch"></fa-icon>
                 <span class="type-name">{{ vuln.tipo_id.nombre }}</span>
               </div>
               <span class="severity-badge" [ngClass]="getSeverityClass(vuln.nivel_severidad_id.nombre)">

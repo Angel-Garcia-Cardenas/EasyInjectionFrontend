@@ -14,7 +14,7 @@
     <!-- Success state -->
     <div *ngIf="verificationStatus === 'success'" class="success-state">
       <div class="verify-icon">
-        <i class="fas fa-check-circle"></i>
+        <fa-icon [icon]="faCheckCircle"></fa-icon>
       </div>
       <p class="message">
         ¡FELICIDADES! <br>
@@ -31,7 +31,7 @@
     <!-- Error state -->
     <div *ngIf="verificationStatus === 'error'" class="error-state">
       <div class="verify-icon error">
-        <i class="fas fa-exclamation-circle"></i>
+        <fa-icon [icon]="faExclamationCircle"></fa-icon>
       </div>
       <p class="message error">
         Error en la verificación

@@ -1,5 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import {
+  faTrophy,
+  faStar,
+  faBullseye,
+  faBug,
+  faChartBar,
+  faMedal,
+  faChartLine,
+  faExclamationTriangle
+} from '@fortawesome/free-solid-svg-icons';
 import {
   ScoreboardService,
   ScoreboardEntry,
@@ -9,11 +20,19 @@ import {
 @Component({
   selector: 'app-scoreboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FontAwesomeModule],
   templateUrl: './scoreboard.html',
   styleUrl: './scoreboard.scss',
 })
 export class ScoreboardComponent implements OnInit {
+  faTrophy = faTrophy;
+  faStar = faStar;
+  faBullseye = faBullseye;
+  faBug = faBug;
+  faChartBar = faChartBar;
+  faMedal = faMedal;
+  faChartLine = faChartLine;
+  faExclamationTriangle = faExclamationTriangle;
   scoreboard: ScoreboardEntry[] = [];
   userStats: UserStats | null = null;
   currentUserRank: number | null = null;

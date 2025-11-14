@@ -1,7 +1,7 @@
 <div class="scoreboard-container">
   <!-- Header -->
   <div class="scoreboard-header">
-    <h1>🏆 Scoreboard</h1>
+    <h1><fa-icon [icon]="faTrophy"></fa-icon> Scoreboard</h1>
     <p class="subtitle">Compite con otros usuarios y escala posiciones</p>
   </div>
 
@@ -16,42 +16,42 @@
     </div>
     <div class="stats-grid">
       <div class="stat-item">
-        <div class="stat-icon">⭐</div>
+        <div class="stat-icon"><fa-icon [icon]="faStar"></fa-icon></div>
         <div class="stat-content">
           <div class="stat-value">{{ formatScore(userStats.totalPoints) }}</div>
           <div class="stat-label">Puntos Totales</div>
         </div>
       </div>
       <div class="stat-item">
-        <div class="stat-icon">🎯</div>
+        <div class="stat-icon"><fa-icon [icon]="faBullseye"></fa-icon></div>
         <div class="stat-content">
           <div class="stat-value">{{ userStats.totalScans }}</div>
           <div class="stat-label">Escaneos</div>
         </div>
       </div>
       <div class="stat-item">
-        <div class="stat-icon">🐛</div>
+        <div class="stat-icon"><fa-icon [icon]="faBug"></fa-icon></div>
         <div class="stat-content">
           <div class="stat-value">{{ userStats.totalVulnerabilities }}</div>
           <div class="stat-label">Vulnerabilidades</div>
         </div>
       </div>
       <div class="stat-item">
-        <div class="stat-icon">📊</div>
+        <div class="stat-icon"><fa-icon [icon]="faChartBar"></fa-icon></div>
         <div class="stat-content">
           <div class="stat-value">{{ formatScore(userStats.avgScore) }}</div>
           <div class="stat-label">Promedio</div>
         </div>
       </div>
       <div class="stat-item">
-        <div class="stat-icon">🏅</div>
+        <div class="stat-icon"><fa-icon [icon]="faMedal"></fa-icon></div>
         <div class="stat-content">
           <div class="stat-value">{{ formatScore(userStats.bestScore) }}</div>
           <div class="stat-label">Mejor Puntaje</div>
         </div>
       </div>
       <div class="stat-item">
-        <div class="stat-icon">📈</div>
+        <div class="stat-icon"><fa-icon [icon]="faChartLine"></fa-icon></div>
         <div class="stat-content">
           <div class="stat-value">Nivel {{ userStats.level }}</div>
           <div class="stat-label">Nivel Actual</div>
@@ -90,7 +90,7 @@
 
   <!-- Error State -->
   <div class="error-state" *ngIf="error && !loading">
-    <div class="error-icon">⚠️</div>
+    <div class="error-icon"><fa-icon [icon]="faExclamationTriangle"></fa-icon></div>
     <p>{{ error }}</p>
     <button class="retry-btn" (click)="loadScoreboard()">Reintentar</button>
   </div>
@@ -169,7 +169,7 @@
 
     <!-- Empty State -->
     <div class="empty-state" *ngIf="scoreboard.length === 0">
-      <div class="empty-icon">📊</div>
+      <div class="empty-icon"><fa-icon [icon]="faChartBar"></fa-icon></div>
       <h3>No hay datos disponibles</h3>
       <p>Completa algunos escaneos para aparecer en el scoreboard</p>
     </div>

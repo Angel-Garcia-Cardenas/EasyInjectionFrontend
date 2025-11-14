@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatBadgeModule } from '@angular/material/badge';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { Subscription, interval } from 'rxjs';
 import { SidebarService } from '../../services/sidebar.service';
 import { NotificationService, Notification } from '../../services/notification.service';
@@ -10,11 +12,12 @@ import { NotificationService, Notification } from '../../services/notification.s
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, MatBadgeModule],
+  imports: [CommonModule, FormsModule, MatIconModule, MatBadgeModule, FontAwesomeModule],
   templateUrl: './header.html',
   styleUrls: ['./header.scss']
 })
 export class Header implements OnInit, OnDestroy {
+  faSearch = faSearch;
   searchQuery = '';
   isSidebarCollapsed = false;
   

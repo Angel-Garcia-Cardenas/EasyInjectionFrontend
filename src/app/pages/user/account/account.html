@@ -17,13 +17,13 @@
       <aside class="account-sidebar">
         <ul>
           <li class="active">
-            <span class="icon">👤</span> Información
+            <fa-icon [icon]="faUser"></fa-icon> Información
           </li>
           <li>
-            <span class="icon">🔒</span> Seguridad
+            <fa-icon [icon]="faLock"></fa-icon> Seguridad
           </li>
           <li>
-            <span class="icon">❓</span> Ayuda
+            <fa-icon [icon]="faQuestionCircle"></fa-icon> Ayuda
           </li>
         </ul>
         <button class="btn-logout">Cerrar sesión</button>
@@ -70,7 +70,7 @@
           <div class="sessions-list" *ngIf="sessions.length > 0">
             <div class="session-item" *ngFor="let session of sessions">
               <div class="session-icon">
-                {{ getDeviceIcon(session.device) }}
+                <fa-icon [icon]="getDeviceIcon(session.device)"></fa-icon>
               </div>
               <div class="session-info">
                 <div class="session-header">
@@ -78,9 +78,9 @@
                   <span class="current-badge" *ngIf="isCurrentSession(session)">Sesión actual</span>
                 </div>
                 <div class="session-details">
-                  <span>{{ getBrowserIcon(session.browser) }} {{ session.browser || 'Navegador desconocido' }}</span>
+                  <span><fa-icon [icon]="getBrowserIcon(session.browser)"></fa-icon> {{ session.browser || 'Navegador desconocido' }}</span>
                   <span class="separator">•</span>
-                  <span>📍 {{ session.location || 'Ubicación desconocida' }}</span>
+                  <span><fa-icon [icon]="faMapMarkerAlt"></fa-icon> {{ session.location || 'Ubicación desconocida' }}</span>
                 </div>
                 <div class="session-meta">
                   <span>IP: {{ session.ip || 'N/A' }}</span>
@@ -88,12 +88,12 @@
                   <span>{{ formatLastActivity(session.lastActivity) }}</span>
                 </div>
               </div>
-              <button 
+                <button 
                 class="btn-close-session" 
                 (click)="closeSession(session._id)"
                 *ngIf="!isCurrentSession(session)"
                 title="Cerrar sesión">
-                ✕
+                <fa-icon [icon]="faTimes"></fa-icon>
               </button>
             </div>
           </div>
