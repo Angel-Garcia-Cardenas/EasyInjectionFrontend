@@ -2,34 +2,46 @@
   <!-- Hero Section -->
   <div class="hero">
     <img src="logo.png" alt="EasyInjection logo" class="hero__logo">
-    <h1 class="hero__title">Bienvenido a EasyInjection</h1>
-    <p class="hero__subtitle">Entender las vulnerabilidades de inyección nunca fue tan fácil</p>
+    <h1 class="hero__title">EasyInjection</h1>
+    <p class="hero__subtitle">Entender las vulnerabilidades de Inyección nunca fue tan fácil.</p>
   </div>
 
   <!-- Quick Actions -->
   <div class="quick-actions">
     <div class="card">
+      <div class="card__icon card__icon--pink">
+        <fa-icon [icon]="faBullseye"></fa-icon>
+      </div>
       <h3 class="card__title">Nuevo Escaneo</h3>
       <p class="card__text">Inicia un nuevo análisis de vulnerabilidades</p>
       <button class="btn btn--primary" (click)="goToNewScan()">Comenzar</button>
     </div>
 
     <div class="card">
+      <div class="card__icon card__icon--pink">
+        <fa-icon [icon]="faThList"></fa-icon>
+      </div>
       <h3 class="card__title">Mis Escaneos</h3>
       <p class="card__text">Revisa tus escaneos anteriores y resultados</p>
       <button class="btn btn--outline-pink" (click)="goToScans()">Ver escaneos</button>
     </div>
 
     <div class="card">
+      <div class="card__icon card__icon--blue">
+        <fa-icon [icon]="faBook"></fa-icon>
+      </div>
       <h3 class="card__title">Teoría</h3>
       <p class="card__text">Aprende sobre vulnerabilidades y cómo prevenirlas</p>
       <button class="btn btn--outline-blue" (click)="goToTheory()">Explorar recursos</button>
     </div>
 
     <div class="card">
+      <div class="card__icon card__icon--gold">
+        <fa-icon [icon]="faTrophy"></fa-icon>
+      </div>
       <h3 class="card__title">Scoreboard</h3>
       <p class="card__text">Compite y compara tu progreso con otros usuarios</p>
-      <button class="btn btn--outline-gray" (click)="goToScoreboard()">Ver ranking</button>
+      <button class="btn btn--outline-gold" (click)="goToScoreboard()">Ver ranking</button>
     </div>
   </div>
 
@@ -40,7 +52,9 @@
       <h3 class="panel__title">Actividad reciente</h3>
       <div class="activity">
         <div class="item" *ngFor="let item of recentActivity">
-          <mat-icon fontSet="material-icons" class="item__icon">{{ getActivityIcon(item.type) }}</mat-icon>
+          <div class="item__icon" [ngClass]="getActivityIconClass(item.type)">
+            <fa-icon [icon]="getActivityIcon(item.type)"></fa-icon>
+          </div>
           <div class="item__content">
             <div class="item__title">{{ item.title }}</div>
             <div class="item__desc">{{ item.description }}</div>
@@ -48,7 +62,7 @@
           </div>
         </div>
         <div class="empty-state" *ngIf="recentActivity.length === 0 && !loading">
-          <mat-icon fontSet="material-icons">history</mat-icon>
+          <fa-icon [icon]="faThList" class="empty-icon"></fa-icon>
           <p>No hay actividad reciente</p>
         </div>
         <div class="loading-state" *ngIf="loading">
@@ -70,12 +84,12 @@
           <span class="row__value">{{ stats.vulnerabilitiesDetected }}</span>
         </div>
         <div class="row">
-          <span class="row__label">Mejor puntuación</span>
-          <span class="row__value">{{ stats.bestScore }}</span>
+          <span class="row__label">Puntos acumulados</span>
+          <span class="row__value">{{ stats.totalPoints || 0 }}</span>
         </div>
         <div class="row">
-          <span class="row__label">Mejor escaneo</span>
-          <span class="row__value">{{ stats.bestScanAlias }}</span>
+          <span class="row__label">Posición en el ranking</span>
+          <span class="row__value">{{ stats.rankingPosition || 'N/A' }}</span>
         </div>
         <button class="btn btn--outline-pink full-btn" (click)="goToScoreboard()">Ver estadísticas completas</button>
       </div>

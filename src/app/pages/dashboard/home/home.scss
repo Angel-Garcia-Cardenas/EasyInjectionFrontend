@@ -3,6 +3,7 @@
   min-height: 100vh;
   background: var(--cream);
   padding: 32px;
+  padding-bottom: 64px;
   color: var(--text);
   font-family: 'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
 
@@ -14,12 +15,15 @@
       font-weight: 800;
       font-size: clamp(28px, 4vw, 40px);
       margin: 0 0 10px 0;
+      color: #000;
+      padding: 20px 0px;
     }
 
     &__subtitle {
       color: #666;
       font-weight: 500;
       margin: 3px;
+      font-size: 16px;
     }
 
     &__logo {
@@ -49,10 +53,36 @@
     text-align: center;
     box-shadow: 0 6px 18px rgba(0,0,0,.06);
 
+    &__icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      font-size: 24px;
+
+      &--pink {
+        background: rgba(229, 57, 102, 0.1);
+        color: #e53966;
+      }
+
+      &--blue {
+        background: rgba(101, 178, 198, 0.1);
+        color: #65b2c6;
+      }
+
+      &--gold {
+        background: rgba(184, 134, 11, 0.1);
+        color: #b8860b;
+      }
+    }
+
     &__title {
       font-size: 18px;
       font-weight: 700;
-      margin: 6px 0 8px;
+      margin: 0 0 8px 0;
     }
 
     &__text {
@@ -94,11 +124,11 @@
       &:hover { background: rgba(var(--blue), .08); }
     }
 
-    .btn--outline-gray {
-      color: #6b7280;
-      border-color: var(--gray);
+    .btn--outline-gold {
+      color: #b8860b;
+      border-color: #b8860b;
       background: transparent;
-      &:hover { background: rgba(var(--gray), .15); }
+      &:hover { background: rgba(184, 134, 11, 0.1); }
     }
   }
 
@@ -137,12 +167,30 @@
       &:last-child { border-bottom: 0; }
 
       &__icon {
-        color: #e53966;
-        font-size: 24px;
-        width: 24px;
-        height: 24px;
+        width: 32px;
+        height: 32px;
         flex-shrink: 0;
         margin-top: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        font-size: 18px;
+
+        &--pink {
+          background: rgba(229, 57, 102, 0.1);
+          color: #e53966;
+        }
+
+        &--blue {
+          background: rgba(101, 178, 198, 0.1);
+          color: #65b2c6;
+        }
+
+        &--gold {
+          background: rgba(184, 134, 11, 0.1);
+          color: #b8860b;
+        }
       }
 
       &__content {
@@ -152,7 +200,7 @@
 
       &__title {
         font-weight: 700;
-        margin-bottom: 2px;
+        margin-bottom: 5px;
       }
       &__desc {
         font-size: 14px;
@@ -172,12 +220,11 @@
     padding: 40px 20px;
     color: #9ca3af;
 
-    mat-icon {
+    .empty-icon {
       font-size: 48px;
-      width: 48px;
-      height: 48px;
       margin: 0 auto 12px;
       opacity: 0.5;
+      display: block;
     }
 
     p {
@@ -203,7 +250,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 0;
+      padding: 15px 0;
       border-bottom: 1px dashed #eee;
 
       &:last-child { border-bottom: 0; }
