@@ -189,6 +189,14 @@ $naranja: #D57275;
 
     // Lesson Header
     .lesson-header {
+      .lesson-header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+      }
+
       .lesson-title {
         font-size: 2rem;
         font-weight: 700;
@@ -206,6 +214,30 @@ $naranja: #D57275;
         font-size: 1rem;
         margin: 0;
         line-height: 1.5;
+      }
+
+      .completed-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        border-radius: 24px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        white-space: nowrap;
+        flex-shrink: 0;
+
+        .badge-icon {
+          font-size: 1rem;
+        }
+
+        @media (max-width: 767px) {
+          font-size: 0.8125rem;
+          padding: 0.4rem 0.875rem;
+        }
       }
     }
 
@@ -262,6 +294,27 @@ $naranja: #D57275;
           border: 1px solid $rosa;
           position: absolute;
           right: 0;
+
+          &.lesson-completed-badge {
+            background: linear-gradient(135deg, $rosa 0%, $naranja 100%);
+            border: 1px solid $rosa;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(214, 61, 108, 0.3);
+            
+            .check-icon {
+              font-size: 1.125rem;
+            }
+
+            &:hover {
+              background: linear-gradient(135deg, darken($rosa, 5%) 0%, darken($naranja, 5%) 100%);
+              box-shadow: 0 4px 12px rgba(214, 61, 108, 0.4);
+              transform: translateY(-1px);
+            }
+
+            &:active {
+              transform: translateY(0);
+            }
+          }
 
           &:hover {
             background: darken($rosa, 10%);

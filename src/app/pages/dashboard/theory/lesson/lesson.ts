@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import hljs from 'highlight.js';
-import { LessonService } from '../../../../services/lesson.service';
+import { LessonProgressService } from '../../../../services/lesson-progress.service';
 
 
 interface LessonData {
@@ -16,12 +18,13 @@ interface LessonData {
 @Component({
   selector: 'app-lesson',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FontAwesomeModule],
   templateUrl: './lesson.html',
   styleUrl: './lesson.scss'
 })
 
 export class LessonComponent implements OnInit {
+  faCheckCircle = faCheckCircle;
   lessonData: LessonData = {
     id: '',
     title: '',
@@ -2660,7 +2663,7 @@ echo "&lt;p&gt;" . htmlspecialchars($estado, ENT_QUOTES, 'UTF-8') . "&lt;/p&gt;"
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private lessonService: LessonService
+    private lessonProgressService: LessonProgressService
   ) {}
 
   ngOnInit(): void {
@@ -2677,26 +2680,40 @@ echo "&lt;p&gt;" . htmlspecialchars($estado, ENT_QUOTES, 'UTF-8') . "&lt;/p&gt;"
       this.calculateStepPosition(lessonId, lesson.category);
       this.updateNavigationState();
 
-      // Check if lesson is already completed
+      // Track lesson view via backend
+      this.trackLessonView(lessonId);
+      
+      // Check if lesson is completed
       this.checkLessonCompletion(lessonId);
-
-      // Mark the lesson as started when user visits it
-      this.lessonService.markLessonStarted(lessonId).subscribe({
-        next: () => {
-          console.log('Lesson marked as started');
-        },
-        error: (error) => {
-          console.error('Error marking lesson as started:', error);
-        }
-      });
     } else {
       this.router.navigate(['/dashboard/theory/syllabus']);
     }
   }
 
+  private trackLessonView(lessonId: string): void {
+    // Mark lesson as viewed via backend
+    this.lessonProgressService.markLessonViewed(lessonId).subscribe({
+      next: (response) => {
+        console.log('Lesson marked as viewed:', response);
+      },
+      error: (error) => {
+        console.error('Error marking lesson as viewed:', error);
+        // Non-critical error, continue showing lesson
+      }
+    });
+  }
+
   private checkLessonCompletion(lessonId: string): void {
-    const completedLessons = this.lessonService.getCompletedLessonsSync();
-    this.isLessonCompleted = completedLessons.includes(lessonId);
+    // Check if lesson is already completed from the service
+    // First check synchronously
+    this.isLessonCompleted = this.lessonProgressService.isLessonCompleted(lessonId);
+    
+    // Also subscribe to completed lessons changes for real-time updates
+    this.lessonProgressService.completedLessons$.subscribe({
+      next: (completedLessons) => {
+        this.isLessonCompleted = completedLessons.includes(lessonId);
+      }
+    });
   }
 
   markLessonAsComplete(): void {
@@ -2707,14 +2724,25 @@ echo "&lt;p&gt;" . htmlspecialchars($estado, ENT_QUOTES, 'UTF-8') . "&lt;/p&gt;"
     this.isMarkingComplete = true;
     const lessonId = this.lessonData.id;
 
-    this.lessonService.markLessonComplete(lessonId).subscribe({
+    // Mark lesson as completed via backend
+    this.lessonProgressService.markLessonCompleted(lessonId).subscribe({
       next: (response) => {
         console.log('Lesson marked as complete:', response);
         this.isLessonCompleted = true;
         this.isMarkingComplete = false;
+        
+        // Force refresh of progress stats to update counts across all components
+        this.lessonProgressService.getProgressStats().subscribe({
+          next: (stats) => {
+            console.log('Progress stats refreshed after completion:', stats);
+          },
+          error: (error) => {
+            console.error('Error refreshing progress stats:', error);
+          }
+        });
       },
       error: (error) => {
-        console.error('Error marking lesson as complete:', error);
+        console.error('Error marking lesson as completed:', error);
         this.isMarkingComplete = false;
         alert('Error al marcar la lección como completada. Por favor, intenta de nuevo.');
       }

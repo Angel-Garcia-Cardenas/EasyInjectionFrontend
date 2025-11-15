@@ -40,8 +40,16 @@
 
           <!-- Encabezado de la lección -->
           <div class="lesson-header">
-            <h1 class="lesson-title">{{ lessonData.title }}</h1>
-            <p class="lesson-subtitle">{{ lessonData.description }}</p>
+            <div class="lesson-header-content">
+              <div>
+                <h1 class="lesson-title">{{ lessonData.title }}</h1>
+                <p class="lesson-subtitle">{{ lessonData.description }}</p>
+              </div>
+              <div class="completed-badge" *ngIf="isLessonCompleted">
+                <fa-icon [icon]="faCheckCircle" class="badge-icon"></fa-icon>
+                <span>Completado</span>
+              </div>
+            </div>
           </div>
 
           <!-- Contenido de la lección -->
@@ -90,11 +98,10 @@
             <button
               *ngIf="currentStep === totalSteps && isLessonCompleted"
               class="lesson-completed-badge nav-btn next-btn"
-              (click)="reloadCurrentLesson()"
-              style="background-color: #d4edda; color: #155724;"
+              (click)="navigateToSyllabus()"
             >
-              <span style="font-size: 20px;">✓</span>
-              ¡Lección completada!
+              <fa-icon [icon]="faCheckCircle" class="check-icon"></fa-icon>
+              Volver al Temario
             </button>
           </div>
 

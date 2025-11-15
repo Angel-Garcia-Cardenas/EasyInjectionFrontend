@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { LessonService } from '../../../../services/lesson.service';
+import { LessonProgressService } from '../../../../services/lesson-progress.service';
+import { ALL_LESSON_IDS } from '../../../../constants/lessons.constants';
 
 interface Lesson {
   id: string;
@@ -35,6 +36,7 @@ export class SyllabusComponent implements OnInit {
   progressPercentage = 0;
   completedLessons = 0;
   totalLessons = 0;
+  loading = false;
 
   tabs: Tab[] = [
     { value: 'all', label: 'Todo el contenido' },
@@ -210,52 +212,75 @@ export class SyllabusComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private lessonService: LessonService
+    private lessonProgressService: LessonProgressService
   ) {}
 
   ngOnInit(): void {
-    this.loadCompletedLessons();
+    // Set loading state
+    this.loading = true;
+    
+    // First, migrate any old localStorage data to backend (one-time)
+    this.lessonProgressService.migrateLocalStorageToBackend().subscribe({
+      next: (result) => {
+        console.log('Migration result:', result);
+        // After migration, load progress
+        this.loadCompletedLessons();
+      },
+      error: (error) => {
+        console.error('Migration error:', error);
+        // Even if migration fails, try to load progress
+        this.loadCompletedLessons();
+      }
+    });
+    
+    // Also subscribe to progress changes for real-time updates
+    this.lessonProgressService.progress$.subscribe({
+      next: (stats) => {
+        if (stats) {
+          this.updateLessonsWithProgress(stats.completedLessons, stats.viewedLessons);
+        }
+      }
+    });
   }
 
   private loadCompletedLessons(): void {
-    // Cargar lecciones completadas desde el backend
-    this.lessonService.getProgress().subscribe({
-      next: (response) => {
-        if (response.success && response.data) {
-          const completedLessons = response.data.completedLessons;
-          const startedLessons = response.data.startedLessons || [];
-
-          // Marcar lecciones completadas y/o iniciadas en securityBasicsLessons
-          this.securityBasicsLessons = this.securityBasicsLessons.map(lesson => ({
-            ...lesson,
-            completed: completedLessons.includes(lesson.id),
-            started: startedLessons.includes(lesson.id)
-          }));
-
-          // Marcar lecciones completadas y/o iniciadas en xssLessons
-          this.xssLessons = this.xssLessons.map(lesson => ({
-            ...lesson,
-            completed: completedLessons.includes(lesson.id),
-            started: startedLessons.includes(lesson.id)
-          }));
-
-          // Marcar lecciones completadas y/o iniciadas en sqlInjectionLessons
-          this.sqlInjectionLessons = this.sqlInjectionLessons.map(lesson => ({
-            ...lesson,
-            completed: completedLessons.includes(lesson.id),
-            started: startedLessons.includes(lesson.id)
-          }));
-
-          // Calcular progreso después de cargar los datos
-          this.calculateProgress();
-        }
+    // Load progress statistics from backend
+    this.lessonProgressService.getProgressStats(ALL_LESSON_IDS).subscribe({
+      next: (stats) => {
+        this.updateLessonsWithProgress(stats.completedLessons, stats.viewedLessons);
+        this.loading = false;
       },
       error: (error) => {
         console.error('Error loading lesson progress:', error);
-        // En caso de error, inicializar sin progreso
+        // In case of error, show lessons without progress
         this.calculateProgress();
+        this.loading = false;
       }
     });
+  }
+
+  private updateLessonsWithProgress(completedLessons: string[], viewedLessons: string[]): void {
+    // Mark lessons as completed or started
+    this.securityBasicsLessons = this.securityBasicsLessons.map(lesson => ({
+      ...lesson,
+      completed: completedLessons.includes(lesson.id),
+      started: viewedLessons.includes(lesson.id) || completedLessons.includes(lesson.id)
+    }));
+
+    this.xssLessons = this.xssLessons.map(lesson => ({
+      ...lesson,
+      completed: completedLessons.includes(lesson.id),
+      started: viewedLessons.includes(lesson.id) || completedLessons.includes(lesson.id)
+    }));
+
+    this.sqlInjectionLessons = this.sqlInjectionLessons.map(lesson => ({
+      ...lesson,
+      completed: completedLessons.includes(lesson.id),
+      started: viewedLessons.includes(lesson.id) || completedLessons.includes(lesson.id)
+    }));
+
+    // Calculate progress
+    this.calculateProgress();
   }
 
   private calculateProgress(): void {
