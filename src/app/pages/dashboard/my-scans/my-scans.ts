@@ -181,7 +181,6 @@ export class MyScansComponent implements OnInit, OnDestroy {
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error loading scans:', error);
         this.error = 'Error al cargar los escaneos';
         this.loading = false;
         // Add mock data for development when API fails
@@ -282,7 +281,6 @@ export class MyScansComponent implements OnInit, OnDestroy {
         this.loadingDetails = false;
       },
       error: (error) => {
-        console.error('Error loading scan details:', error);
         this.loadingDetails = false;
         this.closeDetailsModal();
       }
@@ -311,7 +309,6 @@ export class MyScansComponent implements OnInit, OnDestroy {
           this.closeActionsMenu();
         },
         error: (error) => {
-          console.error('Error deleting scan:', error);
           alert('Error al eliminar el escaneo');
         }
       });

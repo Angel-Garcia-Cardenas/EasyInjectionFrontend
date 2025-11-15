@@ -95,8 +95,7 @@ export class TheoryComponent implements OnInit {
         this.updateUIWithProgress(stats);
         this.loading = false;
       },
-      error: (error) => {
-        console.error('Error loading lesson progress:', error);
+      error: () => {
         // In case of error, keep default state
         this.buttonText = 'Comenzar a aprender';
         this.loading = false;
@@ -141,7 +140,6 @@ export class TheoryComponent implements OnInit {
 
   onSearchChange(): void {
     // Lógica de búsqueda
-    console.log('Searching for:', this.searchTerm);
   }
 
   navigateToSyllabus(): void {

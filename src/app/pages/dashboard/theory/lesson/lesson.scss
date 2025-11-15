@@ -1,4 +1,6 @@
+// Import highlight.js theme - will be overridden by our custom styles below
 @import "highlight.js/styles/atom-one-dark.css";
+
 $rosa: #D63D6C;
 $gris: #c0cbcd;
 $gris-oscuro: #6b6b6b;
@@ -261,6 +263,7 @@ $naranja: #D57275;
     .lesson-navigation {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       gap: 1rem;
       position: relative;
       width: 100%;
@@ -274,6 +277,7 @@ $naranja: #D57275;
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        border: none;
 
         &.prev-btn {
           background: white;
@@ -295,29 +299,90 @@ $naranja: #D57275;
           position: absolute;
           right: 0;
 
-          &.lesson-completed-badge {
-            background: linear-gradient(135deg, $rosa 0%, $naranja 100%);
-            border: 1px solid $rosa;
-            font-weight: 600;
-            box-shadow: 0 2px 8px rgba(214, 61, 108, 0.3);
-            
-            .check-icon {
-              font-size: 1.125rem;
+          &:hover {
+            background: darken($rosa, 10%);
+          }
+        }
+
+        &.complete-lesson-btn {
+          background: #65B2C6;
+          color: white;
+          border: none;
+          font-weight: 600;
+          box-shadow: 0 2px 8px rgba(101, 178, 198, 0.3);
+
+          &:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+          }
+
+          &.center-btn {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+
+            &:hover:not(:disabled) {
+              background: darken(#65B2C6, 8%);
+              box-shadow: 0 4px 12px rgba(101, 178, 198, 0.4);
+              transform: translateX(-50%) translateY(-1px);
             }
 
-            &:hover {
-              background: linear-gradient(135deg, darken($rosa, 5%) 0%, darken($naranja, 5%) 100%);
-              box-shadow: 0 4px 12px rgba(214, 61, 108, 0.4);
+            &:active:not(:disabled) {
+              transform: translateX(-50%) translateY(0);
+            }
+          }
+
+          &.solo-btn {
+            width: 100%;
+            justify-content: center;
+            position: static;
+
+            &:hover:not(:disabled) {
+              background: darken(#65B2C6, 8%);
+              box-shadow: 0 4px 12px rgba(101, 178, 198, 0.4);
               transform: translateY(-1px);
             }
 
-            &:active {
+            &:active:not(:disabled) {
               transform: translateY(0);
             }
           }
 
-          &:hover {
-            background: darken($rosa, 10%);
+          // Default hover for when neither center-btn nor solo-btn
+          &:not(.center-btn):not(.solo-btn) {
+            &:hover:not(:disabled) {
+              background: darken(#65B2C6, 8%);
+              box-shadow: 0 4px 12px rgba(101, 178, 198, 0.4);
+              transform: translateY(-1px);
+            }
+
+            &:active:not(:disabled) {
+              transform: translateY(0);
+            }
+          }
+        }
+
+        &.lesson-completed-badge {
+          background: #65B2C6;
+          color: white;
+          border: none;
+          font-weight: 600;
+          box-shadow: 0 2px 8px rgba(101, 178, 198, 0.3);
+
+          &.center-btn {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+          }
+
+          &.solo-btn {
+            width: 100%;
+            justify-content: center;
+            position: static;
+          }
+
+          .check-icon {
+            font-size: 1.125rem;
           }
         }
 
@@ -355,8 +420,10 @@ $naranja: #D57275;
   }
 }
 
-// Prose Styles
-.prose {
+// Prose Styles - Override highlight.js defaults
+// Use ::ng-deep to style dynamically inserted HTML content
+::ng-deep .lesson-content .prose,
+::ng-deep .prose {
   max-width: none;
   color: #374151;
   line-height: 1.7;
@@ -394,29 +461,32 @@ $naranja: #D57275;
   }
 
   pre {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: #282c34 !important;
+    background-color: #282c34 !important;
+    border: 1px solid #21252b !important;
     border-radius: 8px;
     padding: 1rem;
     margin: 1.5rem 0;
     overflow-x: auto;
     position: relative;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
 
     code {
-      background: none;
+      background: none !important;
       padding: 0;
       font-size: 0.875rem;
-      color: #475569;
+      color: #abb2bf !important;
       white-space: pre;
       font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
 
       &.highlight-vulnerable {
-        background: rgba(239, 68, 68, 0.1);
-        border: 1px solid rgba(239, 68, 68, 0.3);
+        background: #1a1d23 !important;
+        border: 2px solid #dc2626;
         border-radius: 4px;
         padding: 0.75rem;
         display: block;
         position: relative;
+        color: #abb2bf !important;
 
         &::before {
           content: "\f071 Código Vulnerable";
@@ -435,12 +505,13 @@ $naranja: #D57275;
       }
 
       &.highlight-secure {
-        background: rgba(34, 197, 94, 0.1);
-        border: 1px solid rgba(34, 197, 94, 0.3);
+        background: #1a1d23 !important;
+        border: 2px solid #16a34a;
         border-radius: 4px;
         padding: 0.75rem;
         display: block;
         position: relative;
+        color: #abb2bf !important;
 
         &::before {
           content: "\f058 Código Seguro";
@@ -461,42 +532,42 @@ $naranja: #D57275;
       // Estilos para highlight.js
       &.language-php {
         .hljs-meta {
-          color: #1976d2;
+          color: #61afef;
         }
         .hljs-variable {
-          color: #e91e63;
+          color: #e06c75;
         }
         .hljs-string {
-          color: #388e3c;
+          color: #98c379;
         }
       }
 
       &.language-html {
         .hljs-tag {
-          color: #1976d2;
+          color: #61afef;
         }
         .hljs-name {
-          color: #d32f2f;
+          color: #e06c75;
         }
         .hljs-attr {
-          color: #7b1fa2;
+          color: #d19a66;
         }
       }
 
       &.language-javascript {
         .hljs-keyword {
-          color: #1976d2;
+          color: #c678dd;
         }
         .hljs-string {
-          color: #388e3c;
+          color: #98c379;
         }
         .hljs-built_in {
-          color: #e91e63;
+          color: #e5c07b;
         }
       }
 
       &.language-bash {
-        color: #424242;
+        color: #abb2bf;
       }
     }
   }
@@ -571,9 +642,52 @@ $naranja: #D57275;
         order: 1;
       }
 
-      &.next-btn {
+      &.complete-lesson-btn,
+      &.lesson-completed-badge {
         order: 2;
+        
+        &.center-btn,
+        &.solo-btn {
+          position: static;
+          transform: none;
+        }
       }
+
+      &.next-btn {
+        order: 3;
+      }
+    }
+  }
+}
+
+// Section completion button styles
+.lesson-content {
+  button.section-completed,
+  label.section-completed {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    color: white !important;
+    border-color: #10b981 !important;
+    cursor: not-allowed !important;
+    opacity: 0.9;
+    
+    &:hover {
+      transform: none !important;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3) !important;
+    }
+  }
+}
+
+// Final override for all code blocks - must be last to take precedence
+::ng-deep .lesson-content,
+::ng-deep .prose {
+  pre {
+    background: #282c34 !important;
+    background-color: #282c34 !important;
+    color: #abb2bf !important;
+    
+    code {
+      background: transparent !important;
+      color: #abb2bf !important;
     }
   }
 }

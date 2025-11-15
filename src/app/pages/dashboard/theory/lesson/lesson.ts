@@ -39,6 +39,11 @@ export class LessonComponent implements OnInit {
   hasNextLesson = true;
   isLessonCompleted = false;
   isMarkingComplete = false;
+  
+  // Track section completion buttons
+  sectionButtons: NodeListOf<Element> | null = null;
+  completedSections: Set<number> = new Set();
+  totalSections = 0;
 
   private categoryLessons = {
     'security-basics': ['intro-seguridad', 'owasp-top-10'],
@@ -2685,6 +2690,11 @@ echo "&lt;p&gt;" . htmlspecialchars($estado, ENT_QUOTES, 'UTF-8') . "&lt;/p&gt;"
       
       // Check if lesson is completed
       this.checkLessonCompletion(lessonId);
+      
+      // Initialize section completion tracking
+      setTimeout(() => {
+        this.initializeSectionTracking(lessonId);
+      }, 100);
     } else {
       this.router.navigate(['/dashboard/theory/syllabus']);
     }
@@ -2693,11 +2703,10 @@ echo "&lt;p&gt;" . htmlspecialchars($estado, ENT_QUOTES, 'UTF-8') . "&lt;/p&gt;"
   private trackLessonView(lessonId: string): void {
     // Mark lesson as viewed via backend
     this.lessonProgressService.markLessonViewed(lessonId).subscribe({
-      next: (response) => {
-        console.log('Lesson marked as viewed:', response);
+      next: () => {
+        // Lesson marked as viewed
       },
-      error: (error) => {
-        console.error('Error marking lesson as viewed:', error);
+      error: () => {
         // Non-critical error, continue showing lesson
       }
     });
@@ -2717,6 +2726,12 @@ echo "&lt;p&gt;" . htmlspecialchars($estado, ENT_QUOTES, 'UTF-8') . "&lt;/p&gt;"
   }
 
   markLessonAsComplete(): void {
+    // Check if all section buttons have been clicked
+    if (this.totalSections > 0 && this.completedSections.size < this.totalSections) {
+      alert(`Debes completar todos los pasos (${this.completedSections.size}/${this.totalSections}) antes de marcar la lección como completada.`);
+      return;
+    }
+    
     if (this.isMarkingComplete || this.isLessonCompleted) {
       return;
     }
@@ -2726,23 +2741,22 @@ echo "&lt;p&gt;" . htmlspecialchars($estado, ENT_QUOTES, 'UTF-8') . "&lt;/p&gt;"
 
     // Mark lesson as completed via backend
     this.lessonProgressService.markLessonCompleted(lessonId).subscribe({
-      next: (response) => {
-        console.log('Lesson marked as complete:', response);
+      next: () => {
         this.isLessonCompleted = true;
         this.isMarkingComplete = false;
         
         // Force refresh of progress stats to update counts across all components
         this.lessonProgressService.getProgressStats().subscribe({
-          next: (stats) => {
-            console.log('Progress stats refreshed after completion:', stats);
+          next: () => {
+            // Progress stats refreshed - the count will automatically update
+            // when all steps in the category are completed
           },
-          error: (error) => {
-            console.error('Error refreshing progress stats:', error);
+          error: () => {
+            // Error refreshing stats (non-critical)
           }
         });
       },
-      error: (error) => {
-        console.error('Error marking lesson as completed:', error);
+      error: () => {
         this.isMarkingComplete = false;
         alert('Error al marcar la lección como completada. Por favor, intenta de nuevo.');
       }
@@ -2814,6 +2828,127 @@ echo "&lt;p&gt;" . htmlspecialchars($estado, ENT_QUOTES, 'UTF-8') . "&lt;/p&gt;"
 
   getStepsArray(): number[] {
     return Array.from({ length: this.totalSteps }, (_, i) => i + 1);
+  }
+
+  /**
+   * Initialize section completion tracking by finding all section buttons in the lesson content
+   */
+  private initializeSectionTracking(lessonId: string): void {
+    // Find all buttons in the lesson content that contain "Marcar este paso como completado"
+    const lessonContent = document.querySelector('.lesson-content');
+    if (!lessonContent) return;
+
+    // Look for buttons, labels, or clickable elements with the completion text
+    this.sectionButtons = lessonContent.querySelectorAll('button, label, [data-step], input[type="checkbox"]');
+    
+    // Filter to only buttons that are section completion buttons
+    const completionButtons: Element[] = [];
+    this.sectionButtons.forEach((element) => {
+      const text = element.textContent?.toLowerCase() || '';
+      if (text.includes('marcar') && text.includes('paso') && text.includes('completado')) {
+        completionButtons.push(element);
+      }
+    });
+
+    this.totalSections = completionButtons.length;
+    console.log(`Found ${this.totalSections} section completion buttons in lesson ${lessonId}`);
+
+    // Load previously completed sections from localStorage
+    this.loadCompletedSections(lessonId);
+
+    // Add click event listeners to each button
+    completionButtons.forEach((button, index) => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        this.markSectionAsComplete(index, lessonId);
+      });
+
+      // Visual update for already completed sections
+      if (this.completedSections.has(index)) {
+        this.updateSectionButtonState(button, true);
+      }
+    });
+  }
+
+  /**
+   * Mark a section as complete
+   */
+  private markSectionAsComplete(sectionIndex: number, lessonId: string): void {
+    if (this.completedSections.has(sectionIndex)) {
+      return; // Already completed
+    }
+
+    // Add to completed sections
+    this.completedSections.add(sectionIndex);
+
+    // Save to localStorage
+    this.saveCompletedSections(lessonId);
+
+    // Update button visual state
+    const buttons = document.querySelectorAll('.lesson-content button, .lesson-content label');
+    let currentIndex = 0;
+    buttons.forEach((button) => {
+      const text = button.textContent?.toLowerCase() || '';
+      if (text.includes('marcar') && text.includes('paso') && text.includes('completado')) {
+        if (currentIndex === sectionIndex) {
+          this.updateSectionButtonState(button, true);
+        }
+        currentIndex++;
+      }
+    });
+
+    console.log(`Section ${sectionIndex + 1}/${this.totalSections} completed`);
+
+    // Check if all sections are now completed
+    if (this.completedSections.size === this.totalSections && this.totalSections > 0 && !this.isLessonCompleted) {
+      console.log('All sections completed! You can now mark the lesson as complete.');
+      alert('¡Felicidades! Has completado todos los pasos de esta lección. Ahora puedes marcar la lección como completada.');
+    }
+  }
+
+  /**
+   * Update visual state of a section button
+   */
+  private updateSectionButtonState(button: Element, completed: boolean): void {
+    if (completed) {
+      button.classList.add('section-completed');
+      button.setAttribute('disabled', 'true');
+      if (button.textContent) {
+        button.textContent = '✓ Paso completado';
+      }
+      (button as HTMLElement).style.backgroundColor = '#10b981';
+      (button as HTMLElement).style.color = 'white';
+      (button as HTMLElement).style.cursor = 'not-allowed';
+    }
+  }
+
+  /**
+   * Load completed sections from localStorage
+   */
+  private loadCompletedSections(lessonId: string): void {
+    const storageKey = `completedSections-${lessonId}`;
+    const stored = localStorage.getItem(storageKey);
+    
+    if (stored) {
+      try {
+        const sectionsArray = JSON.parse(stored);
+        this.completedSections = new Set(sectionsArray);
+        console.log(`Loaded ${this.completedSections.size} completed sections from localStorage`);
+      } catch (e) {
+        this.completedSections = new Set();
+      }
+    } else {
+      this.completedSections = new Set();
+    }
+  }
+
+  /**
+   * Save completed sections to localStorage
+   */
+  private saveCompletedSections(lessonId: string): void {
+    const storageKey = `completedSections-${lessonId}`;
+    const sectionsArray = Array.from(this.completedSections);
+    localStorage.setItem(storageKey, JSON.stringify(sectionsArray));
   }
 
 }

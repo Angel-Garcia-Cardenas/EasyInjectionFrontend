@@ -105,7 +105,6 @@ export class LessonProgressService {
         this.viewedLessonsSubject.next(viewed);
       }),
       catchError(error => {
-        console.error('Error loading progress:', error);
         throw error;
       })
     );
@@ -133,7 +132,6 @@ export class LessonProgressService {
         this.viewedLessonsSubject.next(stats.viewedLessons);
       }),
       catchError(error => {
-        console.error('Error getting progress stats:', error);
         throw error;
       })
     );
@@ -151,17 +149,12 @@ export class LessonProgressService {
    * Get progress for a specific lesson
    */
   getLessonProgress(lessonId: string): Observable<LessonEntry> {
-    if (!isValidLessonId(lessonId)) {
-      console.warn(`Invalid lesson ID: ${lessonId}`);
-    }
-    
     return this.http.get<{ success: boolean; data: LessonEntry }>(
       `${this.apiUrl}/progress/${lessonId}`,
       { headers: this.getHeaders() }
     ).pipe(
       map(response => response.data),
       catchError(error => {
-        console.error('Error getting lesson progress:', error);
         throw error;
       })
     );
@@ -172,10 +165,6 @@ export class LessonProgressService {
    * Automatically called when user opens a lesson
    */
   markLessonViewed(lessonId: string): Observable<LessonActionResponse> {
-    if (!isValidLessonId(lessonId)) {
-      console.warn(`Invalid lesson ID: ${lessonId}`);
-    }
-    
     return this.http.post<LessonActionResponse>(
       `${this.apiUrl}/progress/${lessonId}/view`,
       {},
@@ -188,10 +177,26 @@ export class LessonProgressService {
           if (!currentViewed.includes(lessonId)) {
             this.viewedLessonsSubject.next([...currentViewed, lessonId]);
           }
+          
+          // Update progressSubject with new counts
+          const currentProgress = this.progressSubject.value;
+          if (currentProgress) {
+            const updatedViewed = currentViewed.includes(lessonId)
+              ? currentViewed
+              : [...currentViewed, lessonId];
+            
+            this.progressSubject.next({
+              ...currentProgress,
+              viewedLessons: updatedViewed,
+              viewedCount: updatedViewed.length,
+              notStartedLessons: currentProgress.notStartedLessons.filter(id => id !== lessonId),
+              notStartedCount: Math.max(0, currentProgress.notStartedCount - (currentViewed.includes(lessonId) ? 0 : 1)),
+              hasStartedAny: true
+            });
+          }
         }
       }),
       catchError(error => {
-        console.error('Error marking lesson as viewed:', error);
         throw error;
       })
     );
@@ -202,10 +207,6 @@ export class LessonProgressService {
    * Called when user explicitly completes a lesson
    */
   markLessonCompleted(lessonId: string): Observable<LessonActionResponse> {
-    if (!isValidLessonId(lessonId)) {
-      console.warn(`Invalid lesson ID: ${lessonId}`);
-    }
-    
     return this.http.post<LessonActionResponse>(
       `${this.apiUrl}/progress/${lessonId}/complete`,
       {},
@@ -224,10 +225,31 @@ export class LessonProgressService {
           if (!currentViewed.includes(lessonId)) {
             this.viewedLessonsSubject.next([...currentViewed, lessonId]);
           }
+          
+          // Update progressSubject with new counts
+          const currentProgress = this.progressSubject.value;
+          if (currentProgress) {
+            const updatedCompleted = currentCompleted.includes(lessonId) 
+              ? currentCompleted 
+              : [...currentCompleted, lessonId];
+            const updatedViewed = currentViewed.includes(lessonId)
+              ? currentViewed
+              : [...currentViewed, lessonId];
+            
+            this.progressSubject.next({
+              ...currentProgress,
+              completedLessons: updatedCompleted,
+              viewedLessons: updatedViewed,
+              completedCount: updatedCompleted.length,
+              viewedCount: updatedViewed.length,
+              notStartedLessons: currentProgress.notStartedLessons.filter(id => id !== lessonId),
+              notStartedCount: Math.max(0, currentProgress.notStartedCount - (currentCompleted.includes(lessonId) ? 0 : 1)),
+              hasStartedAny: true
+            });
+          }
         }
       }),
       catchError(error => {
-        console.error('Error marking lesson as completed:', error);
         throw error;
       })
     );
@@ -250,7 +272,6 @@ export class LessonProgressService {
         }
       }),
       catchError(error => {
-        console.error('Error resetting progress:', error);
         throw error;
       })
     );
@@ -349,7 +370,6 @@ export class LessonProgressService {
       // Check if already migrated
       const migrated = localStorage.getItem('progressMigrated');
       if (migrated === 'true') {
-        console.log('Progress already migrated to backend');
         return new Observable(observer => {
           observer.next({ success: true, message: 'Already migrated' });
           observer.complete();
@@ -363,14 +383,11 @@ export class LessonProgressService {
       if (viewedLessons.length === 0 && completedLessons.length === 0) {
         // No data to migrate
         localStorage.setItem('progressMigrated', 'true');
-        console.log('No localStorage data to migrate');
         return new Observable(observer => {
           observer.next({ success: true, message: 'No data to migrate' });
           observer.complete();
         });
       }
-
-      console.log('Migrating localStorage data:', { viewedLessons, completedLessons });
 
       // Migrate completed lessons first
       const completedRequests = completedLessons.map((lessonId: string) =>
@@ -409,7 +426,6 @@ export class LessonProgressService {
                 localStorage.setItem('progressMigrated', 'true');
                 localStorage.removeItem('viewedLessons');
                 localStorage.removeItem('completedLessons');
-                console.log('Migration completed successfully');
                 observer.next({ 
                   success: true, 
                   message: `Migrated ${total} lessons successfully` 
@@ -417,11 +433,10 @@ export class LessonProgressService {
                 observer.complete();
               }
             },
-            error: (error) => {
+            error: (error: any) => {
               errors.push(error);
               completed++;
               if (completed === total) {
-                console.warn('Migration completed with some errors:', errors);
                 localStorage.setItem('progressMigrated', 'true');
                 localStorage.removeItem('viewedLessons');
                 localStorage.removeItem('completedLessons');
@@ -436,7 +451,6 @@ export class LessonProgressService {
         });
       });
     } catch (error) {
-      console.error('Error during migration:', error);
       return new Observable(observer => {
         observer.next({ success: false, message: 'Migration failed' });
         observer.complete();

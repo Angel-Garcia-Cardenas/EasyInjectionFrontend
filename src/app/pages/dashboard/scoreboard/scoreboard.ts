@@ -56,7 +56,6 @@ export class ScoreboardComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error loading scoreboard:', error);
         this.error = 'Error al cargar el scoreboard';
         this.loading = false;
       },
@@ -69,7 +68,6 @@ export class ScoreboardComponent implements OnInit {
         this.userStats = response.stats;
       },
       error: (error) => {
-        console.error('Error loading user stats:', error);
       },
     });
   }

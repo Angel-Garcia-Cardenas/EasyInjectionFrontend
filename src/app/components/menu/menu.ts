@@ -55,7 +55,6 @@ export class Menu {
         this.router.navigate(['login']);
       },
       error: (error) => {
-        console.error('Error en logout', error);
         this.userService.clearAuth();
         this.router.navigate(['login']);
       }

@@ -60,7 +60,6 @@ export class Home implements OnInit {
         this.recentActivity = activities.slice(0, 5);
       },
       error: (error) => {
-        console.error('Error loading activities:', error);
       }
     });
   }
@@ -73,7 +72,6 @@ export class Home implements OnInit {
         this.loadScoreboardStats();
       },
       error: (error) => {
-        console.error('Error loading statistics:', error);
         this.error = 'Error al cargar estadísticas';
         this.loading = false;
       }
@@ -90,7 +88,6 @@ export class Home implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Error loading scoreboard stats:', error);
         this.loading = false;
       }
     });
@@ -111,7 +108,6 @@ export class Home implements OnInit {
               this.stats.rankingPosition = 'N/A';
             }
           } catch (error) {
-            console.error('Error parsing user:', error);
             this.stats.rankingPosition = 'N/A';
           }
         } else {
@@ -120,7 +116,6 @@ export class Home implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error loading ranking position:', error);
         this.loading = false;
       }
     });

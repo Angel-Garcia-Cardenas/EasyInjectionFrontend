@@ -168,7 +168,6 @@ export class Account implements OnInit {
         });
       },
       error: (error) => {
-        console.error('Error loading user data:', error);
         // Fallback to mock data if API fails
         this.loadMockData();
       }
@@ -181,7 +180,6 @@ export class Account implements OnInit {
         this.sessions = sessions;
       },
       error: (error) => {
-        console.error('Error loading sessions:', error);
         this.showNotificationMessage('Error al cargar las sesiones', 'error');
       }
     });
@@ -334,7 +332,6 @@ export class Account implements OnInit {
       },
 
       error: (error) => {
-        console.error('Error al guardar perfil', error);
 
         this.saving = false;
         this.showEditProfileNotification(
@@ -443,7 +440,6 @@ export class Account implements OnInit {
         }, 2000);
       },
       error: (error) => {
-        console.error('Error al cambiar contraseña', error);
         this.changingPassword = false;
         this.showChangePasswordNotification('Error al cambiar la contraseña: ' + (error.error?.error || 'Error desconocido'), 'error');
       },
@@ -464,7 +460,6 @@ export class Account implements OnInit {
           this.showNotificationMessage('Sesión cerrada exitosamente');
         },
         error: (error) => {
-          console.error('Error cerrando sesión', error);
           this.showNotificationMessage('Error al cerrar la sesión: ' + (error.error?.error || 'Error desconocido'), 'error');
         }
       });
@@ -479,7 +474,6 @@ export class Account implements OnInit {
           this.showNotificationMessage('Todas las sesiones cerradas exitosamente');
         },
         error: (error) => {
-          console.error('Error cerrando todas las sesiones', error);
           this.showNotificationMessage('Error al cerrar las sesiones: ' + (error.error?.error || 'Error desconocido'), 'error');
         }
       });
@@ -497,7 +491,6 @@ export class Account implements OnInit {
         this.router.navigate(['login']);
       },
       error: (error) => {
-        console.error('Error en logout', error);
         // Even if API call fails, clear local storage and redirect
         this.userService.clearAuth();
         this.router.navigate(['login']);

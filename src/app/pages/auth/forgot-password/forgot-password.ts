@@ -38,13 +38,11 @@ export class ForgotPasswordComponent {
 
       this.authService.forgotPassword(email).subscribe({
         next: (res: any) => {
-          console.log('Password reset email sent', res);
           this.isSubmitting = false;
           this.submitSuccess = 'Se ha enviado un correo con instrucciones para restablecer tu contraseña.';
           this.forgotPasswordForm.reset();
         },
         error: (err) => {
-          console.error('Error sending reset email', err);
           this.submitError = err.error?.error || 'Error al enviar el correo. Intenta nuevamente.';
           this.isSubmitting = false;
         }

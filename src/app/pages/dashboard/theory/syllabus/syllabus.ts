@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { LessonProgressService } from '../../../../services/lesson-progress.service';
-import { ALL_LESSON_IDS } from '../../../../constants/lessons.constants';
+import { ALL_LESSON_IDS, LESSON_COUNTS, LESSON_IDS } from '../../../../constants/lessons.constants';
 
 interface Lesson {
   id: string;
@@ -36,6 +36,8 @@ export class SyllabusComponent implements OnInit {
   progressPercentage = 0;
   completedLessons = 0;
   totalLessons = 0;
+  completedIndividualLessons = 0; // Individual lesson count
+  totalIndividualLessons = 0; // Total individual lessons (18)
   loading = false;
 
   tabs: Tab[] = [
@@ -221,13 +223,11 @@ export class SyllabusComponent implements OnInit {
     
     // First, migrate any old localStorage data to backend (one-time)
     this.lessonProgressService.migrateLocalStorageToBackend().subscribe({
-      next: (result) => {
-        console.log('Migration result:', result);
+      next: () => {
         // After migration, load progress
         this.loadCompletedLessons();
       },
-      error: (error) => {
-        console.error('Migration error:', error);
+      error: () => {
         // Even if migration fails, try to load progress
         this.loadCompletedLessons();
       }
@@ -250,8 +250,7 @@ export class SyllabusComponent implements OnInit {
         this.updateLessonsWithProgress(stats.completedLessons, stats.viewedLessons);
         this.loading = false;
       },
-      error: (error) => {
-        console.error('Error loading lesson progress:', error);
+      error: () => {
         // In case of error, show lessons without progress
         this.calculateProgress();
         this.loading = false;
@@ -290,9 +289,44 @@ export class SyllabusComponent implements OnInit {
       ...this.sqlInjectionLessons
     ];
 
-    this.totalLessons = allLessons.length;
-    this.completedLessons = allLessons.filter(lesson => lesson.completed).length;
-    this.progressPercentage = this.totalLessons > 0 ? Math.round((this.completedLessons / this.totalLessons) * 100) : 0;
+    // Count individual completed lessons
+    this.totalIndividualLessons = LESSON_COUNTS.TOTAL; // 18 total
+    this.completedIndividualLessons = allLessons.filter(lesson => lesson.completed).length;
+
+    // Count how many categories are fully completed (all lessons in category are done)
+    // This represents "complete lesson sets" rather than individual lessons
+    let completedCategories = 0;
+    const totalCategories = 3; // Security Basics, XSS, SQL Injection
+
+    // Check Security Basics category
+    const securityBasicsCompleted = LESSON_IDS.SECURITY_BASICS.every(lessonId =>
+      allLessons.find(lesson => lesson.id === lessonId)?.completed === true
+    );
+    if (securityBasicsCompleted) {
+      completedCategories++;
+    }
+
+    // Check XSS category
+    const xssCompleted = LESSON_IDS.XSS.every(lessonId =>
+      allLessons.find(lesson => lesson.id === lessonId)?.completed === true
+    );
+    if (xssCompleted) {
+      completedCategories++;
+    }
+
+    // Check SQL Injection category
+    const sqliCompleted = LESSON_IDS.SQL_INJECTION.every(lessonId =>
+      allLessons.find(lesson => lesson.id === lessonId)?.completed === true
+    );
+    if (sqliCompleted) {
+      completedCategories++;
+    }
+
+    // Count represents fully completed categories (lesson sets)
+    this.totalLessons = totalCategories; // 3 categories total
+    this.completedLessons = completedCategories; // Number of fully completed categories
+    // Calculate percentage based on individual lessons completed
+    this.progressPercentage = this.totalIndividualLessons > 0 ? Math.round((this.completedIndividualLessons / this.totalIndividualLessons) * 100) : 0;
   }
 
   

@@ -220,7 +220,6 @@ export class ScanProgressComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       },
       error: (error) => {
-        console.error('Error loading scan details:', error);
         // Initialize with default flags if error
         this.scanFlags = { sqli: true, xss: true };
         this.initializeDefaultPhases();
@@ -455,7 +454,6 @@ export class ScanProgressComponent implements OnInit, OnDestroy, AfterViewInit {
         // Clean up after reading
         localStorage.removeItem(scanConfigKey);
       } catch (e) {
-        console.error('Error parsing scan config:', e);
       }
     }
 

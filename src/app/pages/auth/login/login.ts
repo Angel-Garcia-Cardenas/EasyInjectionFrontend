@@ -64,7 +64,6 @@ export class LoginComponent implements OnInit {
       this.authService.login(email, password)
         .subscribe({
           next: (res: any) => {
-            console.log('Login exitoso', res);
             this.isSubmitting = false;
 
             // Guardar token y/o usuario en localStorage
@@ -79,7 +78,6 @@ export class LoginComponent implements OnInit {
             this.router.navigate(['/dashboard']);
           },
           error: (err) => {
-            console.error('Error en login', err);
             this.submitError = err.error?.error || 'Credenciales incorrectas o servidor no disponible.';
             this.isSubmitting = false;
             
@@ -92,7 +90,6 @@ export class LoginComponent implements OnInit {
         });
     } else {
       this.loginForm.markAllAsTouched();
-      console.log('Formulario inválido');
     }
   }
 

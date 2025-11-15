@@ -77,7 +77,6 @@ export class Header implements OnInit, OnDestroy {
         this.notifications = notifications;
       },
       error: (error) => {
-        console.error('Error loading notifications:', error);
       }
     });
   }
@@ -88,7 +87,6 @@ export class Header implements OnInit, OnDestroy {
         this.unreadCount = count;
       },
       error: (error) => {
-        console.error('Error loading unread count:', error);
       }
     });
   }

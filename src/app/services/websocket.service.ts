@@ -109,7 +109,6 @@ export class WebsocketService {
 
   connect(token: string): void {
     if (this.socket?.connected) {
-      console.log('Already connected to WebSocket');
       return;
     }
 
@@ -122,17 +121,14 @@ export class WebsocketService {
     });
 
     this.socket.on('connect', () => {
-      console.log('Connected to WebSocket');
       this.connected$.next(true);
     });
 
     this.socket.on('disconnect', () => {
-      console.log('Disconnected from WebSocket');
       this.connected$.next(false);
     });
 
     this.socket.on('error', (error: any) => {
-      console.error('WebSocket error:', error);
     });
 
     // Set up event listeners
@@ -170,7 +166,6 @@ export class WebsocketService {
 
   joinScan(scanId: string): void {
     if (!this.socket) {
-      console.error('Socket not connected');
       return;
     }
     this.socket.emit('scan:join', { scanId });
@@ -183,7 +178,6 @@ export class WebsocketService {
 
   startScan(scanId: string, config: any): void {
     if (!this.socket) {
-      console.error('Socket not connected');
       return;
     }
     this.socket.emit('scan:start', { scanId, config });
@@ -191,7 +185,6 @@ export class WebsocketService {
 
   answerQuestion(scanId: string, selectedAnswer: number): void {
     if (!this.socket) {
-      console.error('Socket not connected');
       return;
     }
     this.socket.emit('question:answer', { scanId, selectedAnswer });
@@ -199,7 +192,6 @@ export class WebsocketService {
 
   pauseScan(scanId: string): void {
     if (!this.socket) {
-      console.error('Socket not connected');
       return;
     }
     this.socket.emit('scan:pause', { scanId });
@@ -207,7 +199,6 @@ export class WebsocketService {
 
   resumeScan(scanId: string): void {
     if (!this.socket) {
-      console.error('Socket not connected');
       return;
     }
     this.socket.emit('scan:resume', { scanId });
@@ -215,7 +206,6 @@ export class WebsocketService {
 
   stopScan(scanId: string): void {
     if (!this.socket) {
-      console.error('Socket not connected');
       return;
     }
     this.socket.emit('scan:stop', { scanId });

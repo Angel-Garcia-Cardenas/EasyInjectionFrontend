@@ -168,7 +168,6 @@ export class NewScanComponent implements OnInit {
           }
         },
         error: (error) => {
-          console.error('Error creating scan:', error);
           this.submitError = error.error?.message || 'Error al crear el escaneo. Verifica tu conexión.';
           this.isSubmitting = false;
         }

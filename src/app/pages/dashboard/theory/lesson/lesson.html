@@ -72,36 +72,40 @@
               Lección anterior
             </button>
 
-            <!-- Botón de siguiente lección (lado derecho, solo si no está al final) -->
+            <!-- Botón de completar paso (visible en todos los pasos si no está completado) -->
             <button
-              *ngIf="hasNextLesson && !(currentStep === totalSteps)"
+              *ngIf="!isLessonCompleted"
+              class="complete-lesson-btn nav-btn"
+              [class.center-btn]="hasNextLesson || hasPreviousLesson"
+              [class.solo-btn]="!hasNextLesson && !hasPreviousLesson"
+              (click)="markLessonAsComplete()"
+              [disabled]="isMarkingComplete"
+              style="background-color: #65B2C6; color: white;"
+            >
+              <span *ngIf="!isMarkingComplete" style="font-size: 20px; margin-right: 8px;">✓</span>
+              {{ isMarkingComplete ? 'Marcando como completada...' : 'Marcar este paso como completado' }}
+            </button>
+
+            <!-- Badge de lección completada (centro, visible si está completada) -->
+            <div
+              *ngIf="isLessonCompleted"
+              class="lesson-completed-badge nav-btn"
+              [class.center-btn]="hasNextLesson || hasPreviousLesson"
+              [class.solo-btn]="!hasNextLesson && !hasPreviousLesson"
+              style="background-color: #65B2C6; color: white; cursor: default;"
+            >
+              <fa-icon [icon]="faCheckCircle" class="check-icon"></fa-icon>
+              <span style="margin-left: 8px;">Lección completada</span>
+            </div>
+
+            <!-- Botón de siguiente lección (lado derecho, solo si hay siguiente lección) -->
+            <button
+              *ngIf="hasNextLesson"
               class="nav-btn next-btn"
               (click)="navigateToNext()"
             >
               Siguiente lección
               <img src="/next.svg" alt="Siguiente" class="nav-icon">
-            </button>
-
-            <!-- Botón de completar lección (lado derecho, solo al final si no está completada) -->
-            <button
-              *ngIf="currentStep === totalSteps && !isLessonCompleted"
-              class="complete-lesson-btn nav-btn next-btn"
-              (click)="markLessonAsComplete()"
-              [disabled]="isMarkingComplete"
-              style="background-color: #28a745; color: white;"
-            >
-              <span *ngIf="!isMarkingComplete" style="font-size: 20px;">✓</span>
-              {{ isMarkingComplete ? 'Marcando como completada...' : 'Marcar lección como completada' }}
-            </button>
-
-            <!-- Badge de lección completada (lado derecho, solo al final si está completada) -->
-            <button
-              *ngIf="currentStep === totalSteps && isLessonCompleted"
-              class="lesson-completed-badge nav-btn next-btn"
-              (click)="navigateToSyllabus()"
-            >
-              <fa-icon [icon]="faCheckCircle" class="check-icon"></fa-icon>
-              Volver al Temario
             </button>
           </div>
 

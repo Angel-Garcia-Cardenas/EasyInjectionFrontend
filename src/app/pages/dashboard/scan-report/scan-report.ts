@@ -124,7 +124,6 @@ export class ScanReportComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error loading scan report:', err);
         this.error = 'Error al cargar el reporte del escaneo';
         this.loading = false;
       }

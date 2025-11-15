@@ -156,7 +156,6 @@ export class RegisterComponent implements OnInit {
       this.http.post(`${environment.backendUrl}api/register`, registerData)
         .subscribe({
           next: (res: any) => {
-            console.log('Registro exitoso', res);
             this.submitSuccess = res.message || 'Usuario registrado exitosamente';
             this.isSubmitting = false;
             
@@ -169,14 +168,12 @@ export class RegisterComponent implements OnInit {
             }, 2000);
           },
           error: (err) => {
-            console.error('Error al registrar', err);
             this.submitError = err.error?.error || 'No se pudo completar el registro. Intenta más tarde.';
             this.isSubmitting = false;
           }
         });
     } else {
       this.registerForm.markAllAsTouched();
-      console.log('Formulario inválido');
     }
   }
 
