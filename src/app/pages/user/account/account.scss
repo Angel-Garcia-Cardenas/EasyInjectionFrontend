@@ -304,6 +304,12 @@ $crema: #efeded;
         font-size: 14px;
       }
 
+      .sessions-actions {
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid #e5e7eb;
+      }
+
       .btn-outline {
         border: 1px solid $gris;
         padding: 0.6rem 1.2rem;
@@ -321,6 +327,92 @@ $crema: #efeded;
           margin-top: 1rem;
         }
       }
+
+      .btn-danger-outline {
+        border: 1px solid #ef4444;
+        color: #ef4444;
+        background: white;
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: #ef4444;
+          color: white;
+        }
+      }
+    }
+  }
+
+  // Danger zone styling - moved outside for specificity
+  .card.danger-zone {
+    border: 2px solid #fecaca !important;
+    background: #fef2f2 !important;
+    box-shadow: 0 2px 6px rgba(220, 38, 38, 0.1) !important;
+
+    h3 {
+      color: #dc2626 !important;
+      font-weight: 700 !important;
+    }
+
+    .text-muted {
+      color: #7f1d1d !important;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    button.btn-danger, .btn-danger {
+      background-color: #dc2626 !important;
+      background: #dc2626 !important;
+      color: #ffffff !important;
+      border: none !important;
+      padding: 0.75rem 1.5rem !important;
+      border-radius: 8px !important;
+      cursor: pointer !important;
+      font-weight: 600 !important;
+      font-size: 0.95rem !important;
+      transition: all 0.2s ease !important;
+      margin-top: 1rem !important;
+      display: inline-block !important;
+      outline: none !important;
+
+      &:hover:not(:disabled) {
+        background-color: #b91c1c !important;
+        background: #b91c1c !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3) !important;
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(0);
+        background-color: #991b1b !important;
+        background: #991b1b !important;
+      }
+
+      &:disabled {
+        opacity: 0.5 !important;
+        cursor: not-allowed !important;
+      }
+    }
+  }
+}
+
+// Additional global styles for danger zone (force through View Encapsulation)
+::ng-deep .danger-zone {
+  .btn-danger {
+    background-color: #dc2626 !important;
+    color: #ffffff !important;
+    border: none !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+
+    &:hover {
+      background-color: #b91c1c !important;
     }
   }
 }
@@ -502,6 +594,73 @@ $crema: #efeded;
         background: #ccc;
         cursor: not-allowed;
       }
+    }
+
+    .btn-danger {
+      background: #dc2626;
+      border: none;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.2s;
+
+      &:hover:not(:disabled) {
+        background: #b91c1c;
+      }
+
+      &:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .warning-message {
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+
+    .warning-icon {
+      color: #f59e0b;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    p {
+      margin: 0;
+      color: #92400e;
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    cursor: pointer;
+    user-select: none;
+
+    input[type="checkbox"] {
+      margin-top: 0.25rem;
+      cursor: pointer;
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    span {
+      flex: 1;
+      color: #333;
+      line-height: 1.5;
     }
   }
 }

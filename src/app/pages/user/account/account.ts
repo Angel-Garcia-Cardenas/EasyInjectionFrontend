@@ -13,7 +13,8 @@ import {
   faTimes,
   faMobileAlt,
   faTabletAlt,
-  faLaptop
+  faLaptop,
+  faExclamationTriangle
 } from '@fortawesome/free-solid-svg-icons';
 import {
   faChrome,
@@ -38,6 +39,7 @@ export class Account implements OnInit {
   faQuestionCircle = faQuestionCircle;
   faMapMarkerAlt = faMapMarkerAlt;
   faTimes = faTimes;
+  faExclamationTriangle = faExclamationTriangle;
   
   getDeviceIcon(device: string): IconDefinition {
     const deviceLower = device.toLowerCase();
@@ -117,9 +119,18 @@ export class Account implements OnInit {
   changePasswordMessageType: 'success' | 'error' = 'success';
   showChangePasswordMessage = false;
 
+  // Delete account states
+  showDeleteAccountModal = false;
+  showDeletePassword = false;
+  deleteAccountMessage = '';
+  deleteAccountMessageType: 'success' | 'error' = 'success';
+  showDeleteAccountMessage = false;
+  deletingAccount = false;
+
   // Formularios reactivos
   editForm: FormGroup;
   changePasswordForm: FormGroup;
+  deleteAccountForm: FormGroup;
   changingPassword = false;
 
   constructor(
@@ -148,6 +159,12 @@ export class Account implements OnInit {
       ]],
       confirmNewPassword: ['', Validators.required]
     }, { validators: this.passwordsMatchValidator });
+
+    // Formulario para eliminar cuenta
+    this.deleteAccountForm = this.fb.group({
+      password: ['', Validators.required],
+      confirmDelete: [false, Validators.requiredTrue]
+    });
   }
 
   ngOnInit(): void {
@@ -218,6 +235,28 @@ export class Account implements OnInit {
     this.activeTab = tab;
   }
 
+  scrollToSection(sectionId: string): void {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Update active tab
+      if (sectionId === 'perfil') {
+        this.activeTab = 'info';
+      } else if (sectionId === 'seguridad') {
+        this.activeTab = 'security';
+      }
+    }
+  }
+
+  downloadHelp(): void {
+    // Create a dummy PDF or download from backend
+    const pdfUrl = '/assets/ayuda.pdf'; // This file should exist in assets
+    const link = document.createElement('a');
+    link.href = pdfUrl;
+    link.download = 'ayuda_easyinjection.pdf';
+    link.click();
+  }
+
   showNotificationMessage(message: string, type: 'success' | 'error' = 'success') {
     this.notificationMessage = message;
     this.notificationType = type;
@@ -262,6 +301,21 @@ export class Account implements OnInit {
 
   hideChangePasswordNotification() {
     this.showChangePasswordMessage = false;
+  }
+
+  showDeleteAccountNotification(message: string, type: 'success' | 'error' = 'success') {
+    this.deleteAccountMessage = message;
+    this.deleteAccountMessageType = type;
+    this.showDeleteAccountMessage = true;
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+      this.showDeleteAccountMessage = false;
+    }, 5000);
+  }
+
+  hideDeleteAccountNotification() {
+    this.showDeleteAccountMessage = false;
   }
 
   // Validation helper methods
@@ -453,14 +507,35 @@ export class Account implements OnInit {
   // Sesiones
   // =========================
   closeSession(sessionId: string) {
-    if (confirm('¿Estás seguro de que deseas cerrar esta sesión?')) {
+    // Find the session being closed
+    const sessionToClose = this.sessions.find(s => s._id === sessionId);
+    const isCurrentSession = sessionToClose ? this.isCurrentSession(sessionToClose) : false;
+
+    const confirmMessage = isCurrentSession 
+      ? '¿Estás seguro de que deseas cerrar tu sesión actual? Serás desconectado.' 
+      : '¿Estás seguro de que deseas cerrar esta sesión?';
+
+    if (confirm(confirmMessage)) {
       this.sessionService.closeSession(sessionId).subscribe({
         next: (response) => {
-          this.sessions = this.sessions.filter(s => s._id !== sessionId);
-          this.showNotificationMessage('Sesión cerrada exitosamente');
+          if (isCurrentSession) {
+            // If closing current session, logout
+            this.userService.clearAuth();
+            this.router.navigate(['/login']);
+          } else {
+            // If closing another session, just remove it from the list
+            this.sessions = this.sessions.filter(s => s._id !== sessionId);
+            this.showNotificationMessage('Sesión cerrada exitosamente');
+          }
         },
         error: (error) => {
-          this.showNotificationMessage('Error al cerrar la sesión: ' + (error.error?.error || 'Error desconocido'), 'error');
+          if (isCurrentSession) {
+            // Even if API call fails, logout anyway
+            this.userService.clearAuth();
+            this.router.navigate(['/login']);
+          } else {
+            this.showNotificationMessage('Error al cerrar la sesión: ' + (error.error?.error || 'Error desconocido'), 'error');
+          }
         }
       });
     }
@@ -480,6 +555,23 @@ export class Account implements OnInit {
     }
   }
 
+  closeAllSessionsAndLogout() {
+    if (confirm('¿Estás seguro de que deseas cerrar todas las sesiones? Esto cerrará tu sesión en todos los dispositivos incluyendo este.')) {
+      this.sessionService.closeAllSessions().subscribe({
+        next: (response) => {
+          // Clear local storage and redirect to login
+          this.userService.clearAuth();
+          this.router.navigate(['/login']);
+        },
+        error: (error) => {
+          // Even if API call fails, log out anyway
+          this.userService.clearAuth();
+          this.router.navigate(['/login']);
+        }
+      });
+    }
+  }
+
   // =========================
   // Logout
   // =========================
@@ -488,12 +580,60 @@ export class Account implements OnInit {
       next: (response) => {
         // Clear local storage and redirect
         this.userService.clearAuth();
-        this.router.navigate(['login']);
+        this.router.navigate(['/login']);
       },
       error: (error) => {
         // Even if API call fails, clear local storage and redirect
         this.userService.clearAuth();
-        this.router.navigate(['login']);
+        this.router.navigate(['/login']);
+      }
+    });
+  }
+
+  // =========================
+  // Delete Account
+  // =========================
+  openDeleteAccountModal() {
+    this.showDeleteAccountModal = true;
+    this.showDeleteAccountMessage = false;
+    this.deleteAccountForm.reset();
+  }
+
+  closeDeleteAccountModal() {
+    this.showDeleteAccountModal = false;
+    this.deleteAccountForm.reset();
+    this.showDeletePassword = false;
+  }
+
+  confirmDeleteAccount() {
+    if (this.deleteAccountForm.invalid) {
+      this.deleteAccountForm.markAllAsTouched();
+      return;
+    }
+
+    this.deletingAccount = true;
+    const { password } = this.deleteAccountForm.value;
+
+    this.userService.deleteAccount({ password }).subscribe({
+      next: (response) => {
+        // Show success message briefly
+        this.showDeleteAccountNotification('Cuenta eliminada exitosamente');
+        
+        // Clear auth and redirect to login after delay
+        setTimeout(() => {
+          this.userService.clearAuth();
+          this.router.navigate(['/login']);
+        }, 2000);
+      },
+      error: (error) => {
+        this.deletingAccount = false;
+        this.showDeleteAccountNotification(
+          'Error al eliminar la cuenta: ' + (error.error?.error || 'Contraseña incorrecta'),
+          'error'
+        );
+      },
+      complete: () => {
+        this.deletingAccount = false;
       }
     });
   }

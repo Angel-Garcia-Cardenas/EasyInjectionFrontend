@@ -57,23 +57,88 @@ $naranja: #D57275;
 
   // Header
   .header-section {
-    .main-title {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #1e293b;
-      margin-bottom: 0.25rem;
-      line-height: 1.2;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1rem;
 
-      @media (min-width: 768px) {
-        font-size: 2.5rem;
+    @media (min-width: 768px) {
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+
+    .header-content {
+      flex: 1;
+
+      .main-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.25rem;
+        line-height: 1.2;
+
+        @media (min-width: 768px) {
+          font-size: 2.5rem;
+        }
+      }
+
+      .main-subtitle {
+        color: $gris-oscuro;
+        font-size: 1rem;
+        margin: 0;
+        line-height: 1.5;
       }
     }
 
-    .main-subtitle {
-      color: $gris-oscuro;
-      font-size: 1rem;
-      margin: 0;
-      line-height: 1.5;
+    .search-wrapper {
+      width: 100%;
+
+      @media (min-width: 768px) {
+        width: 20rem;
+      }
+
+      .search-container {
+        position: relative;
+
+        &:focus-within .search-icon {
+          opacity: 0.9;
+          color: $azul;
+        }
+
+        .search-icon {
+          position: absolute;
+          left: 0.75rem;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 18px;
+          height: 18px;
+          color: $gris-oscuro;
+          opacity: 0.6;
+          transition: all 0.2s ease;
+          pointer-events: none;
+        }
+
+        .search-input {
+          width: 100%;
+          padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+          border: 1px solid #e2e8f0;
+          border-radius: 8px;
+          font-size: 0.875rem;
+          background: white;
+          transition: all 0.2s ease;
+
+          &:focus {
+            outline: none;
+            border-color: $azul;
+            box-shadow: 0 0 0 3px rgba(101, 178, 198, 0.1);
+          }
+
+          &::placeholder {
+            color: $gris-oscuro;
+          }
+        }
+      }
     }
   }
 
@@ -82,6 +147,10 @@ $naranja: #D57275;
     background: rgba($gris, 0.1);
     border-radius: 12px;
     padding: 1.5rem;
+
+    @media (max-width: 480px) {
+      padding: 1rem;
+    }
 
     .progress-content {
       display: flex;
@@ -100,11 +169,21 @@ $naranja: #D57275;
           font-weight: 600;
           color: #1e293b;
           margin: 0 0 0.25rem 0;
+
+          @media (max-width: 480px) {
+            font-size: 1.125rem;
+          }
         }
 
         .progress-description {
           color: $gris-oscuro;
           margin: 0;
+          font-size: 0.875rem;
+          line-height: 1.5;
+
+          @media (max-width: 480px) {
+            font-size: 0.8rem;
+          }
         }
       }
 
@@ -145,6 +224,11 @@ $naranja: #D57275;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       margin-bottom: 1.5rem;
 
+      @media (max-width: 480px) {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+
       .tab-trigger {
         background: none;
         border: none;
@@ -155,6 +239,12 @@ $naranja: #D57275;
         cursor: pointer;
         border-radius: 6px;
         transition: all 0.2s ease;
+        text-align: center;
+
+        @media (max-width: 480px) {
+          padding: 0.6rem 0.75rem;
+          font-size: 0.8rem;
+        }
 
         &.active {
           background: $rosa;
@@ -221,6 +311,10 @@ $naranja: #D57275;
         font-weight: 700;
         color: #1e293b;
         margin: 0;
+
+        @media (max-width: 480px) {
+          font-size: 1.25rem;
+        }
       }
     }
 
@@ -242,6 +336,10 @@ $naranja: #D57275;
         flex-direction: column;
         transition: all 0.2s ease;
         border-left: 4px solid;
+
+        @media (max-width: 480px) {
+          padding: 1rem;
+        }
 
         &.border-coral {
           border-left-color: $naranja;

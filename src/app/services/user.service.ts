@@ -36,6 +36,10 @@ export interface UpdateProfileRequest {
   avatarId?: string;
 }
 
+export interface DeleteAccountRequest {
+  password: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -98,6 +102,14 @@ export class UserService {
   closeAllSessions(): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(`${this.apiUrl}/user/sessions`, {
       headers: this.getHeaders()
+    });
+  }
+
+  // Delete account
+  deleteAccount(data: DeleteAccountRequest): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.apiUrl}/user/account`, {
+      headers: this.getHeaders(),
+      body: data
     });
   }
 

@@ -118,6 +118,12 @@ $naranja: #D57275;
     background: linear-gradient(135deg, #D63D6C 0%, #D57275 100%);
     color: white;
     min-height: 200px;
+    transition: background 0.3s ease;
+
+    // Gradient for users who have started learning
+    &.banner-continued {
+      background: linear-gradient(135deg, #65B2C6 0%, #C0CBCD 100%);
+    }
 
     .banner-background {
       position: absolute;
@@ -190,6 +196,18 @@ $naranja: #D57275;
           opacity: 0.8;
           -webkit-filter: invert(30%) sepia(74%) saturate(600%) hue-rotate(-20deg) brightness(95%) contrast(95%);
           filter: invert(30%) sepia(74%) saturate(600%) hue-rotate(-20deg) brightness(95%) contrast(95%);
+        }
+      }
+    }
+
+    // Updated button styling for continued learning state
+    &.banner-continued .banner-content {
+      .btn-hero {
+        color: $azul;
+
+        .btn-icon {
+          -webkit-filter: invert(59%) sepia(27%) saturate(674%) hue-rotate(147deg) brightness(91%) contrast(88%);
+          filter: invert(59%) sepia(27%) saturate(674%) hue-rotate(147deg) brightness(91%) contrast(88%);
         }
       }
     }

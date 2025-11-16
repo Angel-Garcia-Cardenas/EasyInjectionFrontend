@@ -12,11 +12,27 @@
 
       <!-- Encabezado -->
       <div class="header-section">
-        <h1 class="main-title">Temario de Seguridad Web</h1>
-        
-        <p class="main-subtitle">
-          Aprende sobre vulnerabilidades de seguridad web y cómo proteger tus aplicaciones
-        </p>
+        <div class="header-content">
+          <h1 class="main-title">Temario de Seguridad Web</h1>
+          <p class="main-subtitle">
+            Aprende sobre vulnerabilidades de seguridad web y cómo proteger tus aplicaciones
+          </p>
+        </div>
+        <div class="search-wrapper">
+          <div class="search-container">
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            <input 
+              type="text" 
+              class="search-input" 
+              placeholder="Buscar lección..." 
+              [(ngModel)]="searchTerm"
+              (input)="onSearchChange()"
+            />
+          </div>
+        </div>
       </div>
 
       <!-- Progreso general -->
@@ -64,7 +80,7 @@
 
               <div class="lessons-grid">
                 <div 
-                  *ngFor="let lesson of securityBasicsLessons" 
+                  *ngFor="let lesson of filteredSecurityBasicsLessons" 
                   class="lesson-card"
                   [class]="'border-coral ' + (lesson.completed ? 'completed' : '')"
                 >
@@ -107,7 +123,7 @@
 
               <div class="lessons-grid">
                 <div 
-                  *ngFor="let lesson of xssLessons" 
+                  *ngFor="let lesson of filteredXssLessons" 
                   class="lesson-card"
                   [class]="'border-azul ' + (lesson.completed ? 'completed' : '')"
                 >
@@ -150,7 +166,7 @@
 
               <div class="lessons-grid">
                 <div 
-                  *ngFor="let lesson of sqlInjectionLessons" 
+                  *ngFor="let lesson of filteredSqlInjectionLessons" 
                   class="lesson-card"
                   [class]="'border-rosa ' + (lesson.completed ? 'completed' : '')"
                 >
@@ -215,7 +231,7 @@
 
               <div class="lessons-grid">
                 <div 
-                  *ngFor="let lesson of xssLessons" 
+                  *ngFor="let lesson of filteredXssLessons" 
                   class="lesson-card"
                   [class]="'border-azul ' + (lesson.completed ? 'completed' : '')"
                 >
@@ -258,7 +274,7 @@
 
               <div class="lessons-grid">
                 <div 
-                  *ngFor="let lesson of sqlInjectionLessons" 
+                  *ngFor="let lesson of filteredSqlInjectionLessons" 
                   class="lesson-card"
                   [class]="'border-rosa ' + (lesson.completed ? 'completed' : '')"
                 >

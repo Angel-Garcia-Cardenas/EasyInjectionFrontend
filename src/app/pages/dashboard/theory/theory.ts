@@ -24,7 +24,10 @@ interface FeaturedCategory {
 export class TheoryComponent implements OnInit {
   searchTerm = '';
   hasStartedAnyContent = false;
+  hasNewContent = false;
   buttonText = 'Comenzar a aprender';
+  bannerTitle = 'Domina la seguridad web';
+  bannerDescription = 'Explora nuestra colección completa de recursos sobre vulnerabilidades XSS e inyección SQL. Desde conceptos básicos hasta técnicas avanzadas de prevención.';
   loading = false;
 
   featuredCategories: FeaturedCategory[] = [
@@ -89,14 +92,12 @@ export class TheoryComponent implements OnInit {
   }
 
   private updateCategoryCounts(): void {
-    // Load all progress statistics from backend
     this.lessonProgressService.getProgressStats().subscribe({
       next: (stats) => {
         this.updateUIWithProgress(stats);
         this.loading = false;
       },
       error: () => {
-        // In case of error, keep default state
         this.buttonText = 'Comenzar a aprender';
         this.loading = false;
       }
@@ -104,16 +105,25 @@ export class TheoryComponent implements OnInit {
   }
 
   private updateUIWithProgress(stats: any): void {
-    // Update button text based on whether user has started any content
     this.hasStartedAnyContent = stats.hasStartedAny;
-    this.buttonText = this.hasStartedAnyContent ? 'Continuar aprendiendo' : 'Comenzar a aprender';
+    
+    const totalLessons = LESSON_COUNTS.SECURITY_BASICS + LESSON_COUNTS.XSS + LESSON_COUNTS.SQL_INJECTION;
+    this.hasNewContent = this.hasStartedAnyContent || stats.completedCount < totalLessons;
+    
+    if (this.hasStartedAnyContent) {
+      this.buttonText = 'Continuar aprendiendo';
+      this.bannerTitle = 'Continúa tu aprendizaje';
+      this.bannerDescription = 'Continúa explorando nuestra colección de recursos teóricos sobre vulnerabilidades XSS e Inyección SQL.';
+    } else {
+      this.buttonText = 'Comenzar a aprender';
+      this.bannerTitle = 'Domina la seguridad web';
+      this.bannerDescription = 'Explora nuestra colección completa de recursos sobre vulnerabilidades XSS e inyección SQL. Desde conceptos básicos hasta técnicas avanzadas de prevención.';
+    }
 
-    // Update each category with its progress
     this.featuredCategories = this.featuredCategories.map(category => {
       const total = category.count;
       let completed = 0;
 
-      // Count completed lessons for this category
       if (category.id === 'security-basics') {
         completed = stats.completedLessons.filter((id: string) => 
           LESSON_IDS.SECURITY_BASICS.includes(id)
@@ -128,7 +138,6 @@ export class TheoryComponent implements OnInit {
         ).length;
       }
 
-      // Preserve the original description without "(X/Y completadas)" suffix
       const baseDescription = category.description.replace(/\s*\(\d+\/\d+\s+completadas\)$/, '');
 
       return {

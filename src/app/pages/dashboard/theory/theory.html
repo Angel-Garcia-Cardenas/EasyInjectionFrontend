@@ -13,14 +13,12 @@
       </div>
 
       <!-- Banner principal -->
-      <div class="hero-banner">
+      <div class="hero-banner" [ngClass]="{ 'banner-continued': hasStartedAnyContent }">
         <div class="banner-background"></div>
         <div class="banner-content">
-          <h2 class="banner-title">Domina la seguridad web</h2>
-          <p class="banner-description">
-            Explora nuestra colección completa de recursos sobre vulnerabilidades XSS e inyección SQL. 
-            Desde conceptos básicos hasta técnicas avanzadas de prevención.
-          </p>
+          <span class="badge" *ngIf="hasNewContent">Nuevo contenido</span>
+          <h2 class="banner-title">{{ bannerTitle }}</h2>
+          <p class="banner-description">{{ bannerDescription }}</p>
           <button class="btn-hero" (click)="navigateToSyllabus()">
             <img src="/lesson.svg" alt="Lección" class="btn-icon">
             {{ buttonText }}

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LessonProgressService } from '../../../../services/lesson-progress.service';
 import { ALL_LESSON_IDS, LESSON_COUNTS, LESSON_IDS } from '../../../../constants/lessons.constants';
@@ -27,18 +28,24 @@ interface AdditionalResource {
 @Component({
   selector: 'app-syllabus',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './syllabus.html',
   styleUrl: './syllabus.scss'
 })
 export class SyllabusComponent implements OnInit {
   activeTab = 'all';
+  searchTerm = '';
   progressPercentage = 0;
   completedLessons = 0;
   totalLessons = 0;
   completedIndividualLessons = 0; // Individual lesson count
   totalIndividualLessons = 0; // Total individual lessons (18)
   loading = false;
+  
+  // Filtered lessons for search
+  filteredSecurityBasicsLessons: Lesson[] = [];
+  filteredXssLessons: Lesson[] = [];
+  filteredSqlInjectionLessons: Lesson[] = [];
 
   tabs: Tab[] = [
     { value: 'all', label: 'Todo el contenido' },
@@ -278,6 +285,9 @@ export class SyllabusComponent implements OnInit {
       started: viewedLessons.includes(lesson.id) || completedLessons.includes(lesson.id)
     }));
 
+    // Initialize filtered lessons
+    this.filterLessons();
+
     // Calculate progress
     this.calculateProgress();
   }
@@ -331,8 +341,38 @@ export class SyllabusComponent implements OnInit {
 
   
   onSearchChange(): void {
-    // Lógica de búsqueda
+    this.filterLessons();
+  }
+
+  private filterLessons(): void {
+    const term = this.searchTerm.toLowerCase().trim();
+    
+    if (!term) {
+      // If no search term, show all lessons
+      this.filteredSecurityBasicsLessons = [...this.securityBasicsLessons];
+      this.filteredXssLessons = [...this.xssLessons];
+      this.filteredSqlInjectionLessons = [...this.sqlInjectionLessons];
+    } else {
+      // Filter lessons by title, description, or content
+      this.filteredSecurityBasicsLessons = this.securityBasicsLessons.filter(lesson =>
+        lesson.title.toLowerCase().includes(term) ||
+        lesson.description.toLowerCase().includes(term) ||
+        lesson.content.toLowerCase().includes(term)
+      );
+      
+      this.filteredXssLessons = this.xssLessons.filter(lesson =>
+        lesson.title.toLowerCase().includes(term) ||
+        lesson.description.toLowerCase().includes(term) ||
+        lesson.content.toLowerCase().includes(term)
+      );
+      
+      this.filteredSqlInjectionLessons = this.sqlInjectionLessons.filter(lesson =>
+        lesson.title.toLowerCase().includes(term) ||
+        lesson.description.toLowerCase().includes(term) ||
+        lesson.content.toLowerCase().includes(term)
+      );
     }
+  }
 
   getLessonButtonText(lesson: Lesson): string {
     if (lesson.completed) {
