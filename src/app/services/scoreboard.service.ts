@@ -4,17 +4,18 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
 
+// Updated: Scoreboard now shows individual scan scores, not user comparisons
 export interface ScoreboardEntry {
   rank: number;
-  userId: string;
-  username: string;
-  avatarId: string;
-  level: number;
-  totalPoints: number;
-  totalScans: number;
-  totalVulnerabilities: number;
-  avgScore: number;
-  bestScore: number;
+  scanId: string;
+  scanAlias: string;
+  scanUrl: string;
+  score: number;
+  correctAnswers: number;
+  totalQuestions: number;
+  vulnerabilitiesFound: number;
+  grade: string;
+  completedAt: Date;
 }
 
 export interface UserStats {

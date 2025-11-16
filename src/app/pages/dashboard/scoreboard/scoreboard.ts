@@ -35,7 +35,6 @@ export class ScoreboardComponent implements OnInit {
   faExclamationTriangle = faExclamationTriangle;
   scoreboard: ScoreboardEntry[] = [];
   userStats: UserStats | null = null;
-  currentUserRank: number | null = null;
   timeframe: 'all' | 'week' | 'month' = 'all';
   loading = true;
   error = '';
@@ -52,7 +51,6 @@ export class ScoreboardComponent implements OnInit {
     this.scoreboardService.getScoreboard(this.timeframe).subscribe({
       next: (response) => {
         this.scoreboard = response.scoreboard;
-        this.currentUserRank = response.currentUserRank;
         this.loading = false;
       },
       error: (error) => {
@@ -77,17 +75,6 @@ export class ScoreboardComponent implements OnInit {
     this.loadScoreboard();
   }
 
-  getAvatarPath(avatarId: string): string {
-    return `assets/avatars/${avatarId}.png`;
-  }
-
-  getMedalClass(rank: number): string {
-    if (rank === 1) return 'text-yellow-500';
-    if (rank === 2) return 'text-gray-400';
-    if (rank === 3) return 'text-orange-600';
-    return '';
-  }
-
   getMedalIcon(rank: number): string {
     if (rank === 1) return '🥇';
     if (rank === 2) return '🥈';
@@ -99,7 +86,22 @@ export class ScoreboardComponent implements OnInit {
     return score.toLocaleString('es-ES');
   }
 
-  isCurrentUser(userId: string): boolean {
-    return false; // Will be implemented when we have current user ID
+  getGradeClass(grade: string): string {
+    switch(grade) {
+      case 'Excelente': return 'grade-excellent';
+      case 'Bueno': return 'grade-good';
+      case 'Regular': return 'grade-regular';
+      case 'Deficiente': return 'grade-poor';
+      case 'Crítico': return 'grade-critical';
+      default: return '';
+    }
+  }
+
+  formatDate(date: Date): string {
+    return new Date(date).toLocaleDateString('es-ES', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
   }
 }

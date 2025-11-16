@@ -1,18 +1,14 @@
 <div class="scoreboard-container">
   <!-- Header -->
   <div class="scoreboard-header">
-    <h1><fa-icon [icon]="faTrophy"></fa-icon> Scoreboard</h1>
-    <p class="subtitle">Compite con otros usuarios y escala posiciones</p>
+    <h1><fa-icon [icon]="faTrophy"></fa-icon> Mis Puntuaciones</h1>
+    <p class="subtitle">Ranking de tus escaneos por puntuación</p>
   </div>
 
   <!-- User Stats Card -->
   <div class="user-stats-card" *ngIf="userStats">
     <div class="stats-header">
-      <h2>Tus Estadísticas</h2>
-      <div class="user-rank" *ngIf="currentUserRank">
-        <span class="rank-label">Tu posición:</span>
-        <span class="rank-number">#{{ currentUserRank }}</span>
-      </div>
+      <h2>Resumen General</h2>
     </div>
     <div class="stats-grid">
       <div class="stat-item">
@@ -99,20 +95,18 @@
   <div class="scoreboard-table" *ngIf="!loading && !error">
     <div class="table-header">
       <div class="col-rank">Posición</div>
-      <div class="col-user">Usuario</div>
-      <div class="col-level">Nivel</div>
-      <div class="col-points">Puntos</div>
-      <div class="col-scans">Escaneos</div>
+      <div class="col-scan">Escaneo</div>
+      <div class="col-score">Puntuación</div>
+      <div class="col-questions">Respuestas</div>
       <div class="col-vulns">Vulnerabilidades</div>
-      <div class="col-avg">Promedio</div>
-      <div class="col-best">Mejor</div>
+      <div class="col-grade">Calificación</div>
+      <div class="col-date">Fecha</div>
     </div>
 
     <div class="table-body">
       <div 
         *ngFor="let entry of scoreboard; let i = index" 
-        class="table-row"
-        [class.highlight]="entry.rank === currentUserRank">
+        class="table-row">
         
         <!-- Rank -->
         <div class="col-rank">
@@ -122,47 +116,43 @@
           </span>
         </div>
 
-        <!-- User -->
-        <div class="col-user">
-          <div class="user-info">
-            <div class="avatar">
-              <img [src]="getAvatarPath(entry.avatarId)" [alt]="entry.username" />
-            </div>
-            <div class="username">
-              {{ entry.username }}
-              <span class="you-badge" *ngIf="entry.rank === currentUserRank">Tú</span>
-            </div>
+        <!-- Scan -->
+        <div class="col-scan">
+          <div class="scan-info">
+            <div class="scan-alias">{{ entry.scanAlias }}</div>
+            <div class="scan-url">{{ entry.scanUrl }}</div>
           </div>
         </div>
 
-        <!-- Level -->
-        <div class="col-level">
-          <span class="level-badge">Nivel {{ entry.level }}</span>
+        <!-- Score -->
+        <div class="col-score">
+          <span class="score-value">{{ formatScore(entry.score) }}</span>
+          <span class="score-label">pts</span>
         </div>
 
-        <!-- Points -->
-        <div class="col-points">
-          <span class="points-value">{{ formatScore(entry.totalPoints) }}</span>
-        </div>
-
-        <!-- Scans -->
-        <div class="col-scans">
-          {{ entry.totalScans }}
+        <!-- Questions -->
+        <div class="col-questions">
+          <span class="correct">{{ entry.correctAnswers }}</span> / {{ entry.totalQuestions }}
+          <div class="question-label">Correctas</div>
         </div>
 
         <!-- Vulnerabilities -->
         <div class="col-vulns">
-          {{ entry.totalVulnerabilities }}
+          <span class="vuln-count" [class.has-vulns]="entry.vulnerabilitiesFound > 0">
+            {{ entry.vulnerabilitiesFound }}
+          </span>
         </div>
 
-        <!-- Average -->
-        <div class="col-avg">
-          {{ formatScore(entry.avgScore) }}
+        <!-- Grade -->
+        <div class="col-grade">
+          <span class="grade-badge" [ngClass]="getGradeClass(entry.grade)">
+            {{ entry.grade }}
+          </span>
         </div>
 
-        <!-- Best Score -->
-        <div class="col-best">
-          <span class="best-score">{{ formatScore(entry.bestScore) }}</span>
+        <!-- Date -->
+        <div class="col-date">
+          {{ formatDate(entry.completedAt) }}
         </div>
       </div>
     </div>
@@ -170,8 +160,8 @@
     <!-- Empty State -->
     <div class="empty-state" *ngIf="scoreboard.length === 0">
       <div class="empty-icon"><fa-icon [icon]="faChartBar"></fa-icon></div>
-      <h3>No hay datos disponibles</h3>
-      <p>Completa algunos escaneos para aparecer en el scoreboard</p>
+      <h3>No hay puntuaciones disponibles</h3>
+      <p>Completa algunos escaneos para ver tus puntuaciones aquí</p>
     </div>
   </div>
 </div>
