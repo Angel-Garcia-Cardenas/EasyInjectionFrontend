@@ -441,6 +441,7 @@ $crema: #efeded;
   max-width: 480px;
   max-height: 90vh;
   overflow-y: auto;
+  scrollbar-width: none;
 }
 
 .modal-header {
@@ -492,9 +493,81 @@ $crema: #efeded;
 
     label {
       display: block;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+      color: #1e293b;
+      font-size: 0.95rem;
+      
+      // Special styling for 2FA code input label
+      &[for="token"] {
+        text-align: center;
+        font-size: 1rem;
+        color: #475569;
+        margin-bottom: 1rem;
+      }
+      
+      // Special styling for disable 2FA password label
+      &[for="disablePassword"] {
+        font-size: 1rem;
+        color: #475569;
+        margin-bottom: 0.875rem;
+      }
+    }
+    
+    // Password input in disable 2FA modal
+    input[type="password"][id="disablePassword"] {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      font-size: 1rem;
       font-weight: 500;
-      color: #333;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      background: #f9fafb;
+      color: #1e293b;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-sizing: border-box;
+      
+      &:focus {
+        outline: none;
+        border-color: $rosa;
+        background: white;
+        box-shadow: 0 0 0 4px rgba($rosa, 0.15), 0 4px 12px rgba($rosa, 0.1);
+        transform: translateY(-1px);
+      }
+      
+      &::placeholder {
+        color: #94a3b8;
+        font-weight: 400;
+        opacity: 0.7;
+      }
+      
+      &:disabled {
+        background: #f1f5f9;
+        color: #94a3b8;
+        cursor: not-allowed;
+        border-color: #e2e8f0;
+        transform: none;
+      }
+      
+      // Error state
+      &.ng-invalid.ng-touched {
+        border-color: #ef4444;
+        background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
+        
+        &:focus {
+          box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15), 0 4px 12px rgba(239, 68, 68, 0.1);
+        }
+      }
+      
+      // Success state (when valid)
+      &.ng-valid.ng-touched {
+        border-color: #10b981;
+        background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+        
+        &:focus {
+          box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15), 0 4px 12px rgba(16, 185, 129, 0.1);
+        }
+      }
     }
 
     .password-input {
@@ -878,5 +951,318 @@ $crema: #efeded;
         height: 60px;
       }
     }
+  }
+}
+
+// Security Section Styles
+.security-section {
+  border-bottom: 1px solid #e2e8f0;
+  padding: 1.5rem 0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .security-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+
+    .security-icon {
+      font-size: 2rem;
+      color: $rosa;
+      flex-shrink: 0;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff5f8;
+      border-radius: 12px;
+
+      &.twofa-icon {
+        color: #10b981;
+        background: #d1fae5;
+      }
+
+      fa-icon {
+        font-size: 1.5rem;
+      }
+    }
+
+    .security-info {
+      flex: 1;
+
+      h4 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+      }
+
+      p {
+        margin: 0 0 0.5rem 0;
+        color: $gris-oscuro;
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+
+      .twofa-status {
+        margin-top: 0.5rem;
+
+        .status-badge {
+          display: inline-block;
+          padding: 0.25rem 0.75rem;
+          border-radius: 12px;
+          font-size: 0.85rem;
+          font-weight: 600;
+
+          &.enabled {
+            background: #d1fae5;
+            color: #065f46;
+          }
+
+          &.disabled {
+            background: #fee2e2;
+            color: #991b1b;
+          }
+        }
+      }
+    }
+
+    .btn-outline {
+      flex-shrink: 0;
+      padding: 0.6rem 1.2rem;
+      border: 1px solid $gris;
+      background: white;
+      color: $gris-oscuro;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        border-color: $rosa;
+        color: $rosa;
+        background: #fff5f8;
+      }
+    }
+  }
+}
+
+// QR Code and Backup Codes Styles
+.qr-code-container {
+  text-align: center;
+  margin: 1.5rem 0;
+
+  img {
+    width: 200px;
+    height: 200px;
+    border: 1px solid #e2e8f0;
+    padding: 10px;
+    background: white;
+    border-radius: 8px;
+  }
+
+  .secret-key {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: $gris-oscuro;
+    word-break: break-all;
+  }
+}
+
+.loading-spinner {
+  text-align: center;
+  padding: 2rem;
+  color: $gris-oscuro;
+}
+
+// 2FA Code Input Container
+.modal-body {
+  .form-group {
+    // Special container for 2FA code input
+    .code-input {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.code-input {
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+  padding: 1.25rem 1.5rem;
+  text-align: center;
+  letter-spacing: 0.75rem;
+  font-weight: 700;
+  font-size: 1.75rem;
+  font-family: 'Courier New', monospace;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+  color: #1e293b;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+  display: block;
+  
+  &:focus {
+    outline: none;
+    border-color: $rosa;
+    background: white;
+    box-shadow: 0 0 0 4px rgba($rosa, 0.15), 0 4px 12px rgba($rosa, 0.1);
+    transform: translateY(-2px);
+    letter-spacing: 0.75rem;
+  }
+  
+  &::placeholder {
+    color: #cbd5e1;
+    letter-spacing: 0.75rem;
+    font-weight: 400;
+    opacity: 0.6;
+  }
+  
+  &:disabled {
+    background: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+    border-color: #e2e8f0;
+    transform: none;
+  }
+  
+  // Error state
+  &.ng-invalid.ng-touched {
+    border-color: #ef4444;
+    background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
+    animation: shake 0.3s ease-in-out;
+    
+    &:focus {
+      box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15), 0 4px 12px rgba(239, 68, 68, 0.1);
+    }
+  }
+  
+  // Success state (when valid)
+  &.ng-valid.ng-touched {
+    border-color: #10b981;
+    background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+    
+    &:focus {
+      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15), 0 4px 12px rgba(16, 185, 129, 0.1);
+    }
+  }
+  
+  // Animation for error state
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+  }
+}
+
+// Responsive adjustments for 2FA input
+@media (max-width: 768px) {
+  .code-input {
+    max-width: 100%;
+    font-size: 1.5rem;
+    padding: 1rem 1.25rem;
+    letter-spacing: 0.5rem;
+    
+    &::placeholder {
+      letter-spacing: 0.5rem;
+    }
+    
+    &:focus {
+      letter-spacing: 0.5rem;
+    }
+  }
+}
+
+.success-message {
+  background: #d1fae5;
+  border: 1px solid #6ee7b7;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+
+  .success-icon {
+    color: #10b981;
+    font-size: 1.5rem;
+  }
+
+  span {
+    color: #065f46;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+}
+
+.backup-codes-list {
+  background: #f9fafb;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+
+  .backup-code-item {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 0.75rem;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    color: #333;
+    font-size: 0.95rem;
+  }
+}
+
+.btn-primary {
+  background: $rosa;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: darken($rosa, 10%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba($rosa, 0.3);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  fa-icon {
+    margin-right: 0.5rem;
+  }
+}
+
+// Responsive adjustments for security section
+@media (max-width: 768px) {
+  .security-section .security-item {
+    flex-direction: column;
+    align-items: stretch;
+
+    .btn-outline {
+      width: 100%;
+    }
+  }
+
+  .backup-codes-list {
+    grid-template-columns: 1fr;
   }
 }

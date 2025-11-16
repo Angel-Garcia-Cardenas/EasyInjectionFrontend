@@ -19,7 +19,7 @@
           <li [class.active]="activeTab === 'info'" (click)="scrollToSection('perfil')">
             <fa-icon [icon]="faUser"></fa-icon> Información
           </li>
-          <li [class.active]="activeTab === 'security'" (click)="scrollToSection('seguridad')">
+          <li [class.active]="activeTab === 'security'" (click)="navigateToSecurity()">
             <fa-icon [icon]="faLock"></fa-icon> Seguridad
           </li>
           <li (click)="downloadHelp()">
@@ -32,7 +32,7 @@
       <!-- Panel principal -->
       <div class="account-content">
         <!-- Información personal -->
-        <div class="card" id="perfil">
+        <div class="card" id="perfil" *ngIf="activeTab === 'info'">
           <div class="card-header">
             <h3>Perfil</h3>
             <button class="btn-outline" (click)="openEditProfileModal()">Editar perfil</button>
@@ -47,18 +47,10 @@
             </div>
           </div>
         </div>
-  
-        <!-- Seguridad -->
-        <div class="card" id="seguridad">
-          <div class="card-header">
-            <h3>Seguridad</h3>
-            <button class="btn-outline" (click)="openChangePasswordModal()">Cambiar contraseña</button>
-          </div>
-          <p>Cambia tu contraseña regularmente para mayor seguridad</p>
-        </div>
-  
+
+
         <!-- Sesiones activas -->
-        <div class="card">
+        <div class="card" *ngIf="activeTab === 'info'">
           <div class="card-header">
             <h3>Sesiones activas</h3>
             <button class="btn-outline" (click)="closeAllSessions()" *ngIf="sessions.length > 1">
@@ -106,8 +98,61 @@
           </div>
         </div>
 
+        <!-- Seguridad -->
+        <div class="card" id="seguridad" *ngIf="activeTab === 'security'">
+          <div class="card-header">
+            <h3>Seguridad</h3>
+          </div>
+          <p class="text-muted">Gestiona tu contraseña y autenticación de dos factores</p>
+
+          <!-- Change Password Section -->
+          <div class="security-section">
+            <div class="security-item">
+              <div class="security-icon">
+                <fa-icon [icon]="faLock"></fa-icon>
+              </div>
+              <div class="security-info">
+                <h4>Contraseña</h4>
+                <p>Cambia tu contraseña regularmente para mayor seguridad</p>
+              </div>
+              <button class="btn-outline" (click)="openChangePasswordModal()">
+                Cambiar contraseña
+              </button>
+            </div>
+          </div>
+
+          <!-- Two-Factor Authentication Section -->
+          <div class="security-section">
+            <div class="security-item">
+              <div class="security-icon twofa-icon">
+                <fa-icon [icon]="faShieldAlt"></fa-icon>
+              </div>
+              <div class="security-info">
+                <h4>Autenticación de dos factores (2FA)</h4>
+                <p>Agrega una capa adicional de seguridad a tu cuenta</p>
+                <div class="twofa-status">
+                  <span class="status-badge" [class.enabled]="twoFactorEnabled" [class.disabled]="!twoFactorEnabled">
+                    {{ twoFactorEnabled ? 'Habilitado' : 'Deshabilitado' }}
+                  </span>
+                </div>
+              </div>
+              <button class="btn-outline" (click)="toggle2FA()">
+                {{ twoFactorEnabled ? 'Deshabilitar' : 'Habilitar' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- 2FA Notification -->
+          <div *ngIf="showTwoFAMessage" 
+               class="notification" 
+               [ngClass]="twoFAMessageType === 'error' ? 'submit-error' : 'submit-success'">
+            <span>{{ twoFAMessage }}</span>
+            <button class="notification-close" (click)="hideTwoFANotification()">&times;</button>
+          </div>
+        </div>
+
         <!-- Eliminar cuenta -->
-        <div class="card danger-zone">
+        <div class="card danger-zone" *ngIf="activeTab === 'info'">
           <div class="card-header">
             <h3>Eliminar cuenta</h3>
           </div>
@@ -381,6 +426,140 @@
               </button>              
             </div>
           </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Setup 2FA Modal (QR Code) -->
+    <div class="modal-overlay" *ngIf="showSetup2FAModal || showVerify2FAModal" (click)="closeSetup2FAModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Configurar autenticación de dos factores</h3>
+          <button class="modal-close" (click)="closeSetup2FAModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p class="modal-description">
+            Escanea el código QR con tu aplicación de autenticación (Google Authenticator, Authy, etc.) y luego ingresa el código de 6 dígitos para verificar.
+          </p>
+
+          <div class="qr-code-container" *ngIf="qrCodeDataUrl && !settingUp2FA">
+            <img [src]="qrCodeDataUrl" alt="QR Code">
+            <p class="secret-key">Clave secreta: <strong>{{ twoFactorSecret }}</strong></p>
+          </div>
+
+          <div class="loading-spinner" *ngIf="settingUp2FA">
+            Generando QR...
+          </div>
+
+          <div *ngIf="showTwoFAMessage" 
+               class="modal-notification" 
+               [ngClass]="twoFAMessageType === 'error' ? 'submit-error' : 'submit-success'">
+            <span>{{ twoFAMessage }}</span>
+            <button class="notification-close" (click)="hideTwoFANotification()">&times;</button>
+          </div>
+
+          <form [formGroup]="verify2FATokenForm" (ngSubmit)="verify2FA()" *ngIf="showVerify2FAModal">
+            <div class="form-group">
+              <label for="token">Código de 6 dígitos</label>
+              <input 
+                type="text" 
+                id="token"
+                formControlName="token"
+                placeholder="000000"
+                maxlength="6"
+                class="code-input"
+              >
+              <div class="error-message" *ngIf="verify2FATokenForm.get('token')?.invalid && verify2FATokenForm.get('token')?.touched">
+                Ingresa un código de 6 dígitos válido.
+              </div>
+            </div>
+            <div class="modal-actions">
+              <button type="button" class="btn-cancel" (click)="closeSetup2FAModal()">Cancelar</button>
+              <button type="submit" class="btn-primary" [disabled]="verify2FATokenForm.invalid || verifying2FA">
+                {{ verifying2FA ? 'Verificando...' : 'Verificar y Habilitar' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Disable 2FA Modal -->
+    <div class="modal-overlay" *ngIf="showDisable2FAModal" (click)="closeDisable2FAModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Deshabilitar 2FA</h3>
+          <button class="modal-close" (click)="closeDisable2FAModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="warning-message">
+            <fa-icon [icon]="faExclamationTriangle" class="warning-icon"></fa-icon>
+            <p>
+              Deshabilitar 2FA reducirá la seguridad de tu cuenta. Ingresa tu contraseña para confirmar.
+            </p>
+          </div>
+
+          <div *ngIf="showTwoFAMessage" 
+               class="modal-notification" 
+               [ngClass]="twoFAMessageType === 'error' ? 'submit-error' : 'submit-success'">
+            <span>{{ twoFAMessage }}</span>
+            <button class="notification-close" (click)="hideTwoFANotification()">&times;</button>
+          </div>
+
+          <form [formGroup]="disable2FAForm" (ngSubmit)="disable2FA()">
+            <div class="form-group">
+              <label for="disablePassword">Contraseña</label>
+              <input 
+                type="password" 
+                id="disablePassword"
+                formControlName="password"
+                placeholder="Ingresa tu contraseña"
+              >
+              <div class="error-message" *ngIf="disable2FAForm.get('password')?.invalid && disable2FAForm.get('password')?.touched">
+                La contraseña es requerida.
+              </div>
+            </div>
+            <div class="modal-actions">
+              <button type="button" class="btn-cancel" (click)="closeDisable2FAModal()">Cancelar</button>
+              <button type="submit" class="btn-danger" [disabled]="disable2FAForm.invalid || disabling2FA">
+                {{ disabling2FA ? 'Deshabilitando...' : 'Deshabilitar 2FA' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Backup Codes Modal -->
+    <div class="modal-overlay" *ngIf="showBackupCodesModal" (click)="closeBackupCodesModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Códigos de respaldo 2FA</h3>
+          <button class="modal-close" (click)="closeBackupCodesModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="success-message">
+            <fa-icon [icon]="faCheckCircle" class="success-icon"></fa-icon>
+            <span>¡2FA habilitado exitosamente!</span>
+          </div>
+
+          <p class="modal-description">
+            Guarda estos códigos en un lugar seguro. Cada código puede usarse una sola vez para iniciar sesión si pierdes acceso a tu aplicación de autenticación.
+          </p>
+
+          <div class="backup-codes-list">
+            <div *ngFor="let code of backupCodes" class="backup-code-item">
+              {{ code }}
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn-outline" (click)="downloadBackupCodes()">
+              <fa-icon [icon]="faDownload"></fa-icon>
+              Descargar códigos
+            </button>
+            <button type="button" class="btn-primary" (click)="closeBackupCodesModal()">Entendido</button>
+          </div>
         </div>
       </div>
     </div>

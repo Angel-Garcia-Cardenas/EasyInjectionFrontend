@@ -1,0 +1,260 @@
+<div class="security-page">
+  <div class="page-header">
+    <h1>Seguridad</h1>
+    <p>Administra la seguridad de tu cuenta</p>
+  </div>
+
+  <!-- Notification Display -->
+  <div *ngIf="showNotification" 
+       class="notification" 
+       [ngClass]="notificationType === 'error' ? 'notification-error' : 'notification-success'">
+    <span>{{ notificationMessage }}</span>
+    <button class="notification-close" (click)="hideNotification()">&times;</button>
+  </div>
+
+  <div class="security-container">
+    <!-- Change Password Card -->
+    <div class="security-card">
+      <div class="card-header">
+        <div class="header-icon password-icon">
+          <fa-icon [icon]="faLock"></fa-icon>
+        </div>
+        <div class="header-content">
+          <h2>Contraseña</h2>
+          <p>Cambia tu contraseña regularmente para mayor seguridad</p>
+        </div>
+      </div>
+      <button class="btn-primary" (click)="openChangePasswordModal()">
+        Cambiar contraseña
+      </button>
+    </div>
+
+    <!-- Two-Factor Authentication Card -->
+    <div class="security-card">
+      <div class="card-header">
+        <div class="header-icon twofa-icon">
+          <fa-icon [icon]="faShieldAlt"></fa-icon>
+        </div>
+        <div class="header-content">
+          <h2>Autenticación de dos factores</h2>
+          <p>Agrega una capa adicional de seguridad a tu cuenta</p>
+        </div>
+      </div>
+
+      <div class="twofa-status">
+        <div class="status-info">
+          <span class="status-label">Estado:</span>
+          <span class="status-badge" [class.enabled]="twoFactorEnabled" [class.disabled]="!twoFactorEnabled">
+            {{ twoFactorEnabled ? 'Habilitado' : 'Deshabilitado' }}
+          </span>
+        </div>
+        
+        <div class="twofa-actions">
+          <button 
+            *ngIf="!twoFactorEnabled" 
+            class="btn-success" 
+            (click)="start2FASetup()">
+            Habilitar 2FA
+          </button>
+          <button 
+            *ngIf="twoFactorEnabled" 
+            class="btn-danger-outline" 
+            (click)="openDisable2FAModal()">
+            Deshabilitar 2FA
+          </button>
+        </div>
+      </div>
+
+      <div class="twofa-info" *ngIf="!twoFactorEnabled">
+        <h4>¿Por qué usar 2FA?</h4>
+        <ul>
+          <li>Protege tu cuenta incluso si tu contraseña es comprometida</li>
+          <li>Compatible con Google Authenticator, Authy, y otras apps 2FA</li>
+          <li>Códigos de respaldo en caso de emergencia</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change Password Modal -->
+  <div class="modal-overlay" *ngIf="showChangePasswordModal" (click)="closeChangePasswordModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Cambiar contraseña</h3>
+        <button class="modal-close" (click)="closeChangePasswordModal()">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <p class="modal-description">
+          Crea una nueva contraseña segura que no uses en otros sitios
+        </p>
+        
+        <form [formGroup]="changePasswordForm" (ngSubmit)="changePassword()">
+          <div class="form-group">
+            <label for="currentPassword">Contraseña actual</label>
+            <input 
+              type="password" 
+              id="currentPassword"
+              formControlName="currentPassword"
+              placeholder="Ingresa tu contraseña actual"
+            >
+            <div class="error-message" *ngIf="changePasswordForm.get('currentPassword')?.invalid && changePasswordForm.get('currentPassword')?.touched">
+              La contraseña actual es requerida
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="newPassword">Nueva contraseña</label>
+            <input 
+              type="password" 
+              id="newPassword"
+              formControlName="newPassword"
+              placeholder="Ingresa tu nueva contraseña"
+            >
+            <div class="error-message" *ngIf="changePasswordForm.get('newPassword')?.invalid && changePasswordForm.get('newPassword')?.touched">
+              <div *ngIf="changePasswordForm.get('newPassword')?.errors?.['required']">La nueva contraseña es requerida</div>
+              <div *ngIf="changePasswordForm.get('newPassword')?.errors?.['minlength']">Mínimo 8 caracteres</div>
+              <div *ngIf="changePasswordForm.get('newPassword')?.errors?.['pattern']">Debe contener mayúscula, minúscula y número</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">Confirmar nueva contraseña</label>
+            <input 
+              type="password" 
+              id="confirmPassword"
+              formControlName="confirmNewPassword"
+              placeholder="Confirma tu nueva contraseña"
+            >
+            <div class="error-message" *ngIf="changePasswordForm.errors?.['passwordMismatch'] && changePasswordForm.touched">
+              Las contraseñas no coinciden
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" (click)="closeChangePasswordModal()">
+              Cancelar
+            </button>
+            <button type="submit" class="btn-save" [disabled]="changePasswordForm.invalid || changingPassword">
+              {{ changingPassword ? 'Guardando...' : 'Cambiar contraseña' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Setup 2FA Modal -->
+  <div class="modal-overlay" *ngIf="showSetup2FAModal" (click)="closeSetup2FAModal()">
+    <div class="modal-content modal-2fa" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Configurar autenticación de dos factores</h3>
+        <button class="modal-close" (click)="closeSetup2FAModal()">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <div *ngIf="!showBackupCodes">
+          <div class="setup-step">
+            <h4>Paso 1: Escanea el código QR</h4>
+            <p>Usa Google Authenticator, Authy o cualquier app compatible con TOTP</p>
+            
+            <div class="qr-code-container" *ngIf="qrCodeImage">
+              <img [src]="qrCodeImage" alt="QR Code" class="qr-code">
+            </div>
+          </div>
+
+          <div class="setup-step">
+            <h4>Paso 2: Ingresa el código de verificación</h4>
+            <form [formGroup]="verifyCodeForm" (ngSubmit)="verify2FASetup()">
+              <div class="form-group">
+                <input 
+                  type="text" 
+                  formControlName="code"
+                  placeholder="000000"
+                  maxlength="6"
+                  class="code-input"
+                  autocomplete="off"
+                >
+                <div class="error-message" *ngIf="verifyCodeForm.get('code')?.invalid && verifyCodeForm.get('code')?.touched">
+                  Ingresa un código de 6 dígitos
+                </div>
+              </div>
+
+              <div class="modal-actions">
+                <button type="button" class="btn-cancel" (click)="closeSetup2FAModal()">
+                  Cancelar
+                </button>
+                <button type="submit" class="btn-save" [disabled]="verifyCodeForm.invalid || verifying2FA">
+                  {{ verifying2FA ? 'Verificando...' : 'Verificar y habilitar' }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div *ngIf="showBackupCodes" class="backup-codes-section">
+          <div class="success-message">
+            <fa-icon [icon]="faCheckCircle" class="success-icon"></fa-icon>
+            <h4>¡2FA habilitado exitosamente!</h4>
+          </div>
+
+          <div class="backup-codes-info">
+            <h4>Códigos de respaldo</h4>
+            <p>Guarda estos códigos en un lugar seguro. Puedes usarlos si pierdes acceso a tu app de autenticación.</p>
+            
+            <div class="backup-codes-list">
+              <div *ngFor="let code of backupCodes" class="backup-code">{{ code }}</div>
+            </div>
+
+            <button class="btn-download" (click)="downloadBackupCodes()">
+              <fa-icon [icon]="faDownload"></fa-icon>
+              Descargar códigos
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Disable 2FA Modal -->
+  <div class="modal-overlay" *ngIf="showDisable2FAModal" (click)="closeDisable2FAModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Deshabilitar 2FA</h3>
+        <button class="modal-close" (click)="closeDisable2FAModal()">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="warning-box">
+          <fa-icon [icon]="faExclamationTriangle" class="warning-icon"></fa-icon>
+          <p>Esto reducirá la seguridad de tu cuenta</p>
+        </div>
+
+        <form [formGroup]="disableForm" (ngSubmit)="disable2FA()">
+          <div class="form-group">
+            <label for="disablePassword">Ingresa tu contraseña para confirmar</label>
+            <input 
+              type="password" 
+              id="disablePassword"
+              formControlName="password"
+              placeholder="Contraseña"
+            >
+            <div class="error-message" *ngIf="disableForm.get('password')?.invalid && disableForm.get('password')?.touched">
+              La contraseña es requerida
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" (click)="closeDisable2FAModal()">
+              Cancelar
+            </button>
+            <button type="submit" class="btn-danger" [disabled]="disableForm.invalid || disabling2FA">
+              {{ disabling2FA ? 'Deshabilitando...' : 'Deshabilitar 2FA' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+

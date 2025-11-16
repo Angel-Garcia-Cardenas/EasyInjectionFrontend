@@ -1,0 +1,83 @@
+<div class="verify-2fa-container">
+  <div class="verify-card">
+    <!-- Logo -->
+    <img src="logo.png" alt="EasyInjection logo" class="logo">
+
+    <!-- Icono y título -->
+    <div class="header-icon">
+      <fa-icon [icon]="faShieldAlt"></fa-icon>
+    </div>
+    <h2>Verificación en dos pasos</h2>
+    <p class="subtitle">Ingresa el código de tu aplicación de autenticación</p>
+
+    <!-- Error message -->
+    <div *ngIf="errorMessage" class="submit-error">
+      {{ errorMessage }}
+    </div>
+
+    <form [formGroup]="verifyForm" (ngSubmit)="verify()">
+      <div class="form-group">
+        <label>{{ useBackupCode ? 'Código de respaldo' : 'Código de 6 dígitos' }}</label>
+        <div class="generic-input">
+          <input 
+            type="text" 
+            formControlName="code"
+            [placeholder]="useBackupCode ? 'XXXXXXXX' : '000000'"
+            [maxlength]="useBackupCode ? 8 : 6"
+            class="code-input"
+            autocomplete="off"
+          >
+        </div>
+
+        <div class="error" *ngIf="verifyForm.get('code')?.invalid && verifyForm.get('code')?.touched">
+          <span *ngIf="!useBackupCode">Ingresa un código de 6 dígitos</span>
+          <span *ngIf="useBackupCode">Ingresa un código de respaldo válido</span>
+        </div>
+      </div>
+
+      <button 
+        type="submit" 
+        class="btn btn-primary" 
+        [disabled]="verifyForm.invalid || verifying">
+        {{ verifying ? 'Verificando...' : 'Verificar' }}
+      </button>
+    </form>
+
+    <!-- Divider -->
+    <div class="divider">
+      <span>Opciones alternativas</span>
+    </div>
+
+    <!-- Alternative login button -->
+    <button 
+      type="button" 
+      class="btn btn-secondary" 
+      (click)="toggleBackupCode()">
+      {{ useBackupCode ? '← Usar código de autenticación' : 'Usar código de respaldo' }}
+    </button>
+
+    <!-- Help info -->
+    <div class="help-box">
+      <div class="help-title">
+        <fa-icon [icon]="faLightbulb"></fa-icon>
+        ¿Necesitas ayuda?
+      </div>
+      <ul *ngIf="!useBackupCode">
+        <li>Abre tu app de autenticación (Google Authenticator, Authy, etc.)</li>
+        <li>Busca la entrada de EasyInjection</li>
+        <li>Ingresa el código de 6 dígitos que aparece</li>
+      </ul>
+      <ul *ngIf="useBackupCode">
+        <li>Los códigos de respaldo son códigos de 8 caracteres</li>
+        <li>Los guardaste al configurar 2FA</li>
+        <li>Cada código solo puede usarse una vez</li>
+      </ul>
+    </div>
+
+    <!-- Cancel link -->
+    <p class="login-link">
+      <a (click)="cancelLogin()">← Volver al inicio de sesión</a>
+    </p>
+  </div>
+</div>
+

@@ -1,0 +1,552 @@
+$rosa: #d63d6c;
+$gris: #c0cbcd;
+$gris-oscuro: #6b6b6b;
+$azul: #65b2c6;
+$verde: #10b981;
+$rojo: #ef4444;
+
+.security-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+
+  .page-header {
+    margin-bottom: 2rem;
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: $gris-oscuro;
+      font-size: 1rem;
+    }
+  }
+
+  // Notification
+  .notification {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &.notification-success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #6ee7b7;
+    }
+
+    &.notification-error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    .notification-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      opacity: 0.7;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  .security-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .security-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    .card-header {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+
+      .header-icon {
+        font-size: 2.5rem;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        &.password-icon {
+          color: $rosa;
+        }
+
+        &.twofa-icon {
+          color: $verde;
+        }
+
+        fa-icon {
+          font-size: 2.5rem;
+        }
+      }
+
+      .header-content {
+        flex: 1;
+
+        h2 {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: #1e293b;
+          margin: 0 0 0.5rem 0;
+        }
+
+        p {
+          color: $gris-oscuro;
+          margin: 0;
+          font-size: 0.95rem;
+        }
+      }
+    }
+
+    .twofa-status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: #f8fafc;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+
+      .status-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+
+        .status-label {
+          font-weight: 500;
+          color: $gris-oscuro;
+        }
+
+        .status-badge {
+          padding: 0.25rem 0.75rem;
+          border-radius: 12px;
+          font-size: 0.875rem;
+          font-weight: 600;
+
+          &.enabled {
+            background: #d1fae5;
+            color: #065f46;
+          }
+
+          &.disabled {
+            background: #fee2e2;
+            color: #991b1b;
+          }
+        }
+      }
+    }
+
+    .twofa-info {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #eff6ff;
+      border-radius: 8px;
+      border-left: 4px solid $azul;
+
+      h4 {
+        margin: 0 0 0.75rem 0;
+        color: #1e293b;
+        font-size: 1rem;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 1.5rem;
+        
+        li {
+          color: $gris-oscuro;
+          margin-bottom: 0.5rem;
+          font-size: 0.9rem;
+        }
+      }
+    }
+  }
+
+  // Buttons
+  .btn-primary, .btn-success, .btn-danger-outline, .btn-save, .btn-cancel, .btn-danger, .btn-download {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    font-size: 0.95rem;
+  }
+
+  .btn-primary {
+    background: $rosa;
+    color: white;
+
+    &:hover {
+      background: darken($rosa, 10%);
+    }
+  }
+
+  .btn-success {
+    background: $verde;
+    color: white;
+
+    &:hover {
+      background: darken($verde, 10%);
+    }
+  }
+
+  .btn-danger-outline {
+    background: white;
+    color: $rojo;
+    border: 2px solid $rojo;
+
+    &:hover {
+      background: $rojo;
+      color: white;
+    }
+  }
+
+  .btn-danger {
+    background: $rojo;
+    color: white;
+
+    &:hover {
+      background: darken($rojo, 10%);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .btn-download {
+    background: $azul;
+    color: white;
+    width: 100%;
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    fa-icon {
+      font-size: 1rem;
+    }
+
+    &:hover {
+      background: darken($azul, 10%);
+    }
+  }
+
+  // Modal styles
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .modal-content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+
+    &.modal-2fa {
+      max-width: 600px;
+    }
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #f0f0f0;
+
+    h3 {
+      margin: 0;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: $gris-oscuro;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+
+      &:hover {
+        background: #f5f5f5;
+      }
+    }
+  }
+
+  .modal-body {
+    padding: 1.5rem;
+
+    .modal-description {
+      color: $gris-oscuro;
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    .warning-box {
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      .warning-icon {
+        color: #f59e0b;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+      }
+
+      p {
+        margin: 0;
+        color: #92400e;
+        font-weight: 500;
+        flex: 1;
+      }
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #333;
+      }
+
+      input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        box-sizing: border-box;
+
+        &:focus {
+          outline: none;
+          border-color: $rosa;
+          box-shadow: 0 0 0 2px rgba($rosa, 0.2);
+        }
+      }
+
+      .code-input {
+        text-align: center;
+        font-size: 1.5rem;
+        letter-spacing: 0.5rem;
+        font-weight: 600;
+      }
+
+      .error-message {
+        color: $rojo;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+      }
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #f0f0f0;
+
+      .btn-cancel {
+        background: white;
+        border: 1px solid #ddd;
+        color: $gris-oscuro;
+
+        &:hover {
+          background: #f9f9f9;
+        }
+      }
+
+      .btn-save {
+        background: $rosa;
+        color: white;
+
+        &:hover:not(:disabled) {
+          background: darken($rosa, 10%);
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+
+  // 2FA Setup styles
+  .setup-step {
+    margin-bottom: 2rem;
+
+    h4 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: $gris-oscuro;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .qr-code-container {
+      display: flex;
+      justify-content: center;
+      padding: 2rem;
+      background: #f8fafc;
+      border-radius: 8px;
+      margin: 1rem 0;
+
+      .qr-code {
+        max-width: 250px;
+        height: auto;
+      }
+    }
+  }
+
+  .backup-codes-section {
+    .success-message {
+      background: #d1fae5;
+      border: 1px solid #6ee7b7;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+
+      .success-icon {
+        color: #10b981;
+        font-size: 1.5rem;
+      }
+
+      h4 {
+        margin: 0;
+        color: #065f46;
+        font-size: 1.1rem;
+      }
+    }
+
+    .backup-codes-info {
+      h4 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+      }
+
+      p {
+        color: $gris-oscuro;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+      }
+
+      .backup-codes-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        padding: 1rem;
+        background: #f8fafc;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+
+        .backup-code {
+          font-family: 'Courier New', monospace;
+          font-size: 1rem;
+          font-weight: 600;
+          color: #1e293b;
+          padding: 0.5rem;
+          background: white;
+          border-radius: 4px;
+          text-align: center;
+          border: 1px solid #e2e8f0;
+        }
+      }
+    }
+  }
+
+  // Responsive
+  @media (max-width: 768px) {
+    padding: 1rem;
+
+    .page-header h1 {
+      font-size: 1.5rem;
+    }
+
+    .security-card {
+      padding: 1.5rem;
+
+      .card-header {
+        flex-direction: column;
+        
+        .header-icon {
+          font-size: 2rem;
+        }
+      }
+
+      .twofa-status {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+      }
+    }
+
+    .modal-content {
+      width: 95%;
+    }
+
+    .backup-codes-list {
+      grid-template-columns: 1fr !important;
+    }
+  }
+}
+

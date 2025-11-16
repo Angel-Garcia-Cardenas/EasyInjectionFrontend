@@ -5,12 +5,14 @@ import { RegisterSuccessComponent } from './pages/auth/register-success/register
 import { VerifySuccessComponent } from './pages/auth/verify-success/verify-success';
 import { ForgotPasswordComponent } from './pages/auth/forgot-password/forgot-password';
 import { ResetPasswordComponent } from './pages/auth/reset-password/reset-password';
+import { Verify2FAComponent } from './pages/auth/verify-2fa/verify-2fa';
 import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
     { path: '', loadChildren: () => import('./pages/landing/landing-module').then(m => m.LandingModule) },
     { path: 'register', component: RegisterComponent },
     { path: 'login', component: LoginComponent },
+    { path: 'verify-2fa', component: Verify2FAComponent },
     { path: 'register-success', component: RegisterSuccessComponent },
     { path: 'verify-success', component: VerifySuccessComponent },
     { path: 'forgot-password', component: ForgotPasswordComponent },

@@ -14,7 +14,12 @@ import {
   faMobileAlt,
   faTabletAlt,
   faLaptop,
-  faExclamationTriangle
+  faExclamationTriangle,
+  faShieldAlt,
+  faCheckCircle,
+  faDownload,
+  faEye,
+  faEyeSlash
 } from '@fortawesome/free-solid-svg-icons';
 import {
   faChrome,
@@ -25,6 +30,7 @@ import {
 } from '@fortawesome/free-brands-svg-icons';
 import { UserService, User } from '../../../services/user.service';
 import { SessionService, Session } from '../../../services/session.service';
+import { TwoFactorService } from '../../../services/two-factor.service';
 
 @Component({
   selector: 'app-account',
@@ -40,6 +46,11 @@ export class Account implements OnInit {
   faMapMarkerAlt = faMapMarkerAlt;
   faTimes = faTimes;
   faExclamationTriangle = faExclamationTriangle;
+  faShieldAlt = faShieldAlt;
+  faCheckCircle = faCheckCircle;
+  faDownload = faDownload;
+  faEye = faEye;
+  faEyeSlash = faEyeSlash;
   
   getDeviceIcon(device: string): IconDefinition {
     const deviceLower = device.toLowerCase();
@@ -127,10 +138,29 @@ export class Account implements OnInit {
   showDeleteAccountMessage = false;
   deletingAccount = false;
 
+  // 2FA states
+  twoFactorEnabled = false;
+  qrCodeDataUrl = '';
+  twoFactorSecret = '';
+  backupCodes: string[] = [];
+  showSetup2FAModal = false;
+  showVerify2FAModal = false;
+  showDisable2FAModal = false;
+  showBackupCodesModal = false;
+  settingUp2FA = false;
+  verifying2FA = false;
+  disabling2FA = false;
+  twoFAMessage = '';
+  twoFAMessageType: 'success' | 'error' = 'success';
+  showTwoFAMessage = false;
+  hasBackupCodes = false;
+
   // Formularios reactivos
   editForm: FormGroup;
   changePasswordForm: FormGroup;
   deleteAccountForm: FormGroup;
+  verify2FATokenForm: FormGroup;
+  disable2FAForm: FormGroup;
   changingPassword = false;
 
   constructor(
@@ -138,6 +168,7 @@ export class Account implements OnInit {
     private router: Router,
     private userService: UserService,
     private sessionService: SessionService,
+    private twoFactorService: TwoFactorService,
     private cd: ChangeDetectorRef
   ) {
     // Formulario para editar perfil
@@ -165,12 +196,23 @@ export class Account implements OnInit {
       password: ['', Validators.required],
       confirmDelete: [false, Validators.requiredTrue]
     });
+
+    // Formulario para verificar 2FA token
+    this.verify2FATokenForm = this.fb.group({
+      token: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]]
+    });
+
+    // Formulario para deshabilitar 2FA
+    this.disable2FAForm = this.fb.group({
+      password: ['', Validators.required]
+    });
   }
 
   ngOnInit(): void {
     this.currentSessionToken = localStorage.getItem('token') || '';
     this.loadUserData();
     this.loadSessions();
+    this.load2FAStatus();
   }
 
   loadUserData(): void {
@@ -236,16 +278,30 @@ export class Account implements OnInit {
   }
 
   scrollToSection(sectionId: string): void {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      // Update active tab
-      if (sectionId === 'perfil') {
-        this.activeTab = 'info';
-      } else if (sectionId === 'seguridad') {
-        this.activeTab = 'security';
-      }
+    // Update active tab first
+    if (sectionId === 'perfil') {
+      this.activeTab = 'info';
     }
+    
+    // Wait for DOM to update before scrolling
+    setTimeout(() => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
+  }
+
+  navigateToSecurity(): void {
+    this.activeTab = 'security';
+    
+    // Wait for DOM to update before scrolling
+    setTimeout(() => {
+      const element = document.getElementById('seguridad');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
   }
 
   downloadHelp(): void {
@@ -636,6 +692,162 @@ export class Account implements OnInit {
         this.deletingAccount = false;
       }
     });
+  }
+
+  // =========================
+  // Two-Factor Authentication
+  // =========================
+  load2FAStatus(): void {
+    this.twoFactorService.getStatus().subscribe({
+      next: (status) => {
+        this.twoFactorEnabled = status.twoFactorEnabled;
+        this.hasBackupCodes = status.hasBackupCodes;
+        // Force change detection to update UI
+        this.cd.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error loading 2FA status:', err);
+      }
+    });
+  }
+
+  toggle2FA(): void {
+    if (this.twoFactorEnabled) {
+      this.openDisable2FAModal();
+    } else {
+      this.openSetup2FAModal();
+    }
+  }
+
+  openSetup2FAModal(): void {
+    this.showSetup2FAModal = true;
+    this.settingUp2FA = true;
+    this.twoFactorService.setup().pipe(finalize(() => this.settingUp2FA = false)).subscribe({
+      next: (res) => {
+        this.twoFactorSecret = res.secret;
+        this.qrCodeDataUrl = res.qrCode;
+        this.backupCodes = res.backupCodes || [];
+        this.showVerify2FAModal = true;
+        this.showSetup2FAModal = false;
+      },
+      error: (err) => {
+        this.showTwoFANotification('Error al generar QR para 2FA: ' + (err.error?.error || 'Error desconocido'), 'error');
+        this.closeSetup2FAModal();
+      }
+    });
+  }
+
+  closeSetup2FAModal(): void {
+    this.showSetup2FAModal = false;
+    this.twoFactorSecret = '';
+    this.qrCodeDataUrl = '';
+    this.verify2FATokenForm.reset();
+    this.showVerify2FAModal = false;
+  }
+
+  verify2FA(): void {
+    if (this.verify2FATokenForm.invalid) {
+      this.verify2FATokenForm.markAllAsTouched();
+      return;
+    }
+    this.verifying2FA = true;
+    const token = this.verify2FATokenForm.get('token')?.value;
+
+    this.twoFactorService.verify(token).pipe(finalize(() => this.verifying2FA = false)).subscribe({
+      next: (res) => {
+        this.twoFactorEnabled = true;
+        this.backupCodes = res.backupCodes || [];
+        this.hasBackupCodes = true;
+        this.closeSetup2FAModal();
+        
+        // Force change detection
+        this.cd.detectChanges();
+        
+        // Show backup codes modal
+        this.openBackupCodesModal();
+        
+        // Show success notification
+        this.showTwoFANotification(res.message, 'success');
+        
+        // Reload status to ensure sync
+        this.load2FAStatus();
+      },
+      error: (err) => {
+        this.showTwoFANotification('Error al verificar 2FA: ' + (err.error?.error || 'Código inválido'), 'error');
+      }
+    });
+  }
+
+  openDisable2FAModal(): void {
+    this.showDisable2FAModal = true;
+    this.disable2FAForm.reset();
+  }
+
+  closeDisable2FAModal(): void {
+    this.showDisable2FAModal = false;
+    this.disable2FAForm.reset();
+  }
+
+  disable2FA(): void {
+    if (this.disable2FAForm.invalid) {
+      this.disable2FAForm.markAllAsTouched();
+      return;
+    }
+    this.disabling2FA = true;
+    const password = this.disable2FAForm.get('password')?.value;
+
+    this.twoFactorService.disable(password).pipe(finalize(() => this.disabling2FA = false)).subscribe({
+      next: (res) => {
+        this.twoFactorEnabled = false;
+        this.backupCodes = [];
+        this.hasBackupCodes = false;
+        this.closeDisable2FAModal();
+        
+        // Force change detection
+        this.cd.detectChanges();
+        
+        // Show success notification
+        this.showTwoFANotification(res.message, 'success');
+        
+        // Reload status to ensure sync
+        this.load2FAStatus();
+      },
+      error: (err) => {
+        this.showTwoFANotification('Error al deshabilitar 2FA: ' + (err.error?.error || 'Contraseña incorrecta'), 'error');
+      }
+    });
+  }
+
+  openBackupCodesModal(): void {
+    this.showBackupCodesModal = true;
+  }
+
+  closeBackupCodesModal(): void {
+    this.showBackupCodesModal = false;
+  }
+
+  downloadBackupCodes(): void {
+    const codesText = this.backupCodes.join('\n');
+    const blob = new Blob([codesText], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'easyinjection_backup_codes.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  }
+
+  showTwoFANotification(message: string, type: 'success' | 'error' = 'success') {
+    this.twoFAMessage = message;
+    this.twoFAMessageType = type;
+    this.showTwoFAMessage = true;
+    setTimeout(() => this.showTwoFAMessage = false, 5000);
+  }
+
+  hideTwoFANotification() {
+    this.showTwoFAMessage = false;
   }
 }
 

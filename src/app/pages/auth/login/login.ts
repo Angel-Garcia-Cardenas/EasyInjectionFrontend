@@ -66,7 +66,16 @@ export class LoginComponent implements OnInit {
           next: (res: any) => {
             this.isSubmitting = false;
 
-            // Guardar token y/o usuario en localStorage
+            // Check if 2FA is required
+            if (res.requires2FA) {
+              // Redirect to 2FA verification page
+              this.router.navigate(['/verify-2fa'], {
+                queryParams: { email: res.email }
+              });
+              return;
+            }
+
+            // Normal login flow (no 2FA)
             if (res.token) {
               localStorage.setItem('authToken', res.token);
             }
@@ -74,7 +83,7 @@ export class LoginComponent implements OnInit {
               localStorage.setItem('user', JSON.stringify(res.user));
             }
 
-            // Redirigir al dashboard (o la página principal)
+            // Redirect to dashboard
             this.router.navigate(['/dashboard']);
           },
           error: (err) => {
