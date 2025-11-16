@@ -47,7 +47,7 @@
 
     <div class="features-grid">
       <div class="feature-card">
-        <fa-icon [icon]="faSearch"></fa-icon>
+        <fa-icon [icon]="faBullseye"></fa-icon>
         <h3>Escaneos Reales</h3>
         <p>Realiza escaneos de vulnerabilidades en sitios web reales con herramientas profesionales.</p>
       </div>
@@ -157,8 +157,8 @@
         <span>EasyInjection</span>
       </div>
       <nav>
-        <a href="#">Términos y condiciones</a>
-        <a href="#">Política de privacidad</a>
+        <a (click)="goToPage('terms-conditions')" style="cursor: pointer;">Términos y condiciones</a>
+        <a (click)="goToPage('privacy-policy')" style="cursor: pointer;">Política de privacidad</a>
       </nav>
     </div>
     <p>© 2025 EasyInjection. Todos los derechos reservados.</p>

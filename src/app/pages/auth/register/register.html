@@ -106,7 +106,7 @@
 
       <div class="form-group checkbox">
         <input id="terms" type="checkbox" formControlName="terms">
-        <label for="terms">Acepto los <a href="#">términos y condiciones</a> y la <a href="#">política de privacidad</a></label>
+        <label for="terms">Acepto los <a routerLink="/terms-conditions" target="_blank">términos y condiciones</a> y la <a routerLink="/privacy-policy" target="_blank">política de privacidad</a></label>
       </div>
 
       <div *ngIf="submitError" class="submit-error">{{ submitError }}</div>

@@ -3,9 +3,10 @@ import { Router } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faSearch,
-  faBook,
+  faBookOpen,
   faShieldAlt,
-  faTrophy
+  faTrophy,
+  faBullseye
 } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -15,8 +16,8 @@ import {
   styleUrl: './home.scss'
 })
 export class Home {
-  faSearch = faSearch;
-  faBook = faBook;
+  faBullseye = faBullseye;
+  faBook = faBookOpen;
   faShieldAlt = faShieldAlt;
   faTrophy = faTrophy;
   constructor(private router: Router) {}
