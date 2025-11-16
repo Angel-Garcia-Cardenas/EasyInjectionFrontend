@@ -72,7 +72,6 @@ export class Account implements OnInit {
     if (browserLower.includes('explorer') || browserLower.includes('ie')) return faInternetExplorer;
     return faChrome;
   }
-  // User data from API
   user: User = {
     _id: '',
     username: '',
@@ -86,11 +85,9 @@ export class Account implements OnInit {
     }
   };
 
-  // Active sessions
   sessions: Session[] = [];
   currentSessionToken: string = '';
 
-  // Available avatars
   availableAvatars = [
     { id: 'avatar1', path: 'avatar1.png', name: 'Avatar 1' },
     { id: 'avatar2', path: 'avatar2.png', name: 'Avatar 2' },
@@ -100,14 +97,11 @@ export class Account implements OnInit {
     { id: 'avatar6', path: 'avatar6.png', name: 'Avatar 6' }
   ];
 
-  // Control de pestañas del sidebar
   activeTab: 'info' | 'security' | 'notifications' | 'help' = 'info';
 
-  // Estados de edición
   editing = false;
   saving = false;
 
-  // Modal states
   showPasswordModal = false;
   showCurrentPassword = false;
   showNewPassword = false;
@@ -116,12 +110,10 @@ export class Account implements OnInit {
   activeEditTab: 'username' | 'avatar' = 'username';
   selectedAvatar = 'avatar1';
 
-  // Notification states
   notificationMessage = '';
   notificationType: 'success' | 'error' = 'success';
   showNotification = false;
 
-  // Modal notification states
   editProfileMessage = '';
   editProfileMessageType: 'success' | 'error' = 'success';
   showEditProfileMessage = false;
@@ -130,7 +122,6 @@ export class Account implements OnInit {
   changePasswordMessageType: 'success' | 'error' = 'success';
   showChangePasswordMessage = false;
 
-  // Delete account states
   showDeleteAccountModal = false;
   showDeletePassword = false;
   deleteAccountMessage = '';
@@ -138,7 +129,6 @@ export class Account implements OnInit {
   showDeleteAccountMessage = false;
   deletingAccount = false;
 
-  // 2FA states
   twoFactorEnabled = false;
   qrCodeDataUrl = '';
   twoFactorSecret = '';
@@ -155,7 +145,6 @@ export class Account implements OnInit {
   showTwoFAMessage = false;
   hasBackupCodes = false;
 
-  // Formularios reactivos
   editForm: FormGroup;
   changePasswordForm: FormGroup;
   deleteAccountForm: FormGroup;
@@ -171,7 +160,6 @@ export class Account implements OnInit {
     private twoFactorService: TwoFactorService,
     private cd: ChangeDetectorRef
   ) {
-    // Formulario para editar perfil
     this.editForm = this.fb.group({
       username: ['', [
         Validators.required, 
@@ -182,27 +170,23 @@ export class Account implements OnInit {
       email: ['', [Validators.required, Validators.email]]
     });
 
-    // Formulario para cambiar contraseña
     this.changePasswordForm = this.fb.group({
       currentPassword: ['', Validators.required],
       newPassword: ['', [Validators.required, Validators.minLength(8),
-        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/) // una min, una may, un número
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/)
       ]],
       confirmNewPassword: ['', Validators.required]
     }, { validators: this.passwordsMatchValidator });
 
-    // Formulario para eliminar cuenta
     this.deleteAccountForm = this.fb.group({
       password: ['', Validators.required],
       confirmDelete: [false, Validators.requiredTrue]
     });
 
-    // Formulario para verificar 2FA token
     this.verify2FATokenForm = this.fb.group({
       token: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]]
     });
 
-    // Formulario para deshabilitar 2FA
     this.disable2FAForm = this.fb.group({
       password: ['', Validators.required]
     });
@@ -220,14 +204,12 @@ export class Account implements OnInit {
       next: (response) => {
         this.user = response.user;
         this.selectedAvatar = this.user.perfil?.avatarId || 'avatar1';
-        // Initialize form with current values
         this.editForm.patchValue({ 
           username: this.user.username, 
           email: this.user.email 
         });
       },
       error: (error) => {
-        // Fallback to mock data if API fails
         this.loadMockData();
       }
     });
@@ -270,20 +252,15 @@ export class Account implements OnInit {
       this.editForm.patchValue({ username: this.user.username, email: this.user.email });
   }
 
-  // =========================
-  // Navegación / UI helpers
-  // =========================
   selectTab(tab: 'info' | 'security' | 'notifications' | 'help') {
     this.activeTab = tab;
   }
 
   scrollToSection(sectionId: string): void {
-    // Update active tab first
     if (sectionId === 'perfil') {
       this.activeTab = 'info';
     }
     
-    // Wait for DOM to update before scrolling
     setTimeout(() => {
       const element = document.getElementById(sectionId);
       if (element) {
@@ -295,7 +272,6 @@ export class Account implements OnInit {
   navigateToSecurity(): void {
     this.activeTab = 'security';
     
-    // Wait for DOM to update before scrolling
     setTimeout(() => {
       const element = document.getElementById('seguridad');
       if (element) {
@@ -305,8 +281,7 @@ export class Account implements OnInit {
   }
 
   downloadHelp(): void {
-    // Create a dummy PDF or download from backend
-    const pdfUrl = '/assets/ayuda.pdf'; // This file should exist in assets
+    const pdfUrl = '/assets/ayuda.pdf';
     const link = document.createElement('a');
     link.href = pdfUrl;
     link.download = 'ayuda_easyinjection.pdf';
@@ -318,7 +293,6 @@ export class Account implements OnInit {
     this.notificationType = type;
     this.showNotification = true;
     
-    // Auto-hide after 5 seconds
     setTimeout(() => {
       this.showNotification = false;
     }, 5000);
@@ -327,14 +301,12 @@ export class Account implements OnInit {
   hideNotification() {
     this.showNotification = false;
   }
-
-  // Modal notification methods
+  
   showEditProfileNotification(message: string, type: 'success' | 'error' = 'success') {
     this.editProfileMessage = message;
     this.editProfileMessageType = type;
     this.showEditProfileMessage = true;
     
-    // Auto-hide after 5 seconds
     setTimeout(() => {
       this.showEditProfileMessage = false;
     }, 5000);
@@ -349,7 +321,6 @@ export class Account implements OnInit {
     this.changePasswordMessageType = type;
     this.showChangePasswordMessage = true;
     
-    // Auto-hide after 5 seconds
     setTimeout(() => {
       this.showChangePasswordMessage = false;
     }, 5000);
@@ -364,7 +335,6 @@ export class Account implements OnInit {
     this.deleteAccountMessageType = type;
     this.showDeleteAccountMessage = true;
     
-    // Auto-hide after 5 seconds
     setTimeout(() => {
       this.showDeleteAccountMessage = false;
     }, 5000);
@@ -374,7 +344,6 @@ export class Account implements OnInit {
     this.showDeleteAccountMessage = false;
   }
 
-  // Validation helper methods
   getUsernameErrorMessage(): string {
     const usernameControl = this.editForm.get('username');
     if (!usernameControl?.errors || !usernameControl.touched) {
@@ -409,9 +378,6 @@ export class Account implements OnInit {
     this.editForm.reset({ username: this.user.username, email: this.user.email });
   }
 
-  // =========================
-  // Guardar perfil
-  // =========================
   saveProfile() {
     if (this.editForm.invalid) {
       this.editForm.markAllAsTouched();
@@ -428,14 +394,11 @@ export class Account implements OnInit {
 
     this.userService.updateProfile(payload).subscribe({
       next: (response) => {
-        // Actualizar datos en UI
         this.user = response.user;
         this.editing = false;
 
-        // Notificación de éxito
         this.showEditProfileNotification('Perfil actualizado exitosamente');
 
-        // Cerrar modal después de un pequeño delay
         setTimeout(() => {
           this.closeEditProfileModal();
         }, 2000);
@@ -456,12 +419,9 @@ export class Account implements OnInit {
     });
   }
 
-  // =========================
-  // Modal control methods
-  // =========================
   openChangePasswordModal() {
     this.showPasswordModal = true;
-    this.showChangePasswordMessage = false; // Clear any previous messages
+    this.showChangePasswordMessage = false;
     this.changePasswordForm.reset();
   }
 
@@ -477,7 +437,7 @@ export class Account implements OnInit {
     this.showEditProfileModal = true;
     this.activeEditTab = 'username';
     this.selectedAvatar = this.user.perfil?.avatarId || 'avatar1';
-    this.showEditProfileMessage = false; // Clear any previous messages
+    this.showEditProfileMessage = false;
     this.editForm.patchValue({
       username: this.user.username,
       email: this.user.email
@@ -522,9 +482,6 @@ export class Account implements OnInit {
     }
   }
 
-  // =========================
-  // Cambio de contraseña
-  // =========================
   passwordsMatchValidator(group: AbstractControl) {
     const a = group.get('newPassword')?.value;
     const b = group.get('confirmNewPassword')?.value;
@@ -541,10 +498,20 @@ export class Account implements OnInit {
 
     this.userService.changePassword({ currentPassword, newPassword }).subscribe({
       next: (response) => {
-        // Reset form and notify success
+        const message = response.message || 'Contraseña cambiada correctamente';
+        const was2FADisabled = message.includes('2FA ha sido deshabilitado');
+        
+        if (was2FADisabled) {
+          this.twoFactorEnabled = false;
+          this.backupCodes = [];
+          this.hasBackupCodes = false;
+          this.cd.detectChanges();
+          this.load2FAStatus();
+        }
+        
         this.changePasswordForm.reset();
-        this.showChangePasswordNotification('Contraseña cambiada correctamente');
-        // Close modal after a short delay
+        this.showChangePasswordNotification(message);
+        
         setTimeout(() => {
           this.closeChangePasswordModal();
         }, 2000);
@@ -559,11 +526,7 @@ export class Account implements OnInit {
     });
   }
 
-  // =========================
-  // Sesiones
-  // =========================
   closeSession(sessionId: string) {
-    // Find the session being closed
     const sessionToClose = this.sessions.find(s => s._id === sessionId);
     const isCurrentSession = sessionToClose ? this.isCurrentSession(sessionToClose) : false;
 
@@ -575,18 +538,15 @@ export class Account implements OnInit {
       this.sessionService.closeSession(sessionId).subscribe({
         next: (response) => {
           if (isCurrentSession) {
-            // If closing current session, logout
             this.userService.clearAuth();
             this.router.navigate(['/login']);
           } else {
-            // If closing another session, just remove it from the list
             this.sessions = this.sessions.filter(s => s._id !== sessionId);
             this.showNotificationMessage('Sesión cerrada exitosamente');
           }
         },
         error: (error) => {
           if (isCurrentSession) {
-            // Even if API call fails, logout anyway
             this.userService.clearAuth();
             this.router.navigate(['/login']);
           } else {
@@ -615,12 +575,10 @@ export class Account implements OnInit {
     if (confirm('¿Estás seguro de que deseas cerrar todas las sesiones? Esto cerrará tu sesión en todos los dispositivos incluyendo este.')) {
       this.sessionService.closeAllSessions().subscribe({
         next: (response) => {
-          // Clear local storage and redirect to login
           this.userService.clearAuth();
           this.router.navigate(['/login']);
         },
         error: (error) => {
-          // Even if API call fails, log out anyway
           this.userService.clearAuth();
           this.router.navigate(['/login']);
         }
@@ -628,27 +586,19 @@ export class Account implements OnInit {
     }
   }
 
-  // =========================
-  // Logout
-  // =========================
   logout() {
     this.userService.logout().subscribe({
       next: (response) => {
-        // Clear local storage and redirect
         this.userService.clearAuth();
         this.router.navigate(['/login']);
       },
       error: (error) => {
-        // Even if API call fails, clear local storage and redirect
         this.userService.clearAuth();
         this.router.navigate(['/login']);
       }
     });
   }
 
-  // =========================
-  // Delete Account
-  // =========================
   openDeleteAccountModal() {
     this.showDeleteAccountModal = true;
     this.showDeleteAccountMessage = false;
@@ -672,10 +622,8 @@ export class Account implements OnInit {
 
     this.userService.deleteAccount({ password }).subscribe({
       next: (response) => {
-        // Show success message briefly
         this.showDeleteAccountNotification('Cuenta eliminada exitosamente');
         
-        // Clear auth and redirect to login after delay
         setTimeout(() => {
           this.userService.clearAuth();
           this.router.navigate(['/login']);
@@ -694,15 +642,11 @@ export class Account implements OnInit {
     });
   }
 
-  // =========================
-  // Two-Factor Authentication
-  // =========================
   load2FAStatus(): void {
     this.twoFactorService.getStatus().subscribe({
       next: (status) => {
         this.twoFactorEnabled = status.twoFactorEnabled;
         this.hasBackupCodes = status.hasBackupCodes;
-        // Force change detection to update UI
         this.cd.detectChanges();
       },
       error: (err) => {
@@ -760,13 +704,10 @@ export class Account implements OnInit {
         this.hasBackupCodes = true;
         this.closeSetup2FAModal();
         
-        // Force change detection
         this.cd.detectChanges();
         
-        // Show backup codes modal
         this.openBackupCodesModal();
         
-        // Show success notification
         this.showTwoFANotification(res.message, 'success');
         
         // Reload status to ensure sync
@@ -803,13 +744,10 @@ export class Account implements OnInit {
         this.hasBackupCodes = false;
         this.closeDisable2FAModal();
         
-        // Force change detection
         this.cd.detectChanges();
         
-        // Show success notification
         this.showTwoFANotification(res.message, 'success');
         
-        // Reload status to ensure sync
         this.load2FAStatus();
       },
       error: (err) => {

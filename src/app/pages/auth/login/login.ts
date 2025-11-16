@@ -1,4 +1,3 @@
-// login.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -66,16 +65,13 @@ export class LoginComponent implements OnInit {
           next: (res: any) => {
             this.isSubmitting = false;
 
-            // Check if 2FA is required
             if (res.requires2FA) {
-              // Redirect to 2FA verification page
               this.router.navigate(['/verify-2fa'], {
                 queryParams: { email: res.email }
               });
               return;
             }
 
-            // Normal login flow (no 2FA)
             if (res.token) {
               localStorage.setItem('authToken', res.token);
             }
@@ -83,14 +79,12 @@ export class LoginComponent implements OnInit {
               localStorage.setItem('user', JSON.stringify(res.user));
             }
 
-            // Redirect to dashboard
             this.router.navigate(['/dashboard']);
           },
           error: (err) => {
             this.submitError = err.error?.error || 'Credenciales incorrectas o servidor no disponible.';
             this.isSubmitting = false;
             
-            // Show forgot password button after first failed attempt
             this.failedAttempts++;
             if (this.failedAttempts >= 1) {
               this.showForgotPasswordButton = true;

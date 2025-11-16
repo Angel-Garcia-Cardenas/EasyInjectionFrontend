@@ -1,16 +1,12 @@
 <div class="login-container">
     <div class="login-card">
-      <!-- Logo -->
       <img src="logo.png" alt="EasyInjection logo" class="logo">
   
-      <!-- Título -->
       <h2>Inicia sesión</h2>
       <p class="subtitle">Ingresa tus credenciales para acceder a tu cuenta</p>
   
-      <!-- Formulario con Reactive Forms -->
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
   
-        <!-- Correo -->
         <div class="form-group">
           <label for="email">Correo electrónico</label>
           <div class="generic-input">
@@ -21,7 +17,6 @@
           </div>
         </div>
   
-        <!-- Contraseña -->
         <div class="form-group">
           <label for="password">Contraseña</label>
         <div class="generic-input password-input">
@@ -43,10 +38,8 @@
           </div>
         </div>
   
-        <!-- Mensaje de error general -->
         <div *ngIf="submitError" class="submit-error">{{ submitError }}</div>
 
-        <!-- Forgot Password Button (appears after failed attempt) -->
         <div *ngIf="showForgotPasswordButton" class="forgot-password-alert">
           <mat-icon fontSet="material-icons">info</mat-icon>
           <span>¿Olvidaste tu contraseña?</span>
@@ -55,19 +48,16 @@
           </button>
         </div>
   
-        <!-- Botón de envío -->
         <button type="submit" class="btn btn-primary" 
                 [disabled]="loginForm.invalid || isSubmitting">
           {{ isSubmitting ? 'Ingresando...' : 'Iniciar sesión' }}
         </button>
       </form>
 
-    <!-- Divider -->
     <div class="divider">
       <span>O continúa con</span>
     </div>
 
-    <!-- Google Login Button -->
     <button type="button" class="btn btn-google" (click)="loginWithGoogle()">
       <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -78,7 +68,6 @@
       Continuar con Google
     </button>
   
-      <!-- Links de navegación -->
       <p class="login-link">
         ¿No tienes cuenta?
         <a (click)="goToRegister()">Regístrate</a>

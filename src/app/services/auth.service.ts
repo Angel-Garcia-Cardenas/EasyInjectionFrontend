@@ -22,7 +22,6 @@ export class AuthService {
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {
-    // Check if user is already logged in
     this.loadStoredUser();
   }
 
@@ -78,13 +77,11 @@ export class AuthService {
     });
   }
 
-  // Method to verify token with backend
   verifyToken(): Observable<any> {
     const headers = this.getAuthHeaders();
     return this.http.get(`${environment.backendUrl}api/auth/verify`, { headers });
   }
 
-  // Forgot password - request reset email
   forgotPassword(email: string): Observable<any> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
@@ -96,7 +93,6 @@ export class AuthService {
     );
   }
 
-  // Reset password with token
   resetPassword(token: string, newPassword: string): Observable<any> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
