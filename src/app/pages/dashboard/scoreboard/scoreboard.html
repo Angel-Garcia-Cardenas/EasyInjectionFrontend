@@ -109,7 +109,7 @@
         class="table-row">
         
         <!-- Rank -->
-        <div class="col-rank">
+        <div class="col-rank" data-label="Posición">
           <span class="rank-badge" [class.medal]="entry.rank <= 3">
             <span *ngIf="entry.rank <= 3" class="medal-icon">{{ getMedalIcon(entry.rank) }}</span>
             <span *ngIf="entry.rank > 3">{{ entry.rank }}</span>
@@ -117,7 +117,7 @@
         </div>
 
         <!-- Scan -->
-        <div class="col-scan">
+        <div class="col-scan" data-label="Escaneo">
           <div class="scan-info">
             <div class="scan-alias">{{ entry.scanAlias }}</div>
             <div class="scan-url">{{ entry.scanUrl }}</div>
@@ -125,33 +125,33 @@
         </div>
 
         <!-- Score -->
-        <div class="col-score">
+        <div class="col-score" data-label="Puntuación">
           <span class="score-value">{{ formatScore(entry.score) }}</span>
           <span class="score-label">pts</span>
         </div>
 
         <!-- Questions -->
-        <div class="col-questions">
+        <div class="col-questions" data-label="Respuestas">
           <span class="correct">{{ entry.correctAnswers }}</span> / {{ entry.totalQuestions }}
           <div class="question-label">Correctas</div>
         </div>
 
         <!-- Vulnerabilities -->
-        <div class="col-vulns">
+        <div class="col-vulns" data-label="Vulnerabilidades">
           <span class="vuln-count" [class.has-vulns]="entry.vulnerabilitiesFound > 0">
             {{ entry.vulnerabilitiesFound }}
           </span>
         </div>
 
         <!-- Grade -->
-        <div class="col-grade">
+        <div class="col-grade" data-label="Calificación">
           <span class="grade-badge" [ngClass]="getGradeClass(entry.grade)">
             {{ entry.grade }}
           </span>
         </div>
 
         <!-- Date -->
-        <div class="col-date">
+        <div class="col-date" data-label="Fecha">
           {{ formatDate(entry.completedAt) }}
         </div>
       </div>

@@ -16,42 +16,51 @@
   <!-- Controls Section -->
   <div class="scans-controls">
     <div class="search-section">
-      <input 
-        type="text" 
-        placeholder="Buscar por alias o URL..." 
-        class="search-input"
-        [(ngModel)]="searchTerm"
-        (input)="searchScans()"
-      >
+      <div class="search-input-wrapper">
+        <fa-icon [icon]="faSearch" class="search-icon"></fa-icon>
+        <input 
+          type="text" 
+          placeholder="Buscar por alias o URL..." 
+          class="search-input"
+          [(ngModel)]="searchTerm"
+          (input)="searchScans()"
+        >
+        <button 
+          *ngIf="searchTerm" 
+          class="search-clear"
+          (click)="clearSearch()"
+          type="button"
+        >
+          <fa-icon [icon]="faTimes"></fa-icon>
+        </button>
+      </div>
     </div>
 
     <div class="filters-left">
       <div class="filter-group">
-        <select 
-          id="status-filter" 
-          class="filter-select"
-          [(ngModel)]="statusFilter"
-          (change)="applyFilters()"
+        <button 
+          class="filter-btn"
+          (click)="openStatusModal()"
+          type="button"
         >
-          <option value="" disabled selected>Estado</option>
-          <option *ngFor="let option of statusOptions" [value]="option.value">
-            {{ option.label }}
-          </option>
-        </select>
+          <span class="filter-label">
+            {{ getStatusFilterLabel() }}
+          </span>
+          <fa-icon [icon]="faChevronDown" class="filter-icon"></fa-icon>
+        </button>
       </div>
 
       <div class="filter-group">
-        <select 
-          id="type-filter" 
-          class="filter-select"
-          [(ngModel)]="typeFilter"
-          (change)="applyFilters()"
+        <button 
+          class="filter-btn"
+          (click)="openTypeModal()"
+          type="button"
         >
-          <option value="" disabled selected>Tipo</option>
-          <option *ngFor="let option of typeOptions" [value]="option.value">
-            {{ option.label }}
-          </option>
-        </select>
+          <span class="filter-label">
+            {{ getTypeFilterLabel() }}
+          </span>
+          <fa-icon [icon]="faChevronDown" class="filter-icon"></fa-icon>
+        </button>
       </div>
     </div>
   </div>
@@ -69,15 +78,17 @@
           class="toggle-btn" 
           [class.active]="viewMode === 'grid'"
           (click)="setViewMode('grid')"
+          [attr.aria-label]="'Vista de cuadrícula'"
         >
-          ⚏
+          <fa-icon [icon]="faTh"></fa-icon>
         </button>
         <button 
           class="toggle-btn" 
           [class.active]="viewMode === 'list'"
           (click)="setViewMode('list')"
+          [attr.aria-label]="'Vista de lista'"
         >
-          ☰
+          <fa-icon [icon]="faList"></fa-icon>
         </button>
       </div>
     </div>
@@ -151,9 +162,11 @@
             <div class="actions-container">
               <button 
                 class="actions-btn"
-                (click)="toggleActionsMenu(scan._id)"
+                (click)="toggleActionsMenu(scan._id); $event.stopPropagation()"
+                [attr.aria-label]="'Menú de acciones'"
+                type="button"
               >
-                ⋮
+                <fa-icon [icon]="faEllipsisVertical"></fa-icon>
               </button>
               
               <div 
@@ -255,6 +268,54 @@
     <button class="btn--primary" (click)="goToNewScan()">
       Crear primer escaneo
     </button>
+  </div>
+
+  <!-- Status Filter Modal -->
+  <div class="modal-overlay" *ngIf="showStatusModal" (click)="closeStatusModal()">
+    <div class="filter-modal" (click)="$event.stopPropagation()">
+      <div class="filter-modal-header">
+        <h3>Filtrar por Estado</h3>
+        <button class="modal-close" (click)="closeStatusModal()" type="button">
+          <fa-icon [icon]="faTimes"></fa-icon>
+        </button>
+      </div>
+      <div class="filter-modal-body">
+        <button
+          *ngFor="let option of statusOptions"
+          class="filter-option"
+          [class.active]="statusFilter === option.value"
+          (click)="selectStatusFilter(option.value)"
+          type="button"
+        >
+          <span class="option-label">{{ option.label }}</span>
+          <fa-icon *ngIf="statusFilter === option.value" [icon]="faCheck" class="check-icon"></fa-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Type Filter Modal -->
+  <div class="modal-overlay" *ngIf="showTypeModal" (click)="closeTypeModal()">
+    <div class="filter-modal" (click)="$event.stopPropagation()">
+      <div class="filter-modal-header">
+        <h3>Filtrar por Tipo</h3>
+        <button class="modal-close" (click)="closeTypeModal()" type="button">
+          <fa-icon [icon]="faTimes"></fa-icon>
+        </button>
+      </div>
+      <div class="filter-modal-body">
+        <button
+          *ngFor="let option of typeOptions"
+          class="filter-option"
+          [class.active]="typeFilter === option.value"
+          (click)="selectTypeFilter(option.value)"
+          type="button"
+        >
+          <span class="option-label">{{ option.label }}</span>
+          <fa-icon *ngIf="typeFilter === option.value" [icon]="faCheck" class="check-icon"></fa-icon>
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- Scan Details Modal -->

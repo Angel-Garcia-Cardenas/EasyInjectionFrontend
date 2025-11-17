@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -8,7 +8,14 @@ import {
   faChartBar,
   faEye,
   faLink,
-  faTrash
+  faTrash,
+  faSearch,
+  faTimes,
+  faTh,
+  faList,
+  faEllipsisVertical,
+  faChevronDown,
+  faCheck
 } from '@fortawesome/free-solid-svg-icons';
 import { ScanService, Scan, ScanDetails, Vulnerability } from '../../../services/scan.service';
 
@@ -27,6 +34,13 @@ export class MyScansComponent implements OnInit, OnDestroy {
   faEye = faEye;
   faLink = faLink;
   faTrash = faTrash;
+  faSearch = faSearch;
+  faTimes = faTimes;
+  faTh = faTh;
+  faList = faList;
+  faEllipsisVertical = faEllipsisVertical;
+  faChevronDown = faChevronDown;
+  faCheck = faCheck;
   scans: Scan[] = [];
   filteredScans: Scan[] = [];
   loading = true;
@@ -46,6 +60,10 @@ export class MyScansComponent implements OnInit, OnDestroy {
   // Actions menu
   showActionsMenu: string | null = null;
 
+  // Filter modals
+  showStatusModal = false;
+  showTypeModal = false;
+
   // Filter options
   statusOptions = [
     { value: '', label: 'Todos los estados' },
@@ -61,6 +79,44 @@ export class MyScansComponent implements OnInit, OnDestroy {
     { value: 'sqli', label: 'SQLi' },
     { value: 'both', label: 'XSS y SQLi' }
   ];
+
+  getStatusFilterLabel(): string {
+    const option = this.statusOptions.find(opt => opt.value === this.statusFilter);
+    return option ? option.label : 'Estado';
+  }
+
+  getTypeFilterLabel(): string {
+    const option = this.typeOptions.find(opt => opt.value === this.typeFilter);
+    return option ? option.label : 'Tipo';
+  }
+
+  openStatusModal(): void {
+    this.showStatusModal = true;
+  }
+
+  closeStatusModal(): void {
+    this.showStatusModal = false;
+  }
+
+  openTypeModal(): void {
+    this.showTypeModal = true;
+  }
+
+  closeTypeModal(): void {
+    this.showTypeModal = false;
+  }
+
+  selectStatusFilter(value: string): void {
+    this.statusFilter = value;
+    this.applyFilters();
+    this.closeStatusModal();
+  }
+
+  selectTypeFilter(value: string): void {
+    this.typeFilter = value;
+    this.applyFilters();
+    this.closeTypeModal();
+  }
 
   constructor(
     private scanService: ScanService,
@@ -197,6 +253,11 @@ export class MyScansComponent implements OnInit, OnDestroy {
     this.applyFilters();
   }
 
+  clearSearch(): void {
+    this.searchTerm = '';
+    this.applyFilters();
+  }
+
   applyFilters(): void {
     this.filteredScans = this.scans.filter(scan => {
       const matchesSearch = !this.searchTerm || 
@@ -263,12 +324,37 @@ export class MyScansComponent implements OnInit, OnDestroy {
     return types.join(', ');
   }
 
-  toggleActionsMenu(scanId: string): void {
+  toggleActionsMenu(scanId: string, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
     this.showActionsMenu = this.showActionsMenu === scanId ? null : scanId;
   }
 
   closeActionsMenu(): void {
     this.showActionsMenu = null;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.actions-container')) {
+      this.closeActionsMenu();
+    }
+    // Modals are closed by clicking the overlay, handled in template
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscapeKey(): void {
+    if (this.showStatusModal) {
+      this.closeStatusModal();
+    }
+    if (this.showTypeModal) {
+      this.closeTypeModal();
+    }
+    if (this.showDetailsModal) {
+      this.closeDetailsModal();
+    }
   }
 
   viewDetails(scan: Scan): void {

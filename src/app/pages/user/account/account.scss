@@ -7,19 +7,45 @@ $azul: #65b2c6;
 $crema: #efeded;
 
 .account {
-  padding: 2rem;
+  padding: clamp(1rem, 3vw, 2rem);
+  display: grid;
+  grid-template-areas: 
+    "sidebar"
+    "title"
+    "subtitle"
+    "notification"
+    "content";
+  grid-template-columns: 1fr;
+  gap: 1rem;
+
+  @media (min-width: 1024px) {
+    display: block;
+    grid-template-areas: none;
+    grid-template-columns: none;
+  }
 
   .account-title {
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 4vw, 2rem);
     font-weight: 700;
     color: #333;
     margin-bottom: 0.5rem;
+    line-height: 1.2;
+    grid-area: title;
+
+    @media (min-width: 1024px) {
+      grid-area: auto;
+    }
   }
 
   .account-subtitle {
-    font-size: 1.1rem;
+    font-size: clamp(0.95rem, 2vw, 1.1rem);
     color: $gris-oscuro;
-    // margin-bottom: 2rem;
+    line-height: 1.5;
+    grid-area: subtitle;
+
+    @media (min-width: 1024px) {
+      grid-area: auto;
+    }
   }
 
   // Notification styles
@@ -31,6 +57,11 @@ $crema: #efeded;
     border-radius: 8px;
     margin-bottom: 1rem;
     font-weight: 500;
+    grid-area: notification;
+
+    @media (min-width: 1024px) {
+      grid-area: auto;
+    }
 
     &.submit-success {
       background-color: #d4edda;
@@ -96,30 +127,89 @@ $crema: #efeded;
   }
 
   .account-container {
-    display: flex;
-    gap: 2rem;
+    display: contents;
+
+    @media (min-width: 1024px) {
+      display: flex;
+      flex-direction: row;
+      gap: clamp(1rem, 3vw, 2rem);
+    }
+  }
+  
+  .account-content {
+    grid-area: content;
+
+    @media (min-width: 1024px) {
+      grid-area: auto;
+      flex: 1;
+    }
   }
 
   .account-sidebar {
-    width: 220px;
+    width: 100%;
     background: $crema;
     border-radius: 12px;
-    padding: 0rem 1rem 1rem 1rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    grid-area: sidebar;
+
+    @media (min-width: 1024px) {
+      width: 220px;
+      flex-shrink: 0;
+      margin-bottom: 0;
+      padding: 0rem 1rem 1rem 1rem;
+      grid-area: auto;
+    }
 
     ul {
       list-style: none;
       padding: 0;
       margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: row;
+      gap: 0.5rem;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 0.5rem;
+
+      @media (min-width: 1024px) {
+        flex-direction: column;
+        overflow-x: visible;
+        padding-bottom: 0;
+      }
+
+      // Custom scrollbar for mobile
+      &::-webkit-scrollbar {
+        height: 4px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: rgba($rosa, 0.3);
+        border-radius: 2px;
+      }
 
       li {
-        padding: 0.8rem 1rem;
+        padding: clamp(0.6rem, 2vw, 0.8rem) clamp(0.8rem, 2vw, 1rem);
         border-radius: 8px;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0;
         display: flex;
         align-items: center;
         gap: 0.6rem;
         cursor: pointer;
         color: $gris-oscuro;
+        white-space: nowrap;
+        flex-shrink: 0;
+        font-size: clamp(0.85rem, 2vw, 1rem);
+        transition: all 0.2s ease;
+
+        @media (min-width: 1024px) {
+          margin-bottom: 0.5rem;
+          white-space: normal;
+        }
 
         &.active {
           background: white;
@@ -131,6 +221,10 @@ $crema: #efeded;
         &:hover {
           background: rgba($rosa, 0.1);
         }
+
+        &:active {
+          transform: scale(0.98);
+        }
       }
     }
 
@@ -139,24 +233,33 @@ $crema: #efeded;
       background: none;
       border: 1px solid $rosa;
       color: $rosa;
-      padding: 0.7rem;
+      padding: clamp(0.6rem, 2vw, 0.7rem);
       border-radius: 8px;
       cursor: pointer;
+      font-size: clamp(0.9rem, 2vw, 1rem);
+      font-weight: 500;
+      transition: all 0.2s ease;
+      min-height: 44px; // Better touch target
 
       &:hover {
         background: rgba($rosa, 0.1);
+      }
+
+      &:active {
+        transform: scale(0.98);
       }
     }
   }
 
   .account-content {
     flex: 1;
+    min-width: 0; // Allow flex shrinking
 
     .card {
       background: white;
       border-radius: 12px;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
+      padding: clamp(1rem, 3vw, 1.5rem);
+      margin-bottom: clamp(1rem, 3vw, 1.5rem);
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 
       .card-header {
@@ -164,29 +267,110 @@ $crema: #efeded;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 1rem;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+
+        h3 {
+          margin: 0;
+          font-size: clamp(1.1rem, 3vw, 1.2rem);
+          font-weight: 600;
+          flex: 1;
+          min-width: 0;
+        }
+
+        .btn-outline {
+          flex-shrink: 0;
+          white-space: nowrap;
+          font-size: clamp(0.85rem, 2vw, 0.9rem);
+          padding: clamp(0.5rem, 2vw, 0.6rem) clamp(1rem, 3vw, 1.2rem);
+          min-height: 40px;
+        }
       }
 
       h3 {
         margin: 0;
-        font-size: 1.2rem;
+        font-size: clamp(1.1rem, 3vw, 1.2rem);
         font-weight: 600;
       }
 
       p {
         color: $gris-oscuro;
         margin: 0.4rem 0;
+        font-size: clamp(0.9rem, 2vw, 1rem);
+        line-height: 1.5;
       }
 
       .profile-info {
         display: flex;
-        align-items: center;
-        gap: 1rem;
+        align-items: flex-start;
+        gap: clamp(1.5rem, 4vw, 2.5rem);
+        flex-wrap: wrap;
+        padding: 1.5rem 0;
+
+        @media (min-width: 480px) {
+          align-items: flex-start;
+        }
 
         .avatar {
-          width: 70px;
-          height: 70px;
+          width: clamp(100px, 20vw, 140px);
+          height: clamp(100px, 20vw, 140px);
           border-radius: 50%;
-          border: 2px solid $rosa;
+          border: 4px solid $rosa;
+          flex-shrink: 0;
+          box-shadow: 0 4px 16px rgba(214, 61, 108, 0.3);
+          object-fit: cover;
+        }
+
+        > div {
+          flex: 1;
+          min-width: 0;
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 0;
+          background: #fafbfc;
+          border-radius: 12px;
+          padding: 1.25rem;
+          border: 1px solid #f3f4f6;
+
+          p {
+            margin: 0;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #e5e7eb;
+            transition: all 0.2s ease;
+            display: block;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+
+            &:last-child {
+              border-bottom: none;
+              margin-bottom: 0;
+            }
+
+            &:hover {
+              background: #f9fafb;
+              border-color: #e5e7eb;
+              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+              transform: translateY(-1px);
+            }
+
+            strong {
+              display: block;
+              color: #6b7280;
+              font-size: clamp(0.7rem, 2vw, 0.8rem);
+              font-weight: 600;
+              text-transform: uppercase;
+              letter-spacing: 0.8px;
+              margin-bottom: 0.625rem;
+            }
+
+            // Style the paragraph text (values)
+            font-size: clamp(1.05rem, 2.5vw, 1.15rem);
+            color: #111827;
+            font-weight: 500;
+            line-height: 1.6;
+            word-break: break-word;
+          }
         }
       }
 
@@ -200,12 +384,13 @@ $crema: #efeded;
       .session-item {
         display: flex;
         align-items: flex-start;
-        gap: 16px;
-        padding: 16px;
+        gap: clamp(12px, 3vw, 16px);
+        padding: clamp(12px, 3vw, 16px);
         border: 1px solid #e5e7eb;
         border-radius: 12px;
         background: #fafafa;
         transition: all 0.2s ease;
+        position: relative;
 
         &:hover {
           background: #f5f5f5;
@@ -214,49 +399,62 @@ $crema: #efeded;
         }
 
         .session-icon {
-          font-size: 32px;
+          font-size: clamp(24px, 6vw, 32px);
           line-height: 1;
           flex-shrink: 0;
+          align-self: flex-start;
+          margin-top: 2px;
         }
 
         .session-info {
           flex: 1;
           min-width: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
 
           .session-header {
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 6px;
+            margin-bottom: 0;
+            flex-wrap: wrap;
 
             strong {
-              font-size: 16px;
+              font-size: clamp(14px, 3vw, 16px);
               color: #111827;
+              word-break: break-word;
+              font-weight: 600;
             }
 
             .current-badge {
               display: inline-block;
               background: #e53966;
               color: white;
-              font-size: 11px;
+              font-size: clamp(10px, 2vw, 11px);
               font-weight: 600;
               padding: 2px 8px;
               border-radius: 10px;
               text-transform: uppercase;
+              white-space: nowrap;
             }
           }
 
           .session-details {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 14px;
+            gap: 6px;
+            font-size: clamp(12px, 2.5vw, 14px);
             color: #6b7280;
-            margin-bottom: 4px;
+            margin-bottom: 0;
             flex-wrap: wrap;
 
             .separator {
               color: #d1d5db;
+            }
+
+            fa-icon {
+              font-size: clamp(12px, 2.5vw, 14px);
             }
           }
 
@@ -264,7 +462,7 @@ $crema: #efeded;
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 12px;
+            font-size: clamp(11px, 2vw, 12px);
             color: #9ca3af;
             flex-wrap: wrap;
 
@@ -276,23 +474,31 @@ $crema: #efeded;
 
         .btn-close-session {
           flex-shrink: 0;
-          width: 32px;
-          height: 32px;
+          width: clamp(36px, 8vw, 40px);
+          height: clamp(36px, 8vw, 40px);
           border: none;
           background: #fee;
           color: #ef4444;
           border-radius: 50%;
           cursor: pointer;
-          font-size: 18px;
+          font-size: clamp(16px, 4vw, 18px);
           display: flex;
           align-items: center;
           justify-content: center;
           transition: all 0.2s ease;
+          min-width: 40px;
+          min-height: 40px;
+          align-self: flex-start;
+          margin-top: 0;
 
           &:hover {
             background: #ef4444;
             color: white;
             transform: scale(1.1);
+          }
+
+          &:active {
+            transform: scale(0.95);
           }
         }
       }
@@ -332,16 +538,26 @@ $crema: #efeded;
         border: 1px solid #ef4444;
         color: #ef4444;
         background: white;
-        padding: 0.6rem 1.2rem;
+        padding: clamp(0.6rem, 2vw, 0.7rem) clamp(1rem, 3vw, 1.2rem);
         border-radius: 8px;
         cursor: pointer;
-        font-size: 0.9rem;
+        font-size: clamp(0.85rem, 2vw, 0.9rem);
         font-weight: 500;
         transition: all 0.2s ease;
+        width: 100%;
+        min-height: 44px;
+
+        @media (min-width: 480px) {
+          width: auto;
+        }
 
         &:hover {
           background: #ef4444;
           color: white;
+        }
+
+        &:active {
+          transform: scale(0.98);
         }
       }
     }
@@ -576,12 +792,14 @@ $crema: #efeded;
 
       input {
         width: 100%;
-        padding: 0.75rem;
+        padding: clamp(0.7rem, 2vw, 0.75rem);
         padding-right: 3rem;
         border: 1px solid #ddd;
         border-radius: 8px;
-        font-size: 1rem;
+        font-size: clamp(0.95rem, 2vw, 1rem);
         transition: border-color 0.2s;
+        min-height: 44px; // Better touch target
+        box-sizing: border-box;
 
         &:focus {
           outline: none;
@@ -591,6 +809,7 @@ $crema: #efeded;
 
         &::placeholder {
           color: #999;
+          font-size: clamp(0.9rem, 2vw, 1rem);
         }
       }
 
@@ -784,16 +1003,21 @@ $crema: #efeded;
   .username-input {
     box-sizing: border-box;
     width: 100%;
-    padding: 0.75rem;
+    padding: clamp(0.7rem, 2vw, 0.75rem);
     border: 1px solid #ddd;
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: clamp(0.95rem, 2vw, 1rem);
     transition: border-color 0.2s;
+    min-height: 44px; // Better touch target
 
     &:focus {
       outline: none;
       border-color: $rosa;
       box-shadow: 0 0 0 2px rgba($rosa, 0.2);
+    }
+
+    &::placeholder {
+      font-size: clamp(0.9rem, 2vw, 1rem);
     }
   }
 
@@ -915,11 +1139,359 @@ $crema: #efeded;
   }
 }
 
-// Responsive
+// Small Desktop Styles (1025px - 1440px)
+@media (min-width: 1025px) and (max-width: 1440px) {
+  .account {
+    padding: clamp(1.5rem, 3vw, 2rem);
+
+    .account-container {
+      gap: 1.75rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .account-sidebar {
+      width: 210px;
+      padding: 0.875rem 0.95rem 0.95rem 0.95rem;
+
+      ul li {
+        padding: 0.75rem 0.95rem;
+        font-size: 0.98rem;
+      }
+
+      .btn-logout {
+        padding: 0.7rem;
+        font-size: 0.98rem;
+      }
+    }
+
+    .account-content {
+      .card {
+        padding: 1.4rem;
+        margin-bottom: 1.4rem;
+
+        .card-header {
+          h3 {
+            font-size: 1.18rem;
+          }
+
+          .btn-outline {
+            padding: 0.6rem 1.1rem;
+            font-size: 0.9rem;
+          }
+        }
+
+        .profile-info {
+          .avatar {
+            width: 68px;
+            height: 68px;
+          }
+
+          > div p {
+            font-size: 0.98rem;
+          }
+        }
+
+        .session-item {
+          padding: 15px;
+          gap: 15px;
+
+          .session-icon {
+            font-size: 30px;
+          }
+
+          .session-info {
+            .session-header strong {
+              font-size: 15.5px;
+            }
+
+            .session-details {
+              font-size: 13.5px;
+            }
+
+            .session-meta {
+              font-size: 11.8px;
+            }
+          }
+
+          .btn-close-session {
+            width: 38px;
+            height: 38px;
+            font-size: 17.5px;
+          }
+        }
+      }
+    }
+
+    .modal-content {
+      max-width: 540px;
+      width: 80%;
+    }
+
+    .modal-header {
+      padding: 1.4rem 1.4rem 0 1.4rem;
+
+      h3 {
+        font-size: 1.35rem;
+      }
+    }
+
+    .modal-body {
+      padding: 1.4rem;
+    }
+
+    .edit-profile-modal {
+      max-width: 580px;
+
+      .profile-tabs .tab-button {
+        padding: 0.7rem 1.3rem;
+        font-size: 0.98rem;
+      }
+
+      .avatar-grid {
+        grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
+        gap: 0.875rem;
+
+        .avatar-option .avatar-thumbnail {
+          height: 75px;
+        }
+      }
+    }
+
+    .security-section {
+      padding: 1.4rem 0;
+
+      .security-item {
+        gap: 0.95rem;
+
+        .security-icon {
+          width: 46px;
+          height: 46px;
+          font-size: 1.4rem;
+        }
+
+        .security-info {
+          h4 {
+            font-size: 1.08rem;
+          }
+
+          p {
+            font-size: 0.92rem;
+          }
+        }
+
+        .btn-outline {
+          padding: 0.6rem 1.1rem;
+          font-size: 0.9rem;
+        }
+      }
+    }
+
+    .qr-code-container {
+      img {
+        width: 190px;
+        height: 190px;
+      }
+    }
+
+    .backup-codes-list {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      padding: 1rem;
+
+      .backup-code-item {
+        padding: 0.7rem;
+        font-size: 0.92rem;
+      }
+    }
+  }
+}
+
+// Tablet Styles (1024px - 1024px)
+@media (min-width: 1024px) and (max-width: 1024px) {
+  .account {
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+
+    .account-container {
+      gap: 1.5rem;
+    }
+
+    .account-sidebar {
+      width: 200px;
+      padding: 0.75rem 0.875rem 0.875rem 0.875rem;
+
+      ul li {
+        padding: 0.7rem 0.875rem;
+        font-size: 0.95rem;
+      }
+
+      .btn-logout {
+        padding: 0.65rem;
+        font-size: 0.95rem;
+      }
+    }
+
+    .account-content {
+      .card {
+        padding: 1.25rem;
+        margin-bottom: 1.25rem;
+
+        .card-header {
+          h3 {
+            font-size: 1.15rem;
+          }
+
+          .btn-outline {
+            padding: 0.55rem 1rem;
+            font-size: 0.875rem;
+          }
+        }
+
+        .profile-info {
+          .avatar {
+            width: 65px;
+            height: 65px;
+          }
+
+          > div p {
+            font-size: 0.95rem;
+          }
+        }
+
+        .session-item {
+          padding: 14px;
+          gap: 14px;
+
+          .session-icon {
+            font-size: 28px;
+          }
+
+          .session-info {
+            .session-header strong {
+              font-size: 15px;
+            }
+
+            .session-details {
+              font-size: 13px;
+            }
+
+            .session-meta {
+              font-size: 11.5px;
+            }
+          }
+
+          .btn-close-session {
+            width: 36px;
+            height: 36px;
+            font-size: 17px;
+          }
+        }
+      }
+    }
+
+    .modal-content {
+      max-width: 520px;
+      width: 85%;
+    }
+
+    .modal-header {
+      padding: 1.25rem 1.25rem 0 1.25rem;
+
+      h3 {
+        font-size: 1.3rem;
+      }
+    }
+
+    .modal-body {
+      padding: 1.25rem;
+    }
+
+    .edit-profile-modal {
+      max-width: 550px;
+
+      .profile-tabs .tab-button {
+        padding: 0.65rem 1.25rem;
+        font-size: 0.95rem;
+      }
+
+      .avatar-grid {
+        grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+        gap: 0.75rem;
+
+        .avatar-option .avatar-thumbnail {
+          height: 70px;
+        }
+      }
+    }
+
+    .security-section {
+      padding: 1.25rem 0;
+
+      .security-item {
+        gap: 0.875rem;
+
+        .security-icon {
+          width: 44px;
+          height: 44px;
+          font-size: 1.3rem;
+        }
+
+        .security-info {
+          h4 {
+            font-size: 1.05rem;
+          }
+
+          p {
+            font-size: 0.875rem;
+          }
+        }
+
+        .btn-outline {
+          padding: 0.55rem 1rem;
+          font-size: 0.875rem;
+        }
+      }
+    }
+
+    .qr-code-container {
+      img {
+        width: 180px;
+        height: 180px;
+      }
+    }
+
+    .backup-codes-list {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.625rem;
+      padding: 0.875rem;
+
+      .backup-code-item {
+        padding: 0.65rem;
+        font-size: 0.9rem;
+      }
+    }
+  }
+}
+
+// Mobile Styles
 @media (max-width: 768px) {
+  .account {
+    padding: 1rem;
+  }
+
   .modal-content {
     width: 95%;
-    margin: 1rem;
+    max-width: 95%;
+    margin: 1rem auto;
+    max-height: 90vh;
+  }
+
+  .modal-header {
+    padding: 1rem 1rem 0 1rem;
+
+    h3 {
+      font-size: clamp(1.1rem, 4vw, 1.3rem);
+    }
   }
 
   .modal-body {
@@ -928,18 +1500,27 @@ $crema: #efeded;
 
   .modal-actions {
     flex-direction: column;
+    gap: 0.75rem;
 
     .btn-cancel,
-    .btn-save {
+    .btn-save,
+    .btn-danger,
+    .btn-primary {
       width: 100%;
+      min-height: 44px;
     }
   }
 
   .edit-profile-modal {
     .profile-tabs {
+      flex-wrap: wrap;
+      gap: 0.5rem;
+
       .tab-button {
         padding: 0.5rem 1rem;
-        font-size: 0.9rem;
+        font-size: clamp(0.85rem, 2vw, 0.9rem);
+        flex: 1;
+        min-width: 0;
       }
     }
 
@@ -950,6 +1531,23 @@ $crema: #efeded;
       .avatar-option .avatar-thumbnail {
         height: 60px;
       }
+    }
+
+    .current-avatar-display {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+
+  .qr-code-container {
+    img {
+      width: clamp(160px, 40vw, 200px);
+      height: clamp(160px, 40vw, 200px);
+    }
+
+    .secret-key {
+      font-size: clamp(0.8rem, 2vw, 0.9rem);
+      word-break: break-all;
     }
   }
 }
@@ -1079,12 +1677,30 @@ $crema: #efeded;
   color: $gris-oscuro;
 }
 
-// 2FA Code Input Container
+// 2FA Code Input Container - Additional form styles
 .modal-body {
   .form-group {
     // Special container for 2FA code input
     .code-input {
       margin-bottom: 0;
+    }
+
+    // Responsive form inputs
+    input[type="text"],
+    input[type="password"],
+    input[type="email"] {
+      @media (max-width: 768px) {
+        font-size: clamp(0.95rem, 2vw, 1rem);
+        padding: clamp(0.7rem, 2vw, 0.875rem) clamp(0.875rem, 2vw, 1rem);
+        min-height: 44px;
+      }
+    }
+
+    label {
+      @media (max-width: 768px) {
+        font-size: clamp(0.9rem, 2vw, 0.95rem);
+        margin-bottom: clamp(0.5rem, 2vw, 0.75rem);
+      }
     }
   }
 }
@@ -1253,16 +1869,118 @@ $crema: #efeded;
 
 // Responsive adjustments for security section
 @media (max-width: 768px) {
-  .security-section .security-item {
-    flex-direction: column;
-    align-items: stretch;
+  .security-section {
+    padding: 1rem 0;
 
-    .btn-outline {
-      width: 100%;
+    .security-item {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1rem;
+
+      .security-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+      }
+
+      .security-info {
+        h4 {
+          font-size: clamp(1rem, 3vw, 1.1rem);
+        }
+
+        p {
+          font-size: clamp(0.85rem, 2vw, 0.9rem);
+        }
+      }
+
+      .btn-outline {
+        width: 100%;
+        min-height: 44px;
+      }
     }
   }
 
   .backup-codes-list {
     grid-template-columns: 1fr;
+    gap: 0.5rem;
+    padding: 0.75rem;
+
+    .backup-code-item {
+      padding: 0.6rem;
+      font-size: clamp(0.85rem, 2vw, 0.95rem);
+    }
+  }
+}
+
+// Additional mobile optimizations
+@media (max-width: 480px) {
+  .account {
+    padding: 0.75rem;
+  }
+
+  .account-sidebar {
+    padding: 0.75rem;
+
+    ul {
+      gap: 0.4rem;
+
+      li {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+      }
+    }
+  }
+
+  .account-content .card {
+    padding: 0.875rem;
+    border-radius: 10px;
+  }
+
+  .profile-info {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    > div {
+      width: 100%;
+    }
+  }
+
+  .session-item {
+    padding: 0.75rem;
+    flex-wrap: wrap;
+
+    .session-icon {
+      order: 1;
+    }
+
+    .session-info {
+      order: 2;
+      min-width: 0;
+      flex: 1 1 auto;
+      min-width: 200px;
+    }
+
+    .btn-close-session {
+      order: 3;
+      align-self: flex-start;
+      margin-left: auto;
+    }
+  }
+
+  .modal-content {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    border-radius: 0;
+    max-height: 100vh;
+  }
+
+  .modal-header {
+    padding: 0.875rem;
+  }
+
+  .modal-body {
+    padding: 0.875rem;
   }
 }

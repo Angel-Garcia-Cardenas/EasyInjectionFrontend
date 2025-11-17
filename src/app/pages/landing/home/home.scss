@@ -437,8 +437,41 @@ p {
 
 /* ================= RESPONSIVE ================= */
 @media (max-width: 768px) {
+  .header {
+    padding: 1rem;
+
+    .container {
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo span {
+      font-size: 1rem;
+    }
+
+    .actions {
+      flex-wrap: wrap;
+      gap: 0.5rem;
+
+      .nav {
+        display: none; // Hide nav links on mobile
+      }
+
+      .btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+      }
+    }
+  }
+
+  section {
+    padding: 3rem 1.5rem;
+  }
+
   .hero {
-    padding: 4rem 1.5rem 8rem 1.5rem;
+    padding: 3rem 1.5rem 6rem 1.5rem;
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 60px), 0 100%);
+    margin-bottom: -40px;
 
     .hero-content {
       flex-direction: column;
@@ -450,43 +483,159 @@ p {
       }
 
       h1 {
-        font-size: 2rem;
+        font-size: 1.75rem;
+        line-height: 1.3;
       }
 
       p {
-        font-size: 1rem;
+        font-size: 0.95rem;
       }
 
       img {
-        max-width: 220px;
+        max-width: 200px;
       }
     }
 
     .hero-buttons {
       justify-content: center;
+      flex-direction: column;
+      width: 100%;
+
+      .btn {
+        width: 100%;
+        max-width: 300px;
+      }
     }
   }
 
   .features {
+    padding: 3rem 1.5rem;
+
+    h2 {
+      font-size: 1.75rem;
+    }
+
     .features-grid {
       grid-template-columns: 1fr;
       gap: 1.5rem;
     }
 
     .feature-card {
-      padding: 2rem 1.5rem;
+      padding: 1.5rem;
     }
   }
 
   .how {
+    padding: 3rem 1.5rem;
+
+    h2 {
+      font-size: 1.75rem;
+    }
+
     .steps {
       grid-template-columns: 1fr;
       gap: 1.5rem;
     }
 
     .step-card {
-      padding: 2rem 1.5rem;
+      padding: 1.5rem;
     }
+  }
+
+  .benefits {
+    padding: 3rem 1.5rem;
+
+    h2 {
+      font-size: 1.75rem;
+    }
+
+    .benefits-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+  }
+
+  .cta {
+    padding: 3rem 1.5rem;
+
+    h2 {
+      font-size: 1.75rem;
+    }
+
+    p {
+      font-size: 1rem;
+    }
+  }
+
+  footer {
+    padding: 1.5rem;
+
+    .footer-content {
+      flex-direction: column;
+      gap: 1rem;
+      text-align: center;
+
+      nav {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 0.75rem;
+
+    .logo img {
+      width: 28px;
+    }
+
+    .logo span {
+      font-size: 0.9rem;
+    }
+
+    .actions .btn {
+      padding: 0.35rem 0.7rem;
+      font-size: 0.8rem;
+    }
+  }
+
+  section {
+    padding: 2rem 1rem;
+  }
+
+  .hero {
+    padding: 2rem 1rem 5rem 1rem;
+
+    .hero-content {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      p {
+        font-size: 0.9rem;
+      }
+
+      img {
+        max-width: 160px;
+      }
+    }
+  }
+
+  .features,
+  .how,
+  .benefits,
+  .cta {
+    padding: 2rem 1rem;
+
+    h2 {
+      font-size: 1.5rem;
+    }
+  }
+
+  .benefits-grid {
+    gap: 1rem;
   }
 }
 

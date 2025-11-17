@@ -26,11 +26,17 @@
   
   .main-content {
     margin-left: 0 !important;
+    margin-top: 56px;
+    padding: 16px;
+    overflow-x: hidden;
+    width: 100%;
+    box-sizing: border-box;
   }
-  
-  .sidebar {
-    position: relative !important;
-    width: 100% !important;
-    height: auto !important;
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 12px;
+    margin-top: 56px;
   }
 }

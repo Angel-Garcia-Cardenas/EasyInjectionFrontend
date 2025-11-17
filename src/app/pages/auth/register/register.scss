@@ -316,4 +316,76 @@
     text-align: center;
     font-weight: 600;
   }
+
+  // Mobile responsive styles
+  @media (max-width: 768px) {
+    .register-container {
+      padding: 1rem;
+    }
+
+    .register-card {
+      padding: 1.5rem;
+      max-width: 100%;
+    }
+
+    h2 {
+      font-size: 24px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .register-container {
+      padding: 0.5rem;
+    }
+
+    .register-card {
+      padding: 1.25rem;
+      border-radius: 12px;
+    }
+
+    .logo {
+      width: 60px;
+    }
+
+    h2 {
+      font-size: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+
+      label {
+        font-size: 14px;
+      }
+
+      input {
+        padding: 0.65rem;
+        font-size: 14px;
+      }
+    }
+
+    .password-requirements {
+      padding: 0.65rem;
+      font-size: 13px;
+    }
+
+    .requirement {
+      font-size: 13px;
+      margin-bottom: 0.4rem;
+    }
+
+    .btn-primary,
+    .btn-google {
+      padding: 0.75rem 1.25rem;
+      font-size: 14px;
+    }
+
+    .checkbox {
+      font-size: 13px;
+    }
+  }
   

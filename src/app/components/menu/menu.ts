@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
@@ -24,8 +24,9 @@ import { SidebarService } from '../../services/sidebar.service';
   templateUrl: './menu.html',
   styleUrl: './menu.scss'
 })
-export class Menu {
+export class Menu implements OnInit, OnDestroy {
   isCollapsed = false;
+  isMobileOpen = false;
   faHome = faHome;
   faBook = faBookOpenReader;
   faBullseye = faBullseye;
@@ -44,8 +45,42 @@ export class Menu {
     });
   }
 
+  ngOnInit() {
+    // Close mobile menu if window is resized to desktop size
+    this.checkScreenSize();
+  }
+
+  ngOnDestroy() {
+    // Cleanup if needed
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.checkScreenSize();
+  }
+
+  checkScreenSize() {
+    if (window.innerWidth > 768 && this.isMobileOpen) {
+      this.isMobileOpen = false;
+    }
+  }
+
   toggleSidebar() {
+    // On mobile, toggle mobile menu
+    if (window.innerWidth <= 768) {
+      this.isMobileOpen = !this.isMobileOpen;
+      // Also update the sidebar service for consistency
+      if (this.isMobileOpen) {
+        this.sidebarService.setSidebarState(false);
+      }
+    } else {
+      // On desktop, use normal collapse
     this.sidebarService.toggleSidebar();
+    }
+  }
+
+  closeMobileMenu() {
+    this.isMobileOpen = false;
   }
 
   logout() {

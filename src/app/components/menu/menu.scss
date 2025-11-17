@@ -195,6 +195,7 @@ ul li .icon {
   display: none;
 }
 
+// Desktop/Tablet toggle button (hidden on mobile)
 .toggle-btn {
   position: fixed;
   top: 20px;
@@ -232,5 +233,241 @@ ul li .icon {
 
 .sidebar.collapsed .toggle-btn {
   left: 50px;
+}
+
+// Mobile-only toggle button (hidden on desktop/tablet)
+.mobile-toggle-btn {
+  display: none; // Hidden by default (desktop/tablet)
+}
+  
+// Mobile overlay
+.mobile-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: none;
+}
+
+// Mobile responsive styles
+@media (max-width: 768px) {
+  // Hide desktop toggle button on mobile
+  .toggle-btn {
+    display: none !important;
+  }
+  
+  // Show mobile toggle button
+  .mobile-toggle-btn {
+    display: flex !important;
+    position: fixed;
+    top: clamp(10px, 0.5vw, 14px);
+    left: clamp(8px, 2vw, 12px);
+    z-index: 1003;
+    background: #e53966;
+    color: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    width: clamp(40px, 10vw, 44px);
+    height: clamp(40px, 10vw, 44px);
+    min-width: 40px;
+    min-height: 40px;
+    border: none;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    padding: 0;
+    cursor: pointer;
+  }
+  
+  .mobile-toggle-btn mat-icon {
+    color: white;
+    font-size: clamp(20px, 5vw, 24px);
+    width: clamp(20px, 5vw, 24px);
+    height: clamp(20px, 5vw, 24px);
+  }
+  
+  .mobile-toggle-btn:hover,
+  .mobile-toggle-btn:active {
+    background: #d62d5a; // Darker shade of #e53966 for hover
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  
+  .mobile-toggle-btn.sidebar-open:hover,
+  .mobile-toggle-btn.sidebar-open:active {
+    background: #d62d5a; // Consistent hover state
+  }
+  .mobile-overlay {
+    display: block;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  
+  .mobile-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .sidebar {
+    width: 0; // Completely hidden
+    transform: translateX(-100%); // Completely off-screen
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    box-shadow: none;
+  }
+
+  .sidebar.mobile-open {
+    width: 280px;
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .sidebar.collapsed {
+    width: 0;
+    transform: translateX(-100%);
+  }
+
+  .sidebar.mobile-open.collapsed {
+    width: 280px;
+    transform: translateX(0);
+  }
+  
+  .logo-container {
+    padding: 16px 20px;
+  }
+  
+  .logo img {
+    width: 32px;
+  }
+  
+  .logo span {
+    font-size: 18px;
+  }
+
+  ul li {
+    padding: 16px 20px;
+    min-height: 56px; // Better touch target
+    display: flex;
+    align-items: center;
+  }
+  
+  ul li .icon,
+  ul li i,
+  ul li fa-icon {
+    font-size: 22px;
+    margin-right: 16px;
+    min-width: 22px;
+  }
+  
+  .footer li {
+    padding: 16px 20px;
+    min-height: 56px; // Better touch target
+  }
+  
+  .footer li .icon,
+  .footer li i,
+  .footer li fa-icon {
+    font-size: 22px;
+    margin-right: 16px;
+    min-width: 22px;
+  }
+
+  // Mobile toggle button position when sidebar is open
+  .mobile-toggle-btn.sidebar-open {
+    left: calc(280px - 44px - 12px); // Position at top-right of sidebar (sidebar width - button width - padding)
+    top: clamp(12px, 2vw, 14px); // Align with header
+    background: #e53966; // Match the darker pink
+  }
+
+  // Hide content when sidebar is closed (showing only curved edge)
+  .sidebar:not(.mobile-open) .logo-container,
+  .sidebar:not(.mobile-open) ul,
+  .sidebar:not(.mobile-open) .footer {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+  }
+  
+  .sidebar.mobile-open .logo span {
+    display: block !important;
+  }
+
+  .sidebar.mobile-open ul li span {
+    display: block !important;
+    font-size: 15px;
+  }
+
+  .sidebar.mobile-open .footer li span {
+    display: block !important;
+    font-size: 15px;
+  }
+  
+  .sidebar.mobile-open .logo-container,
+  .sidebar.mobile-open ul,
+  .sidebar.mobile-open .footer {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+    transition: opacity 0.2s ease 0.1s, visibility 0.2s ease 0.1s;
+  }
+  
+  // Add transition for closing
+  .sidebar .logo-container,
+  .sidebar ul,
+  .sidebar .footer {
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 0; // Completely hidden
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.mobile-open {
+    width: 100%;
+    max-width: 100%;
+    transform: translateX(0);
+  }
+
+  .mobile-toggle-btn.sidebar-open {
+    left: calc(100% - 40px - 12px); // Position at top-right of full-width sidebar
+    top: clamp(12px, 2vw, 14px); // Align with header
+    background: #e53966; // Match the darker pink
+  }
+  
+  .mobile-toggle-btn {
+    left: clamp(6px, 1.5vw, 10px); // Flexible position on small screens
+    width: clamp(36px, 9vw, 40px); // Flexible size
+    height: clamp(36px, 9vw, 40px);
+    min-width: 36px;
+    min-height: 36px;
+    top: clamp(10px, 0.5vw, 12px); // Match the user's adjustment
+    background: #e53966; // Consistent background color
+    
+    mat-icon {
+      color: white; // Ensure white icon
+      font-size: clamp(18px, 4.5vw, 22px); // Flexible icon size
+      width: clamp(18px, 4.5vw, 22px);
+      height: clamp(18px, 4.5vw, 22px);
+    }
+  }
+  
+  .logo-container {
+    padding: 14px 16px;
+  }
+  
+  ul li {
+    padding: 14px 16px;
+  }
+  
+  .footer li {
+    padding: 14px 16px;
+  }
 }
   

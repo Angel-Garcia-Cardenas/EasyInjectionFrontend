@@ -58,3 +58,65 @@ body {
   
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+// Global mobile improvements
+* {
+  box-sizing: border-box;
+}
+
+// Better touch targets for mobile
+@media (max-width: 768px) {
+  // Better scrolling
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  // Prevent horizontal scroll
+  body {
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+  }
+  
+  // Better text rendering
+  body,
+  input,
+  textarea,
+  select,
+  button {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  // Prevent iOS zoom on input focus (only for text inputs that need it)
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="url"],
+  input[type="search"],
+  input[type="tel"],
+  textarea {
+    font-size: 16px; // Prevents zoom on iOS when focused
+  }
+}
+
+// Text overflow handling
+@media (max-width: 480px) {
+  h1, h2, h3, h4, h5, h6 {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+  
+  p, span, div {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  // Prevent long URLs from breaking layout
+  a[href^="http"],
+  a[href^="https"] {
+    word-break: break-all;
+    overflow-wrap: break-word;
+  }
+}

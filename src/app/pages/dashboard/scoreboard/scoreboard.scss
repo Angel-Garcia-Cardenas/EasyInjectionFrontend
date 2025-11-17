@@ -1,24 +1,33 @@
 .scoreboard-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 24px;
+  padding: clamp(16px, 3vw, 24px);
 }
 
 // Header
 .scoreboard-header {
-  margin-bottom: 32px;
+  margin-bottom: clamp(24px, 4vw, 32px);
 
   h1 {
-    font-size: 32px;
+    font-size: clamp(24px, 5vw, 32px);
     font-weight: 700;
     color: #111827;
     margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+
+    fa-icon {
+      font-size: clamp(20px, 4vw, 28px);
+    }
   }
 
   .subtitle {
-    font-size: 16px;
+    font-size: clamp(14px, 2vw, 16px);
     color: #6b7280;
     margin: 0;
+    line-height: 1.5;
   }
 }
 
@@ -26,8 +35,8 @@
 .user-stats-card {
   background: linear-gradient(135deg, #e53966 0%, #d62d5a 100%);
   border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 24px;
+  padding: clamp(20px, 3vw, 24px);
+  margin-bottom: clamp(20px, 3vw, 24px);
   color: white;
   box-shadow: 0 4px 12px rgba(229, 57, 102, 0.2);
 
@@ -35,10 +44,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: clamp(20px, 3vw, 24px);
+    flex-wrap: wrap;
+    gap: 12px;
 
     h2 {
-      font-size: 20px;
+      font-size: clamp(18px, 3vw, 20px);
       font-weight: 600;
       margin: 0;
     }
@@ -66,19 +77,20 @@
 
   .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: clamp(12px, 2vw, 16px);
   }
 
   .stat-item {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: clamp(10px, 1.5vw, 12px);
     background: rgba(255, 255, 255, 0.15);
-    padding: 16px;
+    padding: clamp(14px, 2vw, 16px);
     border-radius: 12px;
     backdrop-filter: blur(10px);
     transition: all 0.2s ease;
+    min-width: 0; // Allow flex shrinking
 
     &:hover {
       background: rgba(255, 255, 255, 0.25);
@@ -86,23 +98,27 @@
     }
 
     .stat-icon {
-      font-size: 28px;
+      font-size: clamp(24px, 3.5vw, 28px);
       line-height: 1;
+      flex-shrink: 0;
     }
 
     .stat-content {
       flex: 1;
+      min-width: 0; // Allow text truncation
 
       .stat-value {
-        font-size: 22px;
+        font-size: clamp(18px, 2.8vw, 22px);
         font-weight: 700;
         line-height: 1.2;
         margin-bottom: 4px;
+        word-break: break-word;
       }
 
       .stat-label {
-        font-size: 12px;
+        font-size: clamp(11px, 1.5vw, 12px);
         opacity: 0.9;
+        line-height: 1.3;
       }
     }
   }
@@ -111,24 +127,27 @@
 // Timeframe Selector
 .timeframe-selector {
   display: flex;
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: clamp(8px, 1.5vw, 12px);
+  margin-bottom: clamp(20px, 3vw, 24px);
   background: white;
-  padding: 8px;
+  padding: clamp(6px, 1vw, 8px);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   width: fit-content;
+  flex-wrap: wrap;
 
   .timeframe-btn {
-    padding: 10px 20px;
+    padding: clamp(8px, 1.5vw, 10px) clamp(16px, 2.5vw, 20px);
     border: none;
     background: transparent;
     color: #6b7280;
-    font-size: 14px;
+    font-size: clamp(13px, 1.8vw, 14px);
     font-weight: 500;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
+    white-space: nowrap;
+    min-height: 40px;
 
     &:hover {
       background: rgba(229, 57, 102, 0.1);
@@ -220,32 +239,65 @@
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+  
+  // Custom scrollbar styling
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+    
+    &:hover {
+      background: #a8a8a8;
+    }
+  }
 }
 
 .table-header {
   display: grid;
   grid-template-columns: 80px 2fr 120px 140px 120px 140px 120px;
-  gap: 16px;
-  padding: 16px 20px;
+  gap: clamp(12px, 2vw, 16px);
+  padding: clamp(14px, 2vw, 16px) clamp(16px, 2.5vw, 20px);
   background: #f9fafb;
   border-bottom: 2px solid #e5e7eb;
-  font-size: 12px;
+  font-size: clamp(11px, 1.5vw, 12px);
   font-weight: 600;
   color: #6b7280;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  min-width: min-content;
+  
+  // Desktop and tablet: sticky header when scrolling
+  @media (min-width: 769px) {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #f9fafb;
+  }
 }
 
 .table-body {
   .table-row {
     display: grid;
     grid-template-columns: 80px 2fr 120px 140px 120px 140px 120px;
-    gap: 16px;
-    padding: 16px 20px;
+    gap: clamp(12px, 2vw, 16px);
+    padding: clamp(14px, 2vw, 16px) clamp(16px, 2.5vw, 20px);
     align-items: center;
     border-bottom: 1px solid #f3f4f6;
+    border-left: 4px solid transparent;
     transition: all 0.2s ease;
+    min-width: min-content;
+    box-sizing: border-box;
 
     &:hover {
       background: #f9fafb;
@@ -253,8 +305,7 @@
 
     &.highlight {
       background: rgba(229, 57, 102, 0.05);
-      border-left: 4px solid #e53966;
-      padding-left: 16px;
+      border-left-color: #e53966;
 
       &:hover {
         background: rgba(229, 57, 102, 0.08);
@@ -440,15 +491,34 @@
 
 // Responsive
 @media (max-width: 1200px) {
+  // Keep table width, enable scrolling instead of shrinking
   .table-header,
-  .table-row {
-    grid-template-columns: 60px 1.5fr 100px 120px 100px 120px 100px;
-    gap: 12px;
-    font-size: 12px;
+  .table-body .table-row {
+    min-width: min-content;
   }
 
   .user-stats-card .stats-grid {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+
+  .col-score .score-value {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 968px) {
+  // Keep table width, enable scrolling instead of shrinking
+  .table-header,
+  .table-body .table-row {
+    min-width: min-content;
+  }
+
+  .col-date {
+    font-size: 12px;
+  }
+
+  .col-scan .scan-url {
+    font-size: 11px;
   }
 }
 
@@ -457,48 +527,192 @@
     padding: 16px;
   }
 
+  .scoreboard-header {
+    margin-bottom: 20px;
+  }
+
+  .user-stats-card {
+    padding: 20px;
+    margin-bottom: 20px;
+
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .stat-item {
+      padding: 14px;
+    }
+  }
+
+  .timeframe-selector {
+    width: 100%;
+    justify-content: stretch;
+
+    .timeframe-btn {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  .scoreboard-table {
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 4px 0;
+  }
+
   .table-header {
     display: none;
   }
 
-  .table-body .table-row {
-    grid-template-columns: 1fr;
-    gap: 8px;
-    padding: 16px;
-
-    > div {
+  .table-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 8px 0;
+    
+    .table-row {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      gap: 12px;
+      padding: 18px;
+      border: 1px solid #e5e7eb;
+      background: white;
+      border-radius: 12px;
+      margin-bottom: 0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      transition: all 0.2s ease;
+      
+      &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        transform: translateY(-2px);
+        border-color: #d1d5db;
+      }
+      
+      &.highlight {
+        border-left-color: #e53966;
+        box-shadow: 0 2px 8px rgba(229, 57, 102, 0.15);
+        
+        &:hover {
+          box-shadow: 0 4px 16px rgba(229, 57, 102, 0.2);
+        }
+      }
 
-      &::before {
-        content: attr(data-label);
-        font-weight: 600;
-        color: #6b7280;
-        font-size: 12px;
-        text-transform: uppercase;
+      > div {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 8px 0;
+        border-bottom: 1px solid #f3f4f6;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        &::before {
+          content: attr(data-label);
+          font-weight: 600;
+          color: #6b7280;
+          font-size: 12px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin-right: 12px;
+          flex-shrink: 0;
+        }
       }
     }
   }
 
   .col-rank {
-    justify-content: flex-start;
+    justify-content: space-between;
   }
 
-  .col-user .user-info {
-    flex-direction: row-reverse;
-    justify-content: flex-end;
-  }
+  .col-scan {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 4px;
 
-  .user-stats-card .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .timeframe-selector {
-    width: 100%;
-
-    .timeframe-btn {
+    .scan-info {
+      width: 100%;
       flex: 1;
     }
   }
+
+  .col-questions {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+
+    .question-label {
+      font-size: 10px;
+    }
+  }
 }
+
+@media (max-width: 480px) {
+  .scoreboard-container {
+    padding: 12px;
+  }
+
+  .user-stats-card {
+    padding: 16px;
+    margin-bottom: 16px;
+
+    .stats-grid {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .stat-item {
+      padding: 12px;
+    }
+  }
+
+  .timeframe-selector {
+    padding: 6px;
+    gap: 6px;
+
+    .timeframe-btn {
+      padding: 8px 12px;
+      font-size: 12px;
+      min-height: 36px;
+    }
+  }
+
+  .table-body {
+    gap: 14px;
+    
+    .table-row {
+      padding: 16px;
+      gap: 10px;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+
+      > div {
+        padding: 6px 0;
+        font-size: 14px;
+
+        &::before {
+          font-size: 11px;
+        }
+      }
+    }
+  }
+
+  .col-scan .scan-alias {
+    font-size: 13px;
+  }
+
+  .col-scan .scan-url {
+    font-size: 11px;
+    word-break: break-all;
+    white-space: normal;
+  }
+
+  .col-score .score-value {
+    font-size: 16px;
+  }
+}
+

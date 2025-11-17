@@ -41,8 +41,19 @@
     gap: 24px;
     margin-bottom: 36px;
 
-    @media (max-width: 1100px) { grid-template-columns: repeat(2, 1fr); }
-    @media (max-width: 640px)  { grid-template-columns: 1fr; }
+    @media (max-width: 1100px) { 
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 640px) { 
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
   }
 
   .card {
@@ -101,7 +112,14 @@
       border: 1px solid transparent;
       cursor: pointer;
       transition: transform .05s ease, background-color .2s ease, border-color .2s ease;
+      min-height: 44px; // Better touch target
+      min-width: 120px;
       &:active { transform: translateY(1px); }
+      
+      @media (max-width: 480px) {
+        width: 100%;
+        min-width: auto;
+      }
     }
 
     .btn--primary {
@@ -274,6 +292,164 @@
       border-color: var(--pink);
       background: transparent;
       &:hover { background: rgba(var(--pink,) .07); }
+    }
+  }
+
+  // Mobile responsive styles
+  @media (max-width: 768px) {
+    padding: 16px;
+    padding-bottom: 32px;
+
+    .hero {
+      margin-bottom: 24px;
+
+      &__title {
+        font-size: 24px;
+        padding: 16px 0px;
+      }
+
+      &__subtitle {
+        font-size: 14px;
+      }
+
+      &__logo {
+        width: 64px;
+      }
+    }
+
+    .quick-actions {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      padding: 20px;
+
+      &__icon {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+        margin-bottom: 12px;
+      }
+
+      &__title {
+        font-size: 16px;
+      }
+
+      &__text {
+        font-size: 13px;
+        min-height: auto;
+        margin-bottom: 12px;
+      }
+
+      .btn {
+        padding: 10px 16px;
+        font-size: 14px;
+        min-height: 44px;
+      }
+    }
+
+    .bottom-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .panel {
+      padding: 18px;
+
+      &__title {
+        font-size: 16px;
+        margin-bottom: 12px;
+      }
+    }
+
+    .activity .item {
+      padding: 12px 0;
+      gap: 10px;
+
+      &__icon {
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
+      }
+
+      &__title {
+        font-size: 14px;
+      }
+
+      &__desc {
+        font-size: 13px;
+      }
+
+      &__time {
+        font-size: 11px;
+      }
+    }
+
+    .stats .row {
+      padding: 12px 0;
+      font-size: 14px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px;
+    padding-bottom: 24px;
+
+    .hero {
+      &__title {
+        font-size: 20px;
+        padding: 12px 0px;
+      }
+
+      &__subtitle {
+        font-size: 13px;
+      }
+
+      &__logo {
+        width: 56px;
+      }
+    }
+
+    .quick-actions {
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      padding: 16px;
+
+      &__icon {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+      }
+
+      &__title {
+        font-size: 15px;
+      }
+
+      &__text {
+        font-size: 12px;
+        min-height: auto;
+      }
+      
+      .btn {
+        padding: 10px 14px;
+        font-size: 13px;
+        min-height: 44px;
+        width: 100%;
+      }
+    }
+
+    .panel {
+      padding: 14px;
+
+      &__title {
+        font-size: 15px;
+      }
     }
   }
 }

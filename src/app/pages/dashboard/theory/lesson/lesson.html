@@ -61,52 +61,53 @@
           </div>
 
           <!-- Navegación entre lecciones -->
-          <div class="lesson-navigation" style="min-height: 3rem;">
-            <!-- Botón de lección anterior (lado izquierdo) -->
-            <button
-              *ngIf="hasPreviousLesson"
-              class="nav-btn prev-btn"
-              (click)="navigateToPrevious()"
-            >
-              <img src="/back.svg" alt="Anterior" class="nav-icon">
-              Lección anterior
-            </button>
+          <div class="lesson-navigation-wrapper">
+            <!-- Botón de completar paso (arriba, visible en todos los pasos si no está completado) -->
+            <div class="complete-button-row">
+              <button
+                *ngIf="!isLessonCompleted"
+                class="complete-lesson-btn nav-btn"
+                (click)="markLessonAsComplete()"
+                [disabled]="isMarkingComplete"
+                style="background-color: #65B2C6; color: white;"
+              >
+                <span *ngIf="!isMarkingComplete" style="font-size: 20px; margin-right: 8px;">✓</span>
+                {{ isMarkingComplete ? 'Marcando como completada...' : 'Marcar este paso como completado' }}
+              </button>
 
-            <!-- Botón de completar paso (visible en todos los pasos si no está completado) -->
-            <button
-              *ngIf="!isLessonCompleted"
-              class="complete-lesson-btn nav-btn"
-              [class.center-btn]="hasNextLesson || hasPreviousLesson"
-              [class.solo-btn]="!hasNextLesson && !hasPreviousLesson"
-              (click)="markLessonAsComplete()"
-              [disabled]="isMarkingComplete"
-              style="background-color: #65B2C6; color: white;"
-            >
-              <span *ngIf="!isMarkingComplete" style="font-size: 20px; margin-right: 8px;">✓</span>
-              {{ isMarkingComplete ? 'Marcando como completada...' : 'Marcar este paso como completado' }}
-            </button>
-
-            <!-- Badge de lección completada (centro, visible si está completada) -->
-            <div
-              *ngIf="isLessonCompleted"
-              class="lesson-completed-badge nav-btn"
-              [class.center-btn]="hasNextLesson || hasPreviousLesson"
-              [class.solo-btn]="!hasNextLesson && !hasPreviousLesson"
-              style="background-color: #65B2C6; color: white; cursor: default;"
-            >
-              <fa-icon [icon]="faCheckCircle" class="check-icon"></fa-icon>
-              <span style="margin-left: 8px;">Lección completada</span>
+              <!-- Badge de lección completada (arriba, visible si está completada) -->
+              <div
+                *ngIf="isLessonCompleted"
+                class="lesson-completed-badge nav-btn"
+                style="background-color: #65B2C6; color: white; cursor: default;"
+              >
+                <fa-icon [icon]="faCheckCircle" class="check-icon"></fa-icon>
+                <span style="margin-left: 8px;">Lección completada</span>
+              </div>
             </div>
 
-            <!-- Botón de siguiente lección (lado derecho, solo si hay siguiente lección) -->
-            <button
-              *ngIf="hasNextLesson"
-              class="nav-btn next-btn"
-              (click)="navigateToNext()"
-            >
-              Siguiente lección
-              <img src="/next.svg" alt="Siguiente" class="nav-icon">
-            </button>
+            <!-- Navegación anterior/siguiente (abajo) -->
+            <div class="lesson-navigation" style="min-height: 3rem;">
+              <!-- Botón de lección anterior (lado izquierdo) -->
+              <button
+                *ngIf="hasPreviousLesson"
+                class="nav-btn prev-btn"
+                (click)="navigateToPrevious()"
+              >
+                <img src="/back.svg" alt="Anterior" class="nav-icon">
+                Lección anterior
+              </button>
+
+              <!-- Botón de siguiente lección (lado derecho, solo si hay siguiente lección) -->
+              <button
+                *ngIf="hasNextLesson"
+                class="nav-btn next-btn"
+                (click)="navigateToNext()"
+              >
+                Siguiente lección
+                <img src="/next.svg" alt="Siguiente" class="nav-icon">
+              </button>
+            </div>
           </div>
 
           <!-- Información de progreso -->
