@@ -31,6 +31,9 @@ import {
 import { UserService, User } from '../../../services/user.service';
 import { SessionService, Session } from '../../../services/session.service';
 import { TwoFactorService } from '../../../services/two-factor.service';
+import { ScanService } from '../../../services/scan.service';
+import { forkJoin } from 'rxjs';
+import { jsPDF } from 'jspdf';
 
 @Component({
   selector: 'app-account',
@@ -158,6 +161,7 @@ export class Account implements OnInit {
     private userService: UserService,
     private sessionService: SessionService,
     private twoFactorService: TwoFactorService,
+    private scanService: ScanService,
     private cd: ChangeDetectorRef
   ) {
     this.editForm = this.fb.group({
@@ -281,11 +285,170 @@ export class Account implements OnInit {
   }
 
   downloadHelp(): void {
-    const pdfUrl = '/assets/ayuda.pdf';
-    const link = document.createElement('a');
-    link.href = pdfUrl;
-    link.download = 'ayuda_easyinjection.pdf';
-    link.click();
+    this.showNotification = true;
+    this.notificationMessage = 'Generando PDF con todos los reportes...';
+    this.notificationType = 'success';
+
+    this.scanService.getScans().subscribe({
+      next: (scansResponse) => {
+        if (!scansResponse.success || scansResponse.scans.length === 0) {
+          this.showNotification = true;
+          this.notificationMessage = 'No hay escaneos disponibles para generar el reporte';
+          this.notificationType = 'error';
+          return;
+        }
+
+        const reportRequests = scansResponse.scans.map(scan => 
+          this.scanService.getScanReport(scan._id)
+        );
+
+        forkJoin(reportRequests).subscribe({
+          next: (reports) => {
+            this.generatePDFReport(reports, scansResponse.scans);
+            this.showNotification = true;
+            this.notificationMessage = 'PDF generado exitosamente';
+            this.notificationType = 'success';
+          },
+          error: (err) => {
+            console.error('Error fetching reports:', err);
+            this.showNotification = true;
+            this.notificationMessage = 'Error al obtener los reportes: ' + (err.error?.error || 'Error desconocido');
+            this.notificationType = 'error';
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error fetching scans:', err);
+        this.showNotification = true;
+        this.notificationMessage = 'Error al obtener los escaneos: ' + (err.error?.error || 'Error desconocido');
+        this.notificationType = 'error';
+      }
+    });
+  }
+
+  private generatePDFReport(reports: any[], scans: any[]): void {
+    const pdf = new jsPDF();
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const margin = 20;
+    const maxWidth = pageWidth - (margin * 2);
+    let yPosition = margin;
+
+    const checkNewPage = (requiredHeight: number) => {
+      if (yPosition + requiredHeight > pageHeight - margin) {
+        pdf.addPage();
+        yPosition = margin;
+        return true;
+      }
+      return false;
+    };
+
+    const addText = (text: string, fontSize: number, isBold: boolean = false, color: number[] = [0, 0, 0]) => {
+      pdf.setFontSize(fontSize);
+      pdf.setTextColor(color[0], color[1], color[2]);
+      if (isBold) {
+        pdf.setFont('helvetica', 'bold');
+      } else {
+        pdf.setFont('helvetica', 'normal');
+      }
+      
+      const lines = pdf.splitTextToSize(text, maxWidth);
+      lines.forEach((line: string) => {
+        checkNewPage(fontSize * 0.5);
+        pdf.text(line, margin, yPosition);
+        yPosition += fontSize * 0.5;
+      });
+    };
+
+    addText('Reporte Completo de Escaneos - EasyInjection', 20, true, [233, 30, 99]);
+    yPosition += 10;
+
+    addText(`Usuario: ${this.user.username}`, 12);
+    addText(`Email: ${this.user.email}`, 12);
+    addText(`Fecha de generación: ${new Date().toLocaleString('es-ES')}`, 10, false, [128, 128, 128]);
+    yPosition += 10;
+
+    reports.forEach((reportResponse, index) => {
+      if (!reportResponse.success || !reportResponse.report) return;
+
+      const report = reportResponse.report;
+      const scan = scans[index];
+
+      checkNewPage(50);
+
+      addText(`--- Escaneo ${index + 1}: ${scan.alias || 'Sin alias'} ---`, 16, true, [101, 178, 198]);
+      yPosition += 5;
+
+      addText(`URL: ${scan.url}`, 11);
+      addText(`Fecha inicio: ${new Date(scan.fecha_inicio).toLocaleString('es-ES')}`, 10);
+      if (scan.fecha_fin) {
+        addText(`Fecha fin: ${new Date(scan.fecha_fin).toLocaleString('es-ES')}`, 10);
+      }
+      addText(`Estado: ${scan.estado}`, 10);
+      addText(`Tipo: ${scan.flags.xss ? 'XSS ' : ''}${scan.flags.sqli ? 'SQLi' : ''}`, 10);
+      yPosition += 5;
+
+      if (report.puntuacion) {
+        addText(`Puntuación Final: ${report.puntuacion.puntuacion_final}/100 (${report.puntuacion.calificacion})`, 12, true);
+        yPosition += 5;
+      }
+
+      if (report.resumen_vulnerabilidades) {
+        addText('Resumen de Vulnerabilidades:', 12, true);
+        addText(`Total: ${report.resumen_vulnerabilidades.total}`, 10);
+        addText(`Crítica: ${report.resumen_vulnerabilidades.por_severidad.critica}`, 10, false, [220, 38, 38]);
+        addText(`Alta: ${report.resumen_vulnerabilidades.por_severidad.alta}`, 10, false, [245, 158, 11]);
+        addText(`Media: ${report.resumen_vulnerabilidades.por_severidad.media}`, 10, false, [59, 130, 246]);
+        addText(`Baja: ${report.resumen_vulnerabilidades.por_severidad.baja}`, 10, false, [16, 185, 129]);
+        yPosition += 5;
+      }
+
+      if (report.vulnerabilidades && report.vulnerabilidades.length > 0) {
+        addText('Vulnerabilidades Detalladas:', 12, true);
+        report.vulnerabilidades.forEach((vuln: any, vulnIndex: number) => {
+          checkNewPage(40);
+          addText(`${vulnIndex + 1}. ${vuln.tipo_id?.nombre || 'Vulnerabilidad'} - ${vuln.nivel_severidad_id?.nombre || 'N/A'}`, 11, true);
+          if (vuln.parametro_afectado) {
+            addText(`   Endpoint: ${vuln.parametro_afectado}`, 9);
+          }
+          if (vuln.url_afectada) {
+            addText(`   Parámetro: ${vuln.url_afectada}`, 9);
+          }
+          if (vuln.descripcion) {
+            addText(`   Descripción: ${vuln.descripcion}`, 9);
+          }
+          if (vuln.sugerencia) {
+            addText(`   Sugerencia: ${vuln.sugerencia}`, 9);
+          }
+          yPosition += 3;
+        });
+        yPosition += 5;
+      }
+
+      if (report.cuestionario && report.cuestionario.length > 0) {
+        addText('Resultados del Cuestionario:', 12, true);
+        const correctAnswers = report.cuestionario.filter((q: any) => q.es_correcta).length;
+        addText(`Preguntas: ${report.cuestionario.length} | Correctas: ${correctAnswers} | Incorrectas: ${report.cuestionario.length - correctAnswers}`, 10);
+        addText(`Puntuación: ${report.puntuacion?.puntos_cuestionario || 0}/${report.puntuacion?.total_puntos_cuestionario || 0}`, 10);
+        yPosition += 5;
+      }
+
+      if (index < reports.length - 1) {
+        checkNewPage(20);
+        yPosition += 10;
+        pdf.setDrawColor(200, 200, 200);
+        pdf.line(margin, yPosition, pageWidth - margin, yPosition);
+        yPosition += 10;
+      }
+    });
+
+    pdf.setFontSize(8);
+    pdf.setTextColor(128, 128, 128);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text(`Generado por EasyInjection - ${new Date().toLocaleString('es-ES')}`, margin, pageHeight - 10);
+
+    const fileName = `reporte-completo-escaneos-${new Date().toISOString().split('T')[0]}.pdf`;
+    pdf.save(fileName);
   }
 
   showNotificationMessage(message: string, type: 'success' | 'error' = 'success') {
